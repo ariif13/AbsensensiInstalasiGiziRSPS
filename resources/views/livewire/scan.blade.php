@@ -238,7 +238,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('livewire:navigated', function() {
         const state = {
             errorMsg: document.querySelector('#scanner-error'),
             hasCheckedIn: {{ $hasCheckedIn ? 'true' : 'false' }},
@@ -246,8 +246,6 @@
             isComplete: {{ $isComplete ? 'true' : 'false' }},
             isAbsence: {{ $isAbsence ? 'true' : 'false' }},
             maps: {},
-            userLat: null,
-            userLng: null,
             userLat: null,
             userLng: null,
             isRefreshing: false,
