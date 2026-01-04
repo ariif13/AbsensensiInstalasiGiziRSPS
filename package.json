@@ -5,6 +5,9 @@
         "caniuse-lite": "latest",
         "esbuild": "^0.27.0"
     },
+    "overrides": {
+        "esbuild": "^0.27.0"
+    },
     "scripts": {
         "dev": "vite",
         "build": "BROWSERSLIST_IGNORE_OLD_DATA=true vite build"
