@@ -481,6 +481,16 @@
 
             async function startScanning() {
                 try {
+                    // Update mirroring class based on facing mode
+                    const scannerEl = document.getElementById('scanner');
+                    if (scannerEl) {
+                        if (state.facingMode === 'user') {
+                            scannerEl.classList.add('mirrored');
+                        } else {
+                            scannerEl.classList.remove('mirrored');
+                        }
+                    }
+
                     if (window.isNativeApp()) {
                         await window.startNativeBarcodeScanner(onScanSuccess);
                         return;

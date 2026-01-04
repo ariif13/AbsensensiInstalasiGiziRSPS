@@ -12,7 +12,7 @@
         </button>
     </div>
 
-    <div class="scanner-container w-full min-h-[400px] aspect-square sm:aspect-video rounded-2xl bg-gray-100 dark:bg-gray-900
+    <div class="scanner-container w-full max-w-sm mx-auto aspect-square rounded-2xl bg-gray-100 dark:bg-gray-900
                 cursor-pointer flex items-center justify-center overflow-hidden relative"
         id="scanner" onclick="handleScanClick()">
 
@@ -28,7 +28,7 @@
     </div>
 
     <style>
-        #scanner video {
+        #scanner.mirrored video {
             transform: scaleX(-1) !important;
         }
     </style>

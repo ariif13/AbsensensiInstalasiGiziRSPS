@@ -187,25 +187,25 @@ adb logcat | grep Capacitor
 
 | Scan Page | Scan Page (Mobile) |
 |---|---|
-|![Scan](./screenshots/presensi-scan.png)|![Scan mobile](./screenshots/presensi-scan-mobile.png)|
+|![Scan](./screenshots/user-scan-mobile-full.png)|![Scan mobile](./screenshots/user-home-mobile-full.png)|
 
 | Pengajuan Absensi | Riwayat Absensi Karyawan |
 |---|---|
-|![Pengajuan Absensi](./screenshots/pengajuan-izin.jpeg)|![Riwayat Absensi](./screenshots/presensi-user.jpeg)|
+|![Pengajuan Absensi](./screenshots/user-apply-leave-mobile-full.png)|![Riwayat Absensi](./screenshots/user-history-mobile-full.png)|
 
 ### Admin & Superadmin
 
-| Dashboard Admin | Dashboard Admin Dark |
+| Dashboard (Light) | Dashboard (Dark) |
 |---|---|
-|![Dashboard](./screenshots/dashboard-light.jpeg)|![Dashboard Dark](./screenshots/dashboard-dark.jpeg)|
+|![Dashboard](./screenshots/admin-dashboard-full.png)|![Dashboard Dark](./screenshots/admin-dashboard-dark-full.png)|
 
-| Barcode | Create/Edit Barcode |
+| Data Karyawan | Barcode Management |
 |---|---|
-|![Barcode](./screenshots/barcode.jpeg)|![Create Edit Barcode](./screenshots/create-edit-barcode.jpeg)|
+|![Karyawan](./screenshots/admin-employees-full.png)|![Barcode](./screenshots/admin-barcodes-dark-full.png)|
 
-| Import/Export | Preview Data |
+| Import/Export | Laporan Absensi |
 |---|---|
-|![Export/Import](./screenshots/export-absensi.jpeg)|![Preview](./screenshots/export-absensi-preview.png)|
+|![Import/Export](./screenshots/admin-import-export-dark-full.png)|![Absensi](./screenshots/admin-attendances-full.png)|
 
 ## Donasi ❤
 
