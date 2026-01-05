@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark overflow-hidden">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css'])
+    <script>
+        // Inline Critical Dark Mode Script to prevent FOUC & remove heavy JS bundle dependency
+        (function() {
+            try {
+                var isDark = localStorage.getItem('isDark') === 'true' || 
+                            (!('isDark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (_) {}
+        })();
+    </script>
     <style>
         .stars {
             background-image: 
@@ -17,11 +31,12 @@
             background-repeat: repeat;
             background-size: 200px 200px;
             animation: stars 40s linear infinite;
+            will-change: background-position;
         }
         
         @keyframes stars {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 1000px; }
+             from { background-position: 0 0; }
+             to { background-position: 0 1000px; }
         }
 
         @keyframes float {
@@ -32,21 +47,25 @@
 
         .animate-float {
             animation: float 6s ease-in-out infinite;
+            will-change: transform;
         }
 
         .planet {
             background: radial-gradient(circle at 30% 30%, #4c1d95, #000);
             box-shadow: 0 0 20px #8b5cf6;
+            will-change: transform;
         }
     </style>
 </head>
 <body class="bg-[#0B1120] text-white h-screen overflow-hidden flex items-center justify-center relative font-sans antialiased">
     
     <!-- Background Elements -->
-    <div class="stars absolute inset-0 opacity-50 pointer-events-none"></div>
-    <div class="absolute bottom-[-100px] right-[-100px] w-64 h-64 rounded-full planet opacity-80 animate-float pointer-events-none" style="animation-delay: -2s;"></div>
-    <div class="absolute top-[10%] left-[10%] w-4 h-4 rounded-full bg-blue-400 blur-[2px] animate-pulse pointer-events-none"></div>
-    <div class="absolute top-[20%] right-[20%] w-2 h-2 rounded-full bg-purple-400 blur-[1px] animate-pulse pointer-events-none" style="animation-delay: 1s;"></div>
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="stars absolute inset-0 opacity-50"></div>
+        <div class="absolute bottom-[-100px] right-[-100px] w-64 h-64 rounded-full planet opacity-80 animate-float" style="animation-delay: -2s;"></div>
+        <div class="absolute top-[10%] left-[10%] w-4 h-4 rounded-full bg-blue-400 blur-[2px] animate-pulse"></div>
+        <div class="absolute top-[20%] right-[20%] w-2 h-2 rounded-full bg-purple-400 blur-[1px] animate-pulse" style="animation-delay: 1s;"></div>
+    </div>
 
     <!-- Content -->
     <div class="relative z-10 text-center w-full max-w-2xl px-4 md:px-6">
