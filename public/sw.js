@@ -1,66 +1,49 @@
-const CACHE_NAME = "absensi-v1";
+const CACHE_NAME = 'absensi-cache-v1';
 const urlsToCache = [
-    "/",
-    "/css/app.css",
-    "/js/app.js",
-    "/images/icons/icon-192x192.png",
-    "/offline.html",
+    '/',
+    '/offline',
+    '/build/assets/app.css', // Note: We need dynamic versioning here ideally, but for now we try generic or need mechanism
+    '/images/icons/icon-192x192.png'
 ];
 
-// Install Service Worker
-self.addEventListener("install", (event) => {
+// Install SW
+self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            console.log("Cache dibuka");
-            return cache.addAll(urlsToCache);
-        })
+        caches.open(CACHE_NAME)
+            .then(cache => {
+                console.log('Opened cache');
+                // We don't fail if some assets are missing/dynamic
+                return cache.addAll(urlsToCache).catch(err => console.warn('Some assets failed to cache', err));
+            })
     );
 });
 
-// Fetch - Cache First Strategy
-self.addEventListener("fetch", (event) => {
+// Cache and return requests
+self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request).then((response) => {
-            // Cache hit - return response
-            if (response) {
-                return response;
-            }
-
-            return fetch(event.request)
-                .then((response) => {
-                    // Check jika response valid
-                    if (
-                        !response ||
-                        response.status !== 200 ||
-                        response.type !== "basic"
-                    ) {
-                        return response;
-                    }
-
-                    // Clone response
-                    const responseToCache = response.clone();
-
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseToCache);
-                    });
-
+        caches.match(event.request)
+            .then(response => {
+                // Cache hit - return response
+                if (response) {
                     return response;
-                })
-                .catch(() => {
-                    // Jika offline, tampilkan halaman offline
-                    return caches.match("/offline.html");
+                }
+                return fetch(event.request).catch(() => {
+                    // If fetch fails (offline), try to return offline page for navigation requests
+                    if (event.request.mode === 'navigate') {
+                        return caches.match('/offline');
+                    }
                 });
-        })
+            })
     );
 });
 
-// Activate - Clean old caches
-self.addEventListener("activate", (event) => {
+// Update SW
+self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
+        caches.keys().then(cacheNames => {
             return Promise.all(
-                cacheNames.map((cacheName) => {
+                cacheNames.map(cacheName => {
                     if (cacheWhitelist.indexOf(cacheName) === -1) {
                         return caches.delete(cacheName);
                     }

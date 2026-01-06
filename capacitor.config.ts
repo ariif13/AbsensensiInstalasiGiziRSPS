@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.absensi.test',
-  appName: 'Absensi Test',
+  appName: 'Absensi',
   webDir: 'public',
   server: {
     url: 'https://test-absesnsi.pandanteknik.com',
@@ -14,8 +14,8 @@ const config: CapacitorConfig = {
     allowMixedContent: true,
     backgroundColor: '#ffffff',
     captureInput: true,
-    loggingBehavior: 'debug',
-    webContentsDebuggingEnabled: true
+    loggingBehavior: 'none',
+    webContentsDebuggingEnabled: false
   },
   plugins: {
     Camera: {
@@ -23,13 +23,23 @@ const config: CapacitorConfig = {
     },
     Geolocation: {
       permissions: ['location']
-      },
+    },
     Filesystem: {
       androidPermissions: [
         'android.permission.READ_EXTERNAL_STORAGE',
         'android.permission.WRITE_EXTERNAL_STORAGE'
       ]
     },
+    SplashScreen: {
+      launchShowDuration: 2000,
+      launchAutoHide: true,
+      backgroundColor: "#ffffff",
+      androidSplashResourceName: "splash",
+      showSpinner: false,
+      androidScaleType: "CENTER_CROP",
+      splashFullScreen: true,
+      splashImmersive: true
+    }
   }
 };
 
