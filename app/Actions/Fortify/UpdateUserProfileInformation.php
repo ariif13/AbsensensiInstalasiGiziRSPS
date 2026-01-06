@@ -31,6 +31,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'education_id' => ['nullable', 'exists:educations,id'],
             'division_id' => ['nullable', 'exists:divisions,id'],
             'job_title_id' => ['nullable', 'exists:job_titles,id'],
+            'language' => ['required', 'string', 'in:id,en'],
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {
@@ -60,6 +61,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'education_id' => $input['education_id'],
                 'division_id' => $input['division_id'],
                 'job_title_id' => $input['job_title_id'],
+                'language' => $input['language'],
             ])->save();
         }
     }
@@ -85,6 +87,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'education_id' => $input['education_id'],
             'division_id' => $input['division_id'],
             'job_title_id' => $input['job_title_id'],
+            'language' => $input['language'],
         ])->save();
 
         $user->sendEmailVerificationNotification();

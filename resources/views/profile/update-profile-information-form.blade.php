@@ -175,6 +175,18 @@
       <x-tom-select id="job_title" class="mt-1 block w-full" wire:model="state.job_title_id" :options="App\Models\JobTitle::all()" placeholder="Select Job Title" />
       <x-input-error for="job_title" class="mt-2" />
     </div>
+
+    <!-- Language -->
+    <div class="col-span-6">
+      <x-label for="language" value="{{ __('Language') }}" />
+      <x-tom-select id="language" class="mt-1 block w-full" wire:model="state.language"
+          :options="[
+              ['id' => 'id', 'name' => 'Bahasa Indonesia'],
+              ['id' => 'en', 'name' => 'English']
+          ]"
+          placeholder="{{ __('Select Language') }}" />
+      <x-input-error for="language" class="mt-2" />
+    </div>
   </x-slot>
 
   <x-slot name="actions">

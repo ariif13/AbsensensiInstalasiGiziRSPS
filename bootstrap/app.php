@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\LogUserActivity::class,
             \App\Http\Middleware\EnsureSecurityHeaders::class,
             \App\Http\Middleware\CheckMaintenanceMode::class,
+            \App\Http\Middleware\SetUserLocale::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

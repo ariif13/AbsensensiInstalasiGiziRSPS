@@ -42,6 +42,7 @@ class User extends Authenticatable
         'division_id',
         'job_title_id',
         'profile_photo_path',
+        'language',
     ];
 
     /**
