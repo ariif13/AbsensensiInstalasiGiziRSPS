@@ -14,20 +14,75 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class SystemMaintenance extends Component
 {
+    use \Livewire\WithFileUploads;
+
     public $cleanAttendances = false;
     public $cleanActivityLogs = false;
     public $cleanNotifications = false;
     public $cleanStorage = false;
     public $cleanNonAdminUsers = false;
 
-    public function mount()
+    public $backupFile;
+
+    // ... existing properties ...
+
+    public function restoreDatabase()
     {
         if (!Auth::user()->isSuperadmin) {
-            return redirect()->route('admin.dashboard');
+            $this->dispatch('error', message: 'Unauthorized action.');
+            return;
+        }
+
+        $this->validate([
+            'backupFile' => 'required|file|max:51200', // 50MB Max
+        ]);
+
+        try {
+            $path = $this->backupFile->getRealPath();
+            
+            // Validate extension manually strictly
+            $extension = $this->backupFile->getClientOriginalExtension();
+            if (strtolower($extension) !== 'sql') {
+                $this->dispatch('error', message: 'Invalid file type. Only .sql files are allowed.');
+                return;
+            }
+
+            $dbHost = config('database.connections.mysql.host');
+            $dbPort = config('database.connections.mysql.port');
+            $dbName = config('database.connections.mysql.database');
+            $dbUser = config('database.connections.mysql.username');
+            $dbPassword = config('database.connections.mysql.password');
+
+            // Construct mysql command
+            $command = sprintf(
+                'mysql --user=%s --password=%s --host=%s --port=%s %s < %s',
+                escapeshellarg($dbUser),
+                escapeshellarg($dbPassword),
+                escapeshellarg($dbHost),
+                escapeshellarg($dbPort),
+                escapeshellarg($dbName),
+                escapeshellarg($path)
+            );
+
+            // Using process
+            $process = Process::fromShellCommandline($command);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                throw new ProcessFailedException($process);
+            }
+
+            $this->dispatch('success', message: 'Database restored successfully! The page will reload.');
+            
+            // Delay reload to let toast show
+            $this->js("setTimeout(function(){ window.location.reload(); }, 2000);");
+
+        } catch (\Exception $e) {
+            $this->dispatch('error', message: 'Restore failed: ' . $e->getMessage());
         }
     }
 
-    public function cleanDatabase()
+    public function downloadBackup()
     {
         if (!Auth::user()->isSuperadmin) {
             $this->dispatch('error', message: 'Unauthorized action.');

@@ -72,26 +72,60 @@
                 </div>
             </div>
 
-            <!-- Database Backup Section -->
+            <!-- Database Backup & Restore Section -->
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     <section>
                         <header>
                             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                {{ __('Backup Database') }}
+                                {{ __('Backup & Restore Database') }}
                             </h2>
                             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                {{ __('Download a full SQL backup of the database.') }}
+                                {{ __('Download a full SQL backup or restore from a previous backup file.') }}
                             </p>
                         </header>
 
-                        <div class="mt-6">
+                        <!-- Backup -->
+                        <div class="mt-6 border-b border-gray-200 dark:border-gray-700 pb-6">
+                            <h3 class="text-md font-medium text-gray-900 dark:text-gray-100 mb-2">{{ __('Backup') }}</h3>
                             <x-button wire:click="downloadBackup">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                 </svg>
                                 {{ __('Download SQL Backup') }}
                             </x-button>
+                        </div>
+
+                        <!-- Restore -->
+                        <div class="mt-6">
+                            <h3 class="text-md font-medium text-gray-900 dark:text-gray-100 mb-2">{{ __('Restore') }}</h3>
+                            
+                            <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 mb-4">
+                                <p class="text-sm text-red-700 dark:text-red-200">
+                                    {{ __('CAUTION: Restoring a database will completely OVERWRITE existing data. Ensure you have a backup before proceeding.') }}
+                                </p>
+                            </div>
+
+                            <form wire:submit.prevent="restoreDatabase" class="space-y-4">
+                                <div>
+                                    <input type="file" wire:model="backupFile" accept=".sql" class="block w-full text-sm text-gray-500
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-full file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-indigo-50 file:text-indigo-700
+                                        hover:file:bg-indigo-100
+                                    "/>
+                                    @error('backupFile') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+
+                                <x-danger-button type="submit" wire:loading.attr="disabled">
+                                    {{ __('Restore Database') }}
+                                </x-danger-button>
+                                
+                                <div wire:loading wire:target="restoreDatabase" class="text-sm text-gray-500 ml-2">
+                                    {{ __('Restoring... do not close this window.') }}
+                                </div>
+                            </form>
                         </div>
                     </section>
                 </div>

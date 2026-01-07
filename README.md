@@ -7,6 +7,8 @@ PasPapan adalah solusi presensi modern yang dirancang untuk efisiensi dan akuras
 
 Dibangun dengan stack teknologi terkini: **Laravel 11, Livewire, Tailwind CSS, dan Capacitor**, PasPapan siap digunakan baik sebagai Web App maupun Aplikasi Mobile Native (Android).
 
+> **Support 2 Bahasa (Bilingual)**: Aplikasi ini mendukung penuh Bahasa Indonesia 🇮🇩 dan Bahasa Inggris 🇺🇸 yang dapat diganti secara instan.
+
 ---
 
 ## 🚀 Fitur Unggulan
@@ -54,6 +56,7 @@ Dibangun dengan stack teknologi terkini: **Laravel 11, Livewire, Tailwind CSS, d
 ### 🛡️ Super Admin & System
 *   **Role Management**: Pemisahan hak akses (Super Admin vs Admin vs User).
 *   **System Maintenance**: Mode perbaikan (Maintenance Mode) yang bisa diaktifkan Super Admin untuk memblokir akses sementara.
+*   **Backup & Restore**: Database backup (.sql) dan fitur restore system langsung dari dashboard.
 *   **Application Settings**: Pengaturan radius default, zona waktu, nama aplikasi, dll.
 *   **Activity Logs**: Catatan audit log aktivitas admin untuk keamanan.
 
