@@ -5,21 +5,21 @@
             
             {{-- User Selector --}}
             <div class="w-full sm:w-1/3">
-                <x-label for="user" value="Select Employee" class="mb-1" />
-                <x-tom-select id="user" wire:model.live="selectedUser" placeholder="-- Select Employee --"
+                <x-label for="user" value="{{ __('Select Employee') }}" class="mb-1" />
+                <x-tom-select id="user" wire:model.live="selectedUser" placeholder="-- {{ __('Select Employee') }} --"
                     :options="$users->map(fn($u) => ['id' => $u->id, 'name' => $u->name])" />
             </div>
 
             {{-- Date Filters --}}
             <div class="flex gap-2 w-full sm:w-auto">
                  <div class="w-full sm:w-32">
-                    <x-label for="month" value="Month" class="mb-1" />
-                    <x-tom-select id="month" wire:model.live="month" placeholder="Select Month"
+                    <x-label for="month" value="{{ __('Month') }}" class="mb-1" />
+                    <x-tom-select id="month" wire:model.live="month" placeholder="{{ __('Month') }}"
                         :options="collect(range(1, 12))->map(fn($m) => ['id' => sprintf('%02d', $m), 'name' => Carbon\Carbon::create()->month($m)->translatedFormat('F')])" />
                  </div>
                  <div class="w-full sm:w-24">
-                    <x-label for="year" value="Year" class="mb-1" />
-                    <x-tom-select id="year" wire:model.live="year" placeholder="Select Year"
+                    <x-label for="year" value="{{ __('Year') }}" class="mb-1" />
+                    <x-tom-select id="year" wire:model.live="year" placeholder="{{ __('Year') }}"
                         :options="collect(range(date('Y') - 1, date('Y') + 1))->map(fn($y) => ['id' => $y, 'name' => $y])" />
                  </div>
             </div>
@@ -98,34 +98,34 @@
     {{-- Modal --}}
     <x-dialog-modal wire:model="showModal">
         <x-slot name="title">
-            Set Schedule: {{ $selectedDate }}
+            {{ __('Set Schedule') }}: {{ $selectedDate }}
         </x-slot>
 
         <x-slot name="content">
             <div class="mb-4">
-                <x-label for="shift_select" value="Select Shift" />
+                <x-label for="shift_select" value="{{ __('Select Shift') }}" />
                 <div class="mt-1 w-full">
-                    <x-tom-select id="shift_select" wire:model="selectedShiftId" placeholder="-- Use Auto/Default --"
+                    <x-tom-select id="shift_select" wire:model="selectedShiftId" placeholder="-- {{ __('Use Auto/Default') }} --"
                         :options="$shifts->map(fn($s) => ['id' => $s->id, 'name' => $s->name . ' (' . $s->start_time . ' - ' . $s->end_time . ')'])" />
                 </div>
                 <p class="text-xs text-gray-500 mt-2">
-                    Leave blank to use automatic closest-time detection.
+                    {{ __('Leave blank to use automatic closest-time detection.') }}
                 </p>
             </div>
             
             <div class="flex items-center gap-2">
                 <x-checkbox id="is_off" wire:model="selectedIsOff" />
-                <x-label for="is_off" value="Set as Day Off (Libur)" />
+                <x-label for="is_off" value="{{ __('Set as Day Off') }}" />
             </div>
         </x-slot>
 
         <x-slot name="footer">
             <x-secondary-button wire:click="$toggle('showModal')" wire:loading.attr="disabled">
-                Cancel
+                {{ __('Cancel') }}
             </x-secondary-button>
 
             <x-button class="ml-2" wire:click="saveSchedule" wire:loading.attr="disabled">
-                Save
+                {{ __('Save') }}
             </x-button>
         </x-slot>
     </x-dialog-modal>

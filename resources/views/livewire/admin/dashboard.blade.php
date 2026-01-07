@@ -9,7 +9,7 @@
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200">
-                Absensi Hari Ini
+                {{ __("Today's Attendance") }}
             </h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {{ $date->format('l, d F Y') }}
@@ -22,7 +22,7 @@
                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
                 </path>
             </svg>
-            <span class="font-medium text-blue-600 dark:text-blue-400">{{ $employeesCount }} Karyawan</span>
+            <span class="font-medium text-blue-600 dark:text-blue-400">{{ $employeesCount }} {{ __('Employees') }}</span>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
                 <div>
                     <p class="text-xs sm:text-sm font-medium text-green-600 dark:text-green-400 mb-1">{{ ucfirst(__('present')) }}</p>
                     <p class="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-300">{{ $presentCount }}</p>
-                    <p class="text-xs text-green-600 dark:text-green-400 mt-1">Tepat Waktu</p>
+                    <p class="text-xs text-green-600 dark:text-green-400 mt-1">{{ __('On Time') }}</p>
                 </div>
                 <div class="rounded-lg bg-green-200 dark:bg-green-700 p-1.5 group-hover:bg-green-300 dark:group-hover:bg-green-600 transition-colors">
                     <svg class="w-3.5 h-3.5 text-green-700 dark:text-green-200" fill="none" stroke="currentColor"
@@ -53,7 +53,7 @@
                 <div>
                     <p class="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400 mb-1">{{ ucfirst(__('late')) }}</p>
                     <p class="text-2xl sm:text-3xl font-bold text-amber-700 dark:text-amber-300">{{ $lateCount }}</p>
-                    <p class="text-xs text-amber-600 dark:text-amber-400 mt-1">Datang Telat</p>
+                    <p class="text-xs text-amber-600 dark:text-amber-400 mt-1">{{ __('Arrived Late') }}</p>
                 </div>
                 <div class="rounded-lg bg-amber-200 dark:bg-amber-700 p-1.5 group-hover:bg-amber-300 dark:group-hover:bg-amber-600 transition-colors">
                     <svg class="w-3.5 h-3.5 text-amber-700 dark:text-amber-200" fill="none" stroke="currentColor"
@@ -70,9 +70,9 @@
             class="group cursor-pointer rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 p-3 sm:p-4 border border-orange-200 dark:border-orange-700 hover:scale-[1.02] transition-transform">
             <div class="flex items-start justify-between">
                 <div>
-                    <p class="text-xs sm:text-sm font-medium text-orange-600 dark:text-orange-400 mb-1">Pulang Cepat</p>
+                    <p class="text-xs sm:text-sm font-medium text-orange-600 dark:text-orange-400 mb-1">{{ __('Early Checkout') }}</p>
                     <p class="text-2xl sm:text-3xl font-bold text-orange-700 dark:text-orange-300">{{ $earlyCheckoutCount }}</p>
-                    <p class="text-xs text-orange-600 dark:text-orange-400 mt-1">Sebelum Waktunya</p>
+                    <p class="text-xs text-orange-600 dark:text-orange-400 mt-1">{{ __('Before Time') }}</p>
                 </div>
                 <div class="rounded-lg bg-orange-200 dark:bg-orange-700 p-1.5 group-hover:bg-orange-300 dark:group-hover:bg-orange-600 transition-colors">
                     <svg class="w-3.5 h-3.5 text-orange-700 dark:text-orange-200" fill="none" stroke="currentColor"
@@ -91,7 +91,7 @@
                 <div>
                     <p class="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">{{ ucfirst(__('excused')) }}</p>
                     <p class="text-2xl sm:text-3xl font-bold text-blue-700 dark:text-blue-300">{{ $excusedCount }}</p>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">Izin/Cuti</p>
+                    <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">{{ __('Excused') }}</p>
                 </div>
                 <div class="rounded-lg bg-blue-200 dark:bg-blue-700 p-1.5 group-hover:bg-blue-300 dark:group-hover:bg-blue-600 transition-colors">
                     <svg class="w-3.5 h-3.5 text-blue-700 dark:text-blue-200" fill="none" stroke="currentColor"
@@ -132,7 +132,7 @@
                 <div>
                     <p class="text-xs sm:text-sm font-medium text-red-600 dark:text-red-400 mb-1">{{ ucfirst(__('absent')) }}</p>
                     <p class="text-2xl sm:text-3xl font-bold text-red-700 dark:text-red-300">{{ $absentCount }}</p>
-                    <p class="text-xs text-red-600 dark:text-red-400 mt-1">Belum Absen</p>
+                    <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ __('Not Present') }}</p>
                 </div>
                 <div class="rounded-lg bg-red-200 dark:bg-red-700 p-1.5 group-hover:bg-red-300 dark:group-hover:bg-red-600 transition-colors">
                     <svg class="w-3.5 h-3.5 text-red-700 dark:text-red-200" fill="none" stroke="currentColor"
@@ -203,7 +203,7 @@
 
         {{-- Overdue Checkout List --}}
         <div class="rounded-lg border border-gray-200 bg-white p-3 shadow dark:border-gray-700 dark:bg-gray-800">
-            <h3 class="mb-2 text-sm font-semibold text-gray-900 dark:text-white">{{ __('Belum Checkout (Overdue)') }}</h3>
+            <h3 class="mb-2 text-sm font-semibold text-gray-900 dark:text-white">{{ __('Overdue Checkout') }}</h3>
             
             <div class="space-y-2">
                 @forelse($overdueUsers as $overdue)
@@ -221,7 +221,7 @@
                         </button>
                     </div>
                 @empty
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('Tidak ada karyawan yang terlambat checkout.') }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('No employees with overdue checkout.') }}</p>
                 @endforelse
             </div>
         </div>
@@ -320,11 +320,11 @@
                             <div class="text-xs text-gray-600 dark:text-gray-400">
                                 <div class="flex gap-4">
                                     <span>
-                                        <span class="block text-gray-400 dark:text-gray-500">Masuk</span>
+                                        <span class="block text-gray-400 dark:text-gray-500">{{ __('Time In') }}</span>
                                         <span class="font-medium">{{ $timeIn ?? '-' }}</span>
                                     </span>
                                     <span>
-                                        <span class="block text-gray-400 dark:text-gray-500">Keluar</span>
+                                        <span class="block text-gray-400 dark:text-gray-500">{{ __('Time Out') }}</span>
                                         <span class="font-medium">{{ $timeOut ?? '-' }}</span>
                                     </span>
                                 </div>
@@ -335,7 +335,7 @@
                                         wire:click="show({{ $attendance->id }})"
 
                                         class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-300 dark:bg-blue-900/50 dark:hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        Detail
+                                        {{ __('Detail') }}
                                     </button>
                                 @endif
                             </div>
@@ -494,7 +494,7 @@
         <x-slot name="title">
             {{ __('Detail List') }}: 
             <span class="capitalize">
-                {{ str_replace('_', ' ', $selectedStatType) == 'absent' ? 'Belum Absen' : ucfirst(str_replace('_', ' ', $selectedStatType)) }}
+                {{ str_replace('_', ' ', $selectedStatType) == 'absent' ? __('Not Present') : ucfirst(str_replace('_', ' ', $selectedStatType)) }}
             </span>
         </x-slot>
 
@@ -541,7 +541,7 @@
                         @empty
                         <tr>
                             <td colspan="{{ $selectedStatType !== 'absent' ? 4 : 2 }}" class="px-4 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                                No data found.
+                                {{ __('No data found.') }}
                             </td>
                         </tr>
                         @endforelse
@@ -584,19 +584,19 @@
                             labels: window.dashboardChartData.labels,
                             datasets: [
                                 {
-                                    label: 'Hadir',
+                                    label: '{{ __("present") }}',
                                     data: window.dashboardChartData.present,
                                     backgroundColor: '#22c55e',
                                     borderRadius: 4
                                 },
                                 {
-                                    label: 'Terlambat',
+                                    label: '{{ __("late") }}',
                                     data: window.dashboardChartData.late,
                                     backgroundColor: '#eab308',
                                     borderRadius: 4
                                 },
                                 {
-                                    label: 'Izin/Sakit',
+                                    label: '{{ __("Excused") }}/{{ __("sick") }}',
                                     data: window.dashboardChartData.other,
                                     backgroundColor: '#3b82f6',
                                     borderRadius: 4

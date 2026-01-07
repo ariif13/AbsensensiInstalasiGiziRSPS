@@ -1,10 +1,10 @@
 <div class="p-0 lg:p-0">
     <script src="{{ url('/assets/js/qrcode.min.js') }}"></script>
     <x-button class="mb-4 mr-2" href="{{ route('admin.barcodes.create') }}">
-        Buat Barcode Baru
+        {{ __('Create New Barcode') }}
     </x-button>
     <x-secondary-button class="mb-4">
-        <a href="{{ route('admin.barcodes.downloadall') }}">Download Semua</a>
+        <a href="{{ route('admin.barcodes.downloadall') }}">{{ __('Download All') }}</a>
     </x-secondary-button>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         @foreach ($barcodes as $barcode)
@@ -71,11 +71,11 @@
 
     <x-confirmation-modal wire:model="confirmingDeletion">
         <x-slot name="title">
-            Hapus Barcode
+            {{ __('Delete Barcode') }}
         </x-slot>
 
         <x-slot name="content">
-            Apakah Anda yakin ingin menghapus <b>{{ $deleteName }}</b>?
+            {{ __('Are you sure you want to delete') }} <b>{{ $deleteName }}</b>?
         </x-slot>
 
         <x-slot name="footer">

@@ -1,13 +1,13 @@
 <div>
   <div class="mb-4 flex-col items-center gap-5 sm:flex-row md:flex md:justify-between lg:mr-4">
     <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200 md:mb-0">
-      Data Karyawan
+      {{ __('Employee Data') }}
     </h3>
     <x-button wire:click="showCreating">
-      <x-heroicon-o-plus class="mr-2 h-4 w-4" /> Tambah Karyawan
+      <x-heroicon-o-plus class="mr-2 h-4 w-4" /> {{ __('Add Employee') }}
     </x-button>
   </div>
-  <div class="mb-1 text-sm dark:text-white">Filter:</div>
+  <div class="mb-1 text-sm dark:text-white">{{ __('Filter') }}:</div>
   <div class="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-4 lg:flex lg:flex-wrap lg:gap-5">
     <div class="w-full lg:w-48">
         <x-tom-select id="division" wire:model.live="division" placeholder="{{ __('Select Division') }}"
@@ -174,11 +174,11 @@
 
   <x-confirmation-modal wire:model="confirmingDeletion">
     <x-slot name="title">
-      Hapus Karyawan
+      {{ __('Delete Employee') }}
     </x-slot>
 
     <x-slot name="content">
-      Apakah Anda yakin ingin menghapus <b>{{ $deleteName }}</b>?
+      {{ __('Are you sure you want to delete') }} <b>{{ $deleteName }}</b>?
     </x-slot>
 
     <x-slot name="footer">
@@ -194,7 +194,7 @@
 
   <x-dialog-modal wire:model="creating">
     <x-slot name="title">
-      Karyawan Baru
+      {{ __('New Employee') }}
     </x-slot>
 
     <form wire:submit="create">
@@ -241,7 +241,7 @@
           </div>
         @endif
         <div class="mt-4">
-          <x-label for="create_name">Nama Karyawan</x-label>
+          <x-label for="create_name">{{ __('Employee Name') }}</x-label>
           <x-input id="create_name" class="mt-1 block w-full" type="text" wire:model="form.name" autocomplete="off" />
           @error('form.name')
             <x-input-error for="form.name" class="mt-2" message="{{ $message }}" />
@@ -270,7 +270,7 @@
             <x-label for="create_password">{{ __('Password') }}</x-label>
             <x-input id="create_password" class="mt-1 block w-full" type="password" wire:model="form.password"
               placeholder="New Password" autocomplete="new-password" />
-            <p class="text-sm dark:text-gray-400">Default password: <b>password</b></p>
+            <p class="text-sm dark:text-gray-400">{{ __('Default password') }}: <b>password</b></p>
             @error('form.password')
               <x-input-error for="form.password" class="mt-2" message="{{ $message }}" />
             @enderror
@@ -383,7 +383,7 @@
 
   <x-dialog-modal wire:model="editing">
     <x-slot name="title">
-      Edit Karyawan
+      {{ __('Edit Employee') }}
     </x-slot>
 
     <form wire:submit.prevent="update" id="user-edit">
@@ -403,7 +403,6 @@
 
             <x-label for="photo_edit" value="{{ __('Photo') }}" />
 
-            <!-- Current Profile Photo -->
             <div class="mt-2" x-show="! photoPreview">
               <img src="{{ $form->user?->profile_photo_url }}" alt="{{ $form->user?->name }}"
                 class="h-20 w-20 rounded-full object-cover">
@@ -432,7 +431,7 @@
           </div>
         @endif
         <div class="mt-4">
-          <x-label for="edit_name">Nama Karyawan</x-label>
+          <x-label for="edit_name">{{ __('Employee Name') }}</x-label>
           <x-input id="edit_name" class="mt-1 block w-full" type="text" wire:model="form.name" autocomplete="off" />
           @error('form.name')
             <x-input-error for="form.name" class="mt-2" message="{{ $message }}" />

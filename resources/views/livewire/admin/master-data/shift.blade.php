@@ -1,10 +1,10 @@
 <div>
   <div class="mb-4 flex-col items-center gap-5 sm:flex-row md:flex md:justify-between lg:mr-4">
     <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200 md:mb-0">
-      Data Shift
+      {{ __('Shift Data') }}
     </h3>
     <x-button wire:click="showCreating" class="w-full sm:w-auto justify-center">
-      <x-heroicon-o-plus class="mr-2 h-4 w-4" /> Tambah Shift
+      <x-heroicon-o-plus class="mr-2 h-4 w-4" /> {{ __('Add Shift') }}
     </x-button>
   </div>
 
@@ -15,16 +15,16 @@
           <div class="flex justify-between items-start mb-3">
               <h4 class="text-base font-bold text-gray-900 dark:text-white">{{ $shift->name }}</h4>
           </div>
-          <div class="grid grid-cols-2 gap-4 text-sm mb-3">
-             <div>
-                 <span class="text-gray-500 block text-xs">Mulai</span>
-                 <span class="font-medium dark:text-gray-200">{{ $shift->start_time }}</span>
-             </div>
-             <div>
-                 <span class="text-gray-500 block text-xs">Selesai</span>
-                 <span class="font-medium dark:text-gray-200">{{ $shift->end_time ?? '-' }}</span>
-             </div>
-          </div>
+              <div class="grid grid-cols-2 gap-4 text-sm mb-3">
+                 <div>
+                     <span class="text-gray-500 block text-xs">{{ __('Time Start') }}</span>
+                     <span class="font-medium dark:text-gray-200">{{ $shift->start_time }}</span>
+                 </div>
+                 <div>
+                     <span class="text-gray-500 block text-xs">{{ __('Time End') }}</span>
+                     <span class="font-medium dark:text-gray-200">{{ $shift->end_time ?? '-' }}</span>
+                 </div>
+              </div>
           <div class="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
               <x-secondary-button wire:click="edit({{ $shift->id }})" class="justify-center px-2 py-1">
                   <x-heroicon-o-pencil class="w-4 h-4" />
@@ -83,11 +83,11 @@
 
   <x-confirmation-modal wire:model="confirmingDeletion">
     <x-slot name="title">
-      Hapus Shift
+      {{ __('Delete Shift') }}
     </x-slot>
 
     <x-slot name="content">
-      Apakah Anda yakin ingin menghapus <b>{{ $deleteName }}</b>?
+      {{ __('Are you sure you want to delete') }} <b>{{ $deleteName }}</b>?
     </x-slot>
 
     <x-slot name="footer">
@@ -103,13 +103,13 @@
 
   <x-dialog-modal wire:model="creating">
     <x-slot name="title">
-      Shift Baru
+      {{ __('New Shift') }}
     </x-slot>
 
     <x-slot name="content">
       <form wire:submit="create">
         <div>
-          <x-label for="create_name">Nama Shift</x-label>
+          <x-label for="create_name">{{ __('Shift Name') }}</x-label>
           <x-input id="create_name" class="mt-1 block w-full" type="text" wire:model="form.name" autocomplete="off" />
           @error('form.name')
             <x-input-error for="form.name" class="mt-2" message="{{ $message }}" />
@@ -147,13 +147,13 @@
 
   <x-dialog-modal wire:model="editing">
     <x-slot name="title">
-      Edit Shift
+      {{ __('Edit Shift') }}
     </x-slot>
 
     <x-slot name="content">
       <form wire:submit.prevent="update" id="shift-edit">
         <div>
-          <x-label for="edit_name">Nama Shift</x-label>
+          <x-label for="edit_name">{{ __('Shift Name') }}</x-label>
           <x-input id="edit_name" class="mt-1 block w-full" type="text" wire:model="form.name" autocomplete="off" />
           @error('form.name')
             <x-input-error for="form.name" class="mt-2" message="{{ $message }}" />

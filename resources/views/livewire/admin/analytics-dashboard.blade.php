@@ -3,18 +3,18 @@
         <!-- Header & Filters -->
         <div class="mb-6 flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
             <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 sm:mb-0">
-                📊 Analytics Dashboard
+                📊 {{ __('Analytics Dashboard') }}
             </h2>
             <div class="flex gap-2">
                 <div class="w-40">
-                    <x-tom-select wire:model.live="month" placeholder="Select Month" class="w-full">
+                    <x-tom-select wire:model.live="month" placeholder="{{ __('Select Month') }}" class="w-full">
                         @foreach(range(1, 12) as $m)
-                            <option value="{{ sprintf('%02d', $m) }}">{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
+                            <option value="{{ sprintf('%02d', $m) }}">{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
                         @endforeach
                     </x-tom-select>
                 </div>
                 <div class="w-28">
-                     <x-tom-select wire:model.live="year" placeholder="Select Year" class="w-full">
+                     <x-tom-select wire:model.live="year" placeholder="{{ __('Select Year') }}" class="w-full">
                         @foreach(range(date('Y')-1, date('Y')) as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
@@ -27,7 +27,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <!-- Line Chart (Trend) -->
             <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Attendance Trend</h3>
+                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">{{ __('Attendance Trend') }}</h3>
                 <div class="relative h-64 w-full">
                     <canvas id="trendChart"></canvas>
                 </div>
@@ -35,7 +35,7 @@
 
             <!-- Doughnut Chart (Status Distribution) -->
             <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Status Distribution</h3>
+                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">{{ __('Status Distribution') }}</h3>
                 <div class="relative h-64 w-full flex justify-center">
                     <canvas id="statusChart"></canvas>
                 </div>
@@ -47,8 +47,8 @@
             <!-- Top Diligent -->
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-medium text-green-600 dark:text-green-400">🏆 Fajar Siddiq Award (Top Diligent)</h3>
-                    <span class="text-xs text-gray-500">Earliest avg check-in</span>
+                    <h3 class="text-lg font-medium text-green-600 dark:text-green-400">🏆 Fajar Siddiq Award ({{ __('Top Diligent') }})</h3>
+                    <span class="text-xs text-gray-500">{{ __('Earliest avg check-in') }}</span>
                 </div>
                 <div class="flow-root">
                     <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -69,7 +69,7 @@
                                 </div>
                             </li>
                         @empty
-                            <p class="text-sm text-gray-500 text-center py-4">No data yet.</p>
+                            <p class="text-sm text-gray-500 text-center py-4">{{ __('No data yet.') }}</p>
                         @endforelse
                     </ul>
                 </div>
@@ -78,8 +78,8 @@
             <!-- Top Late -->
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-medium text-red-600 dark:text-red-400">🐢 Tukang Telat (Most Late)</h3>
-                    <span class="text-xs text-gray-500">Highest late count</span>
+                    <h3 class="text-lg font-medium text-red-600 dark:text-red-400">🐢 Tukang Telat ({{ __('Most Late') }})</h3>
+                    <span class="text-xs text-gray-500">{{ __('Highest late count') }}</span>
                 </div>
                 <div class="flow-root">
                     <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -100,7 +100,7 @@
                                 </div>
                             </li>
                         @empty
-                            <p class="text-sm text-gray-500 text-center py-4">Everyone is diligent! 🎉</p>
+                            <p class="text-sm text-gray-500 text-center py-4">{{ __('Everyone is diligent!') }} 🎉</p>
                         @endforelse
                     </ul>
                 </div>
@@ -109,8 +109,8 @@
             <!-- Top Early Leavers -->
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-medium text-amber-500 dark:text-amber-400">🏃‍♂️ Tukang Bolos (Early Leaver)</h3>
-                    <span class="text-xs text-gray-500">Checkout before time</span>
+                    <h3 class="text-lg font-medium text-amber-500 dark:text-amber-400">🏃‍♂️ Tukang Bolos ({{ __('Early Leaver') }})</h3>
+                    <span class="text-xs text-gray-500">{{ __('Checkout before time') }}</span>
                 </div>
                 <div class="flow-root">
                     <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -131,7 +131,7 @@
                                 </div>
                             </li>
                         @empty
-                            <p class="text-sm text-gray-500 text-center py-4">Everyone stays until the end! 👏</p>
+                            <p class="text-sm text-gray-500 text-center py-4">{{ __('Everyone stays until the end!') }} 👏</p>
                         @endforelse
                     </ul>
                 </div>
@@ -160,19 +160,19 @@
                             labels: trendData.labels,
                             datasets: [
                                 {
-                                    label: 'Present',
+                                    label: '{{ __("present") }}',
                                     data: trendData.present,
                                     borderColor: '#10B981', // green-500
                                     tension: 0.3
                                 },
                                 {
-                                    label: 'Late',
+                                    label: '{{ __("late") }}',
                                     data: trendData.late,
                                     borderColor: '#EF4444', // red-500
                                     tension: 0.3
                                 },
                                 {
-                                    label: 'Absent/Sick',
+                                    label: '{{ __("Excused") }}/{{ __("sick") }}',
                                     data: trendData.absent,
                                     borderColor: '#F59E0B', // amber-500
                                     tension: 0.3

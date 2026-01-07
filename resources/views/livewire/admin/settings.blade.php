@@ -12,7 +12,7 @@
                     
                     <div class="mb-4 flex-col items-center gap-5 sm:flex-row md:flex md:justify-between lg:mr-4">
                         <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200 md:mb-0">
-                            Generic Settings
+                            {{ __('Generic Settings') }}
                         </h3>
                     </div>
 

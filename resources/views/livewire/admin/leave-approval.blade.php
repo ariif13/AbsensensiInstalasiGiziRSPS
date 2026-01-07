@@ -4,9 +4,9 @@
             <div class="p-6 lg:p-8">
                 <div class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
-                        <h1 class="text-xl font-semibold text-gray-900 dark:text-white">Pending Leave Requests</h1>
+                        <h1 class="text-xl font-semibold text-gray-900 dark:text-white">{{ __('Pending Leave Requests') }}</h1>
                         <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">
-                            Review and approve employee leave requests.
+                            {{ __('Review and approve employee leave requests.') }}
                         </p>
                     </div>
                 </div>
@@ -17,14 +17,16 @@
                             <table class="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-0">Employee</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Date</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Type</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Note</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Attachment</th>
+                                    <tr>
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-0">{{ __('Employee') }}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">{{ __('Date') }}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">{{ __('Type') }}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">{{ __('Note') }}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">{{ __('Attachment') }}</th>
                                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                             <span class="sr-only">Actions</span>
                                         </th>
+                                    </tr>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -62,7 +64,7 @@
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
                                                 @if ($firstLeave->attachment)
-                                                    <a href="{{ $firstLeave->attachment_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 underline">View</a>
+                                                    <a href="{{ $firstLeave->attachment_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 underline">{{ __('View') }}</a>
                                                 @else
                                                     -
                                                 @endif
@@ -70,10 +72,10 @@
                                             <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                                 <div class="flex justify-end gap-2">
                                                     <button wire:click="approve({{ json_encode($leaveIds) }})" class="inline-flex items-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
-                                                        Approve
+                                                        {{ __('Approve') }}
                                                     </button>
                                                     <button wire:click="confirmReject({{ json_encode($leaveIds) }})" class="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-                                                        Reject
+                                                        {{ __('Reject') }}
                                                     </button>
                                                 </div>
                                             </td>
@@ -81,7 +83,7 @@
                                     @empty
                                         <tr>
                                             <td colspan="6" class="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                                                No pending leave requests.
+                                                {{ __('No pending leave requests.') }}
                                             </td>
                                         </tr>
                                     @endforelse
@@ -92,7 +94,7 @@
                 </div>
 
                 <div class="mt-4 text-xs text-gray-500 dark:text-gray-400">
-                    Showing all pending requests grouped by user and type.
+                    {{ __('Showing all pending requests grouped by user and type.') }}
                 </div>
             </div>
         </div>

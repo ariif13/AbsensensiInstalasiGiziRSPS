@@ -7,7 +7,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Absensi Test</title>
+    <title>PasPapan</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/images/icons/web-app-manifest-192x192.png">
     <meta name="theme-color" content="#4CAF50" />
@@ -105,7 +105,7 @@
 <body>
     <div class="splash-container">
         <div class="logo">📱</div>
-        <h1>Absensi Test</h1>
+        <h1>PasPapan</h1>
         <p style="opacity: 0.8; font-size: 14px;">Aplikasi Presensi Karyawan</p>
 
         <div class="loading">

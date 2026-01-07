@@ -3,7 +3,7 @@
     @if ($mode != 'import')
       <div>
         <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200">
-          Ekspor Data Karyawan/Admin
+          {{ __('Export Employee/Admin Data') }}
         </h3>
         <form wire:submit.prevent="export">
           <div>
@@ -45,20 +45,20 @@
     @if ($mode != 'export')
       <div>
         <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200">
-          Impor Data Karyawan/Admin
+          {{ __('Import Employee/Admin Data') }}
         </h3>
         <form x-data="{ file: null }" method="post" wire:submit.prevent="import" enctype="multipart/form-data">
           @csrf
           <div class="mb-4 flex items-center gap-3">
             <x-secondary-button class="me-2" type="button" x-on:click.prevent="$refs.file.click()"
-              x-text="file ? 'Ganti File' : 'Pilih File dan Pratinjau'">
-              Pilih File
+              x-text="file ? '{{ __('Change File') }}' : '{{ __('Select File and Preview') }}'">
+              {{ __('Select File') }}
             </x-secondary-button>
             <x-secondary-button class="me-2" type="button" x-show="file"
               x-on:click.prevent="$refs.file.files[0] = null; file = null; $wire.$set('file', null)">
-              Hapus File
+              {{ __('Remove File') }}
             </x-secondary-button>
-            <h5 class="text-sm dark:text-gray-200" x-text="file ? file.name : 'File Belum Dipilih'"></h5>
+            <h5 class="text-sm dark:text-gray-200" x-text="file ? file.name : '{{ __('File Not Selected') }}'"></h5>
             <x-input type="file" class="hidden" name="file" x-ref="file"
               x-on:change="file = $refs.file.files[0]" wire:model.live="file" />
           </div>

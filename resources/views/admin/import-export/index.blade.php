@@ -12,7 +12,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                         <div>
                             <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                                Impor Data Karyawan
+                                {{ __('Import Employee/Admin Data') }}
                             </h3>
                             <form x-data="{ file: null }" action="{{ route('admin.users.import') }}" method="post"
                                 enctype="multipart/form-data">
@@ -36,7 +36,7 @@
                             </form>
                             <hr class="my-4">
                             <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                                Ekspor Data Karyawan
+                                {{ __('Export Employee/Admin Data') }}
                             </h3>
                             <div class="flex items-center justify-stretch">
                                 <x-button href="{{ route('admin.users.export') }}"
@@ -46,7 +46,7 @@
                         <hr class="my-4 lg:hidden border-dashed border-gray-500 dark:border-white">
                         <div>
                             <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                                Impor Data Absensi
+                                {{ __('Import Attendance Data') }}
                             </h3>
                             <form x-data="{ file: null }" action="{{ route('admin.attendances.import') }}"
                                 method="post" enctype="multipart/form-data">
@@ -70,16 +70,16 @@
                             </form>
                             <hr class="my-4">
                             <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                                Ekspor Data Absensi
+                                {{ __('Export Attendance Data') }}
                             </h3>
                             <form action="{{ route('admin.attendances.export') }}" method="get">
                                 <div class="flex flex-col gap-3 lg:flex-row lg:items-center mb-4">
-                                    <x-label for="year" value="Per Tahun"></x-label>
+                                    <x-label for="year" value="{{ __('By Year') }}"></x-label>
                                     <x-input type="number" min="1970" max="2099" value="{{ date('Y') }}"
                                         name="year" id="year" />
                                 </div>
                                 <div class="flex flex-col gap-3 lg:flex-row lg:items-center mb-4">
-                                    <x-label for="month" value="Per Bulan"></x-label>
+                                    <x-label for="month" value="{{ __('By Month') }}"></x-label>
                                     <x-input type="month" name="month" id="month" />
                                 </div>
                                 <x-select id="division" name="division" class="mb-4">

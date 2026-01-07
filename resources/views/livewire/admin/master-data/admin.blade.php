@@ -1,11 +1,11 @@
 <div>
   <div class="mb-4 flex-col items-center gap-5 sm:flex-row md:flex md:justify-between lg:mr-4">
     <h3 class="mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200 md:mb-0">
-      Data Admin
+      {{ __('Admin Data') }}
     </h3>
     @if (Auth::user()->isSuperadmin)
       <x-button wire:click="showCreating" class="w-full sm:w-auto justify-center">
-        <x-heroicon-o-plus class="mr-2 h-4 w-4" /> Tambah Admin
+        <x-heroicon-o-plus class="mr-2 h-4 w-4" /> {{ __('Add Admin') }}
       </x-button>
     @endif
   </div>
@@ -141,11 +141,11 @@
 
   <x-confirmation-modal wire:model="confirmingDeletion">
     <x-slot name="title">
-      Hapus Admin
+      {{ __('Delete Admin') }}
     </x-slot>
 
     <x-slot name="content">
-      Apakah Anda yakin ingin menghapus <b>{{ $deleteName }}</b>?
+      {{ __('Are you sure you want to delete') }} <b>{{ $deleteName }}</b>?
     </x-slot>
 
     <x-slot name="footer">
@@ -161,7 +161,7 @@
 
   <x-dialog-modal wire:model="creating">
     <x-slot name="title">
-      Admin Baru
+      {{ __('New Admin') }}
     </x-slot>
 
     <x-slot name="content">
@@ -210,7 +210,7 @@
           </div>
         @endif
         <div class="mt-4">
-          <x-label for="create_name">Nama Admin</x-label>
+          <x-label for="create_name">{{ __('Admin Name') }}</x-label>
           <x-input id="create_name" class="mt-1 block w-full" type="text" wire:model="form.name" autocomplete="off" />
           @error('form.name')
             <x-input-error for="form.name" class="mt-2" message="{{ $message }}" />
@@ -239,7 +239,7 @@
             <x-label for="create_password">{{ __('Password') }}</x-label>
             <x-input id="create_password" class="mt-1 block w-full" type="password" wire:model="form.password"
               placeholder="New Password" required autocomplete="new-password" />
-            <p class="text-sm dark:text-gray-400">Default password: <b>admin</b></p>
+            <p class="text-sm dark:text-gray-400">{{ __('Default password admin') }}</p>
             @error('form.password')
               <x-input-error for="form.password" class="mt-2" message="{{ $message }}" />
             @enderror
@@ -313,7 +313,7 @@
 
   <x-dialog-modal wire:model="editing">
     <x-slot name="title">
-      Edit Admin
+      {{ __('Edit Admin') }}
     </x-slot>
 
     <x-slot name="content">
@@ -362,7 +362,7 @@
           </div>
         @endif
         <div class="mt-4">
-          <x-label for="edit_name">Nama Admin</x-label>
+          <x-label for="edit_name">{{ __('Admin Name') }}</x-label>
           <x-input id="edit_name" class="mt-1 block w-full" type="text" wire:model="form.name" autocomplete="off" />
           @error('form.name')
             <x-input-error for="form.name" class="mt-2" message="{{ $message }}" />

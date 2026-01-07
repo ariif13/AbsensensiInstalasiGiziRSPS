@@ -10,20 +10,20 @@
             integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     @endpushOnce
     <h3 class="col-span-2 mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200">
-        Data Absensi
+        {{ __('Attendance Data') }}
     </h3>
-    <div class="mb-1 text-sm dark:text-white">Filter:</div>
+    <div class="mb-1 text-sm dark:text-white">{{ __('Filter') }}:</div>
     <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-end gap-4">
         <div class="flex flex-col gap-1 w-full lg:w-auto">
-            <x-label for="month_filter" value="Per Bulan"></x-label>
+            <x-label for="month_filter" value="{{ __('By Month') }}"></x-label>
             <x-input type="month" name="month_filter" id="month_filter" wire:model.live="month" class="w-full" />
         </div>
         <div class="flex flex-col gap-1 w-full lg:w-auto">
-            <x-label for="week_filter" value="Per Minggu"></x-label>
+            <x-label for="week_filter" value="{{ __('By Week') }}"></x-label>
             <x-input type="week" name="week_filter" id="week_filter" wire:model.live="week" class="w-full" />
         </div>
         <div class="flex flex-col gap-1 w-full lg:w-auto sm:col-span-2 lg:col-span-1">
-            <x-label for="day_filter" value="Per Hari"></x-label>
+            <x-label for="day_filter" value="{{ __('By Day') }}"></x-label>
             <x-input type="date" name="day_filter" id="day_filter" wire:model.live="date" class="w-full" />
         </div>
         <div class="w-full lg:w-48">
@@ -45,7 +45,7 @@
              <x-secondary-button
                 href="{{ route('admin.attendances.report', ['month' => $month, 'week' => $week, 'date' => $date, 'division' => $division, 'jobTitle' => $jobTitle]) }}"
                 class="flex justify-center w-full lg:w-auto gap-2">
-                Cetak Laporan
+                {{ __('Print Report') }}
                 <x-heroicon-o-printer class="h-5 w-5" />
             </x-secondary-button>
          </div>
@@ -104,7 +104,7 @@
                     <div class="border-t border-gray-100 dark:border-gray-700 pt-3">
                          <div class="flex justify-between items-center mb-2">
                              <div class="text-sm">
-                                 <span class="text-gray-500 block text-xs">Shift</span>
+                                 <span class="text-gray-500 block text-xs">{{ __('Shift') }}</span>
                                  <span class="font-medium dark:text-gray-200">{{ $attendance['shift'] ?? '-' }}</span>
                              </div>
                              <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusColor }}">
@@ -113,11 +113,11 @@
                          </div>
                          <div class="grid grid-cols-2 gap-4 text-sm mb-3">
                              <div>
-                                 <span class="text-gray-500 block text-xs">Masuk</span>
+                                 <span class="text-gray-500 block text-xs">{{ __('Time In') }}</span>
                                  <span class="font-medium dark:text-gray-200">{{ $timeIn ?? '-' }}</span>
                              </div>
                              <div>
-                                 <span class="text-gray-500 block text-xs">Keluar</span>
+                                 <span class="text-gray-500 block text-xs">{{ __('Time Out') }}</span>
                                  <span class="font-medium dark:text-gray-200">{{ $timeOut ?? '-' }}</span>
                              </div>
                          </div>
@@ -157,23 +157,23 @@
                         <div class="grid grid-cols-3 gap-2 text-center text-xs">
                              <div class="bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">
                                  <span class="block font-bold text-green-700 dark:text-green-400 text-lg">{{ $presentCount }}</span>
-                                 <span class="text-green-600 dark:text-green-500">Hadir</span>
+                                 <span class="text-green-600 dark:text-green-500">{{ __('present') }}</span>
                              </div>
                              <div class="bg-amber-50 dark:bg-amber-900/20 p-2 rounded-lg">
                                  <span class="block font-bold text-amber-700 dark:text-amber-400 text-lg">{{ $lateCount }}</span>
-                                 <span class="text-amber-600 dark:text-amber-500">Terlambat</span>
+                                 <span class="text-amber-600 dark:text-amber-500">{{ __('late') }}</span>
                              </div>
                              <div class="bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">
                                  <span class="block font-bold text-red-700 dark:text-red-400 text-lg">{{ $absentCount }}</span>
-                                 <span class="text-red-600 dark:text-red-500">Alpha</span>
+                                 <span class="text-red-600 dark:text-red-500">{{ __('absent') }}</span>
                              </div>
                               <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg">
                                  <span class="block font-bold text-blue-700 dark:text-blue-400 text-lg">{{ $excusedCount }}</span>
-                                 <span class="text-blue-600 dark:text-blue-500">Izin</span>
+                                 <span class="text-blue-600 dark:text-blue-500">{{ __('excused') }}</span>
                              </div>
                               <div class="bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg">
                                  <span class="block font-bold text-gray-700 dark:text-gray-400 text-lg">{{ $sickCount }}</span>
-                                 <span class="text-gray-600 dark:text-gray-500">Sakit</span>
+                                 <span class="text-gray-600 dark:text-gray-500">{{ __('sick') }}</span>
                              </div>
                         </div>
                     </div>
@@ -225,7 +225,7 @@
                         <th scope="col"
                             class="{{ $textClass }} text-nowrap border border-gray-300 px-1 py-3 text-center text-xs font-medium dark:border-gray-600">
                             @if ($isPerDayFilter)
-                                Status
+                                {{ __('Status') }}
                             @else
                                 {{ $date->format('d/m') }}
                             @endif
@@ -416,7 +416,7 @@
     </div>
     @if ($employees->isEmpty())
         <div class="my-2 text-center text-sm font-medium text-gray-900 dark:text-gray-100">
-            Tidak ada data
+            {{ __('No data found') }}
         </div>
     @endif
     <div class="mt-3">
