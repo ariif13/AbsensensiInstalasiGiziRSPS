@@ -34,7 +34,7 @@ class LeaveApproval extends Component
 
         return view('livewire.admin.leave-approval', [
             'groupedLeaves' => $groupedLeaves
-        ])->layout('layouts.app');
+        ]);
     }
 
     public function approve($ids)

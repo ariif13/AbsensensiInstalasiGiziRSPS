@@ -134,7 +134,6 @@
 
             navigator.serviceWorker.register("/service-worker.js")
                 .then((registration) => {
-                    console.log("SW registered:", registration);
                     statusEl.textContent = "Service worker aktif!";
 
                     // Tunggu 1 detik sebelum redirect (lebih smooth)

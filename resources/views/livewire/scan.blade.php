@@ -686,7 +686,6 @@
 
                     // Early Checkout Check
                     const attendanceData = await window.Livewire.find('{{ $_instance->getId() }}').call('getAttendance');
-                    console.log('Attendance Data:', attendanceData);
 
                     if (attendanceData && attendanceData.shift_end_time) {
                         const now = new Date();
@@ -695,9 +694,6 @@
                         const shiftEnd = new Date();
                         shiftEnd.setHours(hours, minutes, seconds || 0);
                         
-                        console.log('Now:', now);
-                        console.log('Shift End Parsed:', shiftEnd);
-                        console.log('Is Early:', now < shiftEnd);
 
                         if (now < shiftEnd) {
                             const formattedTime = formatTime(attendanceData.shift_end_time);
