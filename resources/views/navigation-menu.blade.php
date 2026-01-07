@@ -100,59 +100,44 @@
             </div>
 
             <div class="flex gap-2">
-                <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                <div class="hidden sm:ms-6 sm:flex sm:items-center sm:gap-3">
 
-                    <div class="flex items-center">
-                        <livewire:notifications-dropdown />
+                    <livewire:notifications-dropdown />
+
+
+
+
+
+
+                    <div class="flex items-center mt-1">
+                        <form method="POST" action="{{ route('user.language.update') }}">
+                            @csrf
+                            <input type="hidden" name="language" value="{{ app()->getLocale() == 'id' ? 'en' : 'id' }}">
+                            <button type="submit"
+                                class="relative inline-flex h-6 w-12 shrink-0 cursor-pointer items-center rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">
+                                <span class="sr-only">Switch Language</span>
+                                <!-- Labels -->
+                                <span class="absolute inset-0 flex h-full w-full items-center justify-between px-1.5 text-[8px] font-bold text-gray-500 select-none">
+                                    <span>ID</span>
+                                    <span>EN</span>
+                                </span>
+                                <!-- Knob -->
+                                <span
+                                    class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ app()->getLocale() == 'en' ? 'translate-x-[24px]' : 'translate-x-0' }}">
+                                    <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity opacity-100">
+                                        <span class="text-[10px] leading-none pt-0.5">
+                                            {{ app()->getLocale() == 'id' ? '🇮🇩' : '🇺🇸' }}
+                                        </span>
+                                    </span>
+                                </span>
+                            </button>
+                        </form>
                     </div>
 
-                    <div class="relative ms-3">
-                         <x-dropdown align="right" width="48">
-                             <x-slot name="trigger">
-                                 <button
-                                     class="flex items-center gap-2 rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:bg-gray-50 focus:outline-none active:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300 dark:focus:bg-gray-700 dark:active:bg-gray-700">
-                                     @if (app()->getLocale() == 'id')
-                                         🇮🇩 ID
-                                     @else
-                                         🇺🇸 EN
-                                     @endif
-
-                                     <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                          fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                         <path stroke-linecap="round" stroke-linejoin="round"
-                                               d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                     </svg>
-                                 </button>
-                             </x-slot>
-
-                             <x-slot name="content">
-                                 <div class="block px-4 py-2 text-xs text-gray-400">
-                                     {{ __('Select Language') }}
-                                 </div>
-
-                                 <form method="POST" action="{{ route('user.language.update') }}">
-                                     @csrf
-                                     <input type="hidden" name="language" value="id">
-                                     <x-dropdown-link href="#" onclick="event.preventDefault(); this.closest('form').submit();" :active="app()->getLocale() == 'id'">
-                                         🇮🇩 Indonesia
-                                     </x-dropdown-link>
-                                 </form>
-
-                                 <form method="POST" action="{{ route('user.language.update') }}">
-                                     @csrf
-                                     <input type="hidden" name="language" value="en">
-                                     <x-dropdown-link href="#" onclick="event.preventDefault(); this.closest('form').submit();" :active="app()->getLocale() == 'en'">
-                                         🇺🇸 English
-                                     </x-dropdown-link>
-                                 </form>
-                             </x-slot>
-                         </x-dropdown>
-                    </div>
-                    
                     <x-theme-toggle id="theme-switcher-desktop" />
 
                     <!-- Settings Dropdown -->
-                    <div class="relative ms-3">
+                    <div class="relative">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
                                 @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
@@ -214,38 +199,31 @@
                     <livewire:notifications-dropdown />
                     
                     <!-- Mobile Language Switcher -->
-                    <div class="ml-2 relative">
-                         <x-dropdown align="right" width="48">
-                             <x-slot name="trigger">
-                                 <button class="flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out dark:focus:bg-gray-900 dark:focus:text-gray-400">
-                                     @if (app()->getLocale() == 'id')
-                                         🇮🇩
-                                     @else
-                                         🇺🇸
-                                     @endif
-                                 </button>
-                             </x-slot>
-                             
-                             <x-slot name="content">
-                                 <div class="block px-4 py-2 text-xs text-gray-400">
-                                     {{ __('Select Language') }}
-                                 </div>
-                                 <form method="POST" action="{{ route('user.language.update') }}">
-                                     @csrf
-                                     <input type="hidden" name="language" value="id">
-                                     <x-dropdown-link href="#" onclick="event.preventDefault(); this.closest('form').submit();" :active="app()->getLocale() == 'id'">
-                                         🇮🇩 Indonesia
-                                     </x-dropdown-link>
-                                 </form>
-                                 <form method="POST" action="{{ route('user.language.update') }}">
-                                     @csrf
-                                     <input type="hidden" name="language" value="en">
-                                     <x-dropdown-link href="#" onclick="event.preventDefault(); this.closest('form').submit();" :active="app()->getLocale() == 'en'">
-                                         🇺🇸 English
-                                     </x-dropdown-link>
-                                 </form>
-                             </x-slot>
-                        </x-dropdown>
+                    <!-- Mobile Language Switcher -->
+                    <!-- Mobile Language Switcher -->
+                    <div class="ml-2 flex items-center mt-1">
+                        <form method="POST" action="{{ route('user.language.update') }}">
+                            @csrf
+                            <input type="hidden" name="language" value="{{ app()->getLocale() == 'id' ? 'en' : 'id' }}">
+                            <button type="submit"
+                                class="relative inline-flex h-6 w-12 shrink-0 cursor-pointer items-center rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">
+                                <span class="sr-only">Switch Language</span>
+                                <!-- Labels -->
+                                <span class="absolute inset-0 flex h-full w-full items-center justify-between px-1.5 text-[8px] font-bold text-gray-500 select-none">
+                                    <span>ID</span>
+                                    <span>EN</span>
+                                </span>
+                                <!-- Knob -->
+                                <span
+                                    class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ app()->getLocale() == 'en' ? 'translate-x-[24px]' : 'translate-x-0' }}">
+                                    <span class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity opacity-100">
+                                        <span class="text-[10px] leading-none pt-0.5">
+                                            {{ app()->getLocale() == 'id' ? '🇮🇩' : '🇺🇸' }}
+                                        </span>
+                                    </span>
+                                </span>
+                            </button>
+                        </form>
                     </div>
                 </div>
 

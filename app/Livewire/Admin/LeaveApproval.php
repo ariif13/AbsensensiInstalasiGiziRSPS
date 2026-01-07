@@ -16,57 +16,74 @@ class LeaveApproval extends Component
     use WithPagination;
 
     public $rejectionNote;
-    public $selectedId;
+    public $selectedIds = [];
     public $confirmingRejection = false;
 
     public function render()
     {
-        $leaves = Attendance::pending()
-            ->with('user')
+        // Fetch all pending requests
+        $allLeaves = Attendance::pending()
+            ->with(['user.division']) // Eager load
             ->orderBy('date', 'asc')
-            ->paginate(10);
+            ->get();
+
+        // Group by User ID, Status, and Note to combine related requests
+        $groupedLeaves = $allLeaves->groupBy(function ($item) {
+            return $item->user_id . '|' . $item->status . '|' . trim($item->note);
+        });
 
         return view('livewire.admin.leave-approval', [
-            'leaves' => $leaves
+            'groupedLeaves' => $groupedLeaves
         ])->layout('layouts.app');
     }
 
-    public function approve($id)
+    public function approve($ids)
     {
-        $attendance = Attendance::findOrFail($id);
-        $attendance->update([
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+
+        Attendance::whereIn('id', $ids)->update([
             'approval_status' => Attendance::STATUS_APPROVED,
             'approved_by' => Auth::id(),
             'approved_at' => now(),
         ]);
 
-        $this->dispatch('saved'); 
-        
-        // Notify user
-        $attendance->user->notify(new LeaveStatusUpdated($attendance));
+        $attendances = Attendance::whereIn('id', $ids)->get();
+        foreach ($attendances as $attendance) {
+            $attendance->user->notify(new LeaveStatusUpdated($attendance));
+        }
+
+        $this->dispatch('saved');
     }
 
-    public function confirmReject($id)
+    public function confirmReject($ids)
     {
-        $this->selectedId = $id;
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+        $this->selectedIds = $ids;
         $this->confirmingRejection = true;
     }
 
     public function reject()
     {
-        $attendance = Attendance::findOrFail($this->selectedId);
-        $attendance->update([
+        Attendance::whereIn('id', $this->selectedIds)->update([
             'approval_status' => Attendance::STATUS_REJECTED,
+            'status' => 'rejected', // Change main status to rejected as requested
             'rejection_note' => $this->rejectionNote,
             'approved_by' => Auth::id(),
             'approved_at' => now(),
         ]);
 
+        $attendances = Attendance::whereIn('id', $this->selectedIds)->get();
+        foreach ($attendances as $attendance) {
+            $attendance->user->notify(new LeaveStatusUpdated($attendance));
+        }
+
         $this->confirmingRejection = false;
         $this->rejectionNote = '';
+        $this->selectedIds = [];
         $this->dispatch('saved');
-        
-        // Notify user
-        $attendance->user->notify(new LeaveStatusUpdated($attendance));
     }
 }

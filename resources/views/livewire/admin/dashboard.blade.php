@@ -241,7 +241,7 @@
                         <div class="flex items-center gap-3">
                             <div class="flex flex-col">
                                 <span class="text-xs font-medium text-gray-900 dark:text-white">{{ $leave['title'] }}</span>
-                                <span class="text-[10px] text-gray-500 dark:text-gray-400">{{ \Carbon\Carbon::parse($leave['start'])->format('d M Y') }}</span>
+                                <span class="text-[10px] text-gray-500 dark:text-gray-400">{{ $leave['date_display'] }}</span>
                             </div>
                         </div>
                         <span class="px-1.5 py-0.5 text-[10px] font-medium rounded {{ $leave['status'] == 'sick' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' }}">

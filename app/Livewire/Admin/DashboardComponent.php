@@ -132,17 +132,46 @@ class DashboardComponent extends Component
                 return false;
             });
 
-        // Calendar Data: Leaves in current month
-        $calendarLeaves = Attendance::with('user')
+        // Calendar Data: Leaves in current month (Grouped)
+        $rawLeaves = Attendance::with('user')
             ->whereMonth('date', now()->month)
             ->whereYear('date', now()->year)
             ->whereIn('status', ['sick', 'excused'])
-            ->get()
-            ->map(fn($a) => [
-                'title' => $a->user->name . ' (' . ucfirst($a->status) . ')',
-                'start' => $a->date,
-                'status' => $a->status
-            ]);
+            ->orderBy('user_id')
+            ->orderBy('date')
+            ->get();
+
+        $calendarLeaves = collect();
+        if ($rawLeaves->isNotEmpty()) {
+            $grouped = $rawLeaves->groupBy(function ($item) {
+                return $item->user_id . '-' . $item->status;
+            });
+
+            foreach ($grouped as $group) {
+                // Determine consecutive dates
+                $tempGroup = [];
+                foreach ($group as $leave) {
+                    if (empty($tempGroup)) {
+                        $tempGroup[] = $leave;
+                        continue;
+                    }
+
+                    $last = end($tempGroup);
+                    // Check if consecutive (1 day difference)
+                    if ($last->date->diffInDays($leave->date) == 1) {
+                        $tempGroup[] = $leave;
+                    } else {
+                        // Push previous group
+                        $calendarLeaves->push($this->formatLeaveGroup($tempGroup));
+                        $tempGroup = [$leave];
+                    }
+                }
+                // Push last group
+                if (!empty($tempGroup)) {
+                    $calendarLeaves->push($this->formatLeaveGroup($tempGroup));
+                }
+            }
+        }
 
         return view('livewire.admin.dashboard', [
             'employees' => $employees,
@@ -174,5 +203,30 @@ class DashboardComponent extends Component
             // Log it
             \App\Models\ActivityLog::record('Notification Sent', 'Sent checkout reminder to ' . $attendance->user->name);
         }
+    }
+
+    private function formatLeaveGroup($leaves)
+    {
+        $first = $leaves[0];
+        $last = end($leaves);
+        $count = count($leaves);
+
+        $dateDisplay = $first->date->format('d M');
+        if ($count > 1) {
+            if ($first->date->format('M') == $last->date->format('M')) {
+                $dateDisplay .= ' - ' . $last->date->format('d M Y');
+            } else {
+                $dateDisplay .= ' - ' . $last->date->format('d M Y');
+            }
+            $dateDisplay .= ' (' . $count . ' days)';
+        } else {
+            $dateDisplay = $first->date->format('d M Y');
+        }
+
+        return [
+            'title' => $first->user->name,
+            'date_display' => $dateDisplay,
+            'status' => $first->status
+        ];
     }
 }

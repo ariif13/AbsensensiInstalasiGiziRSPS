@@ -181,6 +181,33 @@ class ScanComponent extends Component
     }
 
     private function saveAttendanceRequest($barcode, $date, $timeIn, $status, $attachmentPath, $shift) {
+        // Check if there is a rejected attendance for this user and date
+        $rejectedAttendance = Attendance::where('user_id', Auth::user()->id)
+            ->where('date', $date)
+            ->where('status', 'rejected')
+            ->first();
+
+        if ($rejectedAttendance) {
+            $rejectedAttendance->update([
+                'barcode_id' => $barcode->id,
+                'time_in' => $timeIn,
+                'time_out' => null,
+                'shift_id' => $shift->id,
+                'latitude_in' => doubleval($this->currentLiveCoords[0]),
+                'longitude_in' => doubleval($this->currentLiveCoords[1]),
+                // Legacy fields
+                'latitude' => doubleval($this->currentLiveCoords[0]),
+                'longitude' => doubleval($this->currentLiveCoords[1]),
+
+                'status' => $status,
+                'note' => null, // Clear note or keep rejection note? User probably wants to start fresh.
+                'attachment' => $attachmentPath ? json_encode(['in' => $attachmentPath]) : null,
+                'rejection_note' => null, // Clear rejection note as they are now attending
+                'approval_status' => null, // Reset approval status
+            ]);
+            return $rejectedAttendance;
+        }
+
         return Attendance::create([
             'user_id' => Auth::user()->id,
             'barcode_id' => $barcode->id,

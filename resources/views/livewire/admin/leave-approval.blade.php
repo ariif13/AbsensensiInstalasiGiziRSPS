@@ -28,36 +28,51 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                    @forelse ($leaves as $leave)
+                                    @forelse ($groupedLeaves as $groupKey => $group)
+                                        @php
+                                            $firstLeave = $group->first();
+                                            $lastLeave = $group->last();
+                                            $leaveIds = $group->pluck('id')->toArray();
+                                            // Format Date Range: "12 Jan 2024" or "12 - 14 Jan 2024"
+                                            if ($group->count() > 1) {
+                                                if ($firstLeave->date->format('M Y') == $lastLeave->date->format('M Y')) {
+                                                    $dateDisplay = $firstLeave->date->format('d') . ' - ' . $lastLeave->date->format('d M Y') . ' (' . $group->count() . ' days)';
+                                                } else {
+                                                    $dateDisplay = $firstLeave->date->format('d M') . ' - ' . $lastLeave->date->format('d M Y') . ' (' . $group->count() . ' days)';
+                                                }
+                                            } else {
+                                                $dateDisplay = $firstLeave->date->format('d M Y');
+                                            }
+                                        @endphp
                                         <tr>
                                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-white sm:pl-0">
-                                                {{ $leave->user->name }}
-                                                <div class="text-xs text-gray-500">{{ $leave->user->division->name ?? '-' }}</div>
+                                                {{ $firstLeave->user->name }}
+                                                <div class="text-xs text-gray-500">{{ $firstLeave->user->division->name ?? '-' }}</div>
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $leave->date->format('d M Y') }}
+                                                {{ $dateDisplay }}
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $leave->status === 'sick' ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20' : 'bg-blue-50 text-blue-700 ring-blue-700/10' }}">
-                                                    {{ ucfirst($leave->status) }}
+                                                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $firstLeave->status === 'sick' ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20' : 'bg-blue-50 text-blue-700 ring-blue-700/10' }}">
+                                                    {{ ucfirst($firstLeave->status) }}
                                                 </span>
                                             </td>
                                             <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate">
-                                                {{ $leave->note }}
+                                                {{ $firstLeave->note }}
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                                @if ($leave->attachment)
-                                                    <a href="{{ $leave->attachment_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 underline">View</a>
+                                                @if ($firstLeave->attachment)
+                                                    <a href="{{ $firstLeave->attachment_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 underline">View</a>
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                                 <div class="flex justify-end gap-2">
-                                                    <button wire:click="approve('{{ $leave->id }}')" class="inline-flex items-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                                                    <button wire:click="approve({{ json_encode($leaveIds) }})" class="inline-flex items-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
                                                         Approve
                                                     </button>
-                                                    <button wire:click="confirmReject('{{ $leave->id }}')" class="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                                                    <button wire:click="confirmReject({{ json_encode($leaveIds) }})" class="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
                                                         Reject
                                                     </button>
                                                 </div>
@@ -76,8 +91,8 @@
                     </div>
                 </div>
 
-                <div class="mt-4">
-                    {{ $leaves->links() }}
+                <div class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                    Showing all pending requests grouped by user and type.
                 </div>
             </div>
         </div>
