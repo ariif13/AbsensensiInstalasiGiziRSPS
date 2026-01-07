@@ -29,7 +29,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
                         <a href="https://www.google.com/maps/search/?api=1&query={{ $barcode->latitude }},{{ $barcode->longitude }}"
-                            target="_blank" class="hover:text-blue-600 hover:underline truncate">
+                            target="_blank" 
+                            onclick="if(window.isNativeApp && window.isNativeApp()) { window.open(this.href, '_system'); return false; }"
+                            class="hover:text-blue-600 hover:underline truncate">
                             {{ $barcode->latitude }}, {{ $barcode->longitude }}
                         </a>
                     </div>

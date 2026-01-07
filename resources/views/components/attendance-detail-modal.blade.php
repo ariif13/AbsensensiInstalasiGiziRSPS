@@ -154,6 +154,7 @@
                                     </div>
                                     <a href="https://www.google.com/maps?q={{ $currentAttendance['latitude_in'] }},{{ $currentAttendance['longitude_in'] }}"
                                         target="_blank"
+                                        onclick="if(window.isNativeApp && window.isNativeApp()) { window.open(this.href, '_system'); return false; }"
                                         class="block text-sm text-blue-600 dark:text-blue-400 hover:underline">
                                         📍 {{ number_format($currentAttendance['latitude_in'], 6) }},
                                         {{ number_format($currentAttendance['longitude_in'], 6) }}
@@ -178,6 +179,7 @@
                                     </div>
                                     <a href="https://www.google.com/maps?q={{ $currentAttendance['latitude_out'] }},{{ $currentAttendance['longitude_out'] }}"
                                         target="_blank"
+                                        onclick="if(window.isNativeApp && window.isNativeApp()) { window.open(this.href, '_system'); return false; }"
                                         class="block text-sm text-blue-600 dark:text-blue-400 hover:underline">
                                         📍 {{ number_format($currentAttendance['latitude_out'], 6) }},
                                         {{ number_format($currentAttendance['longitude_out'], 6) }}

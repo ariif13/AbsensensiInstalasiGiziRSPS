@@ -40,4 +40,5 @@ verify_fix.php
 setup
 setup-database
 deploy.sh
-production-build.zip
+*.zip
+*.apk
