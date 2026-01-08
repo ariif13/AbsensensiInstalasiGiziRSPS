@@ -41,6 +41,12 @@ class AppServiceProvider extends ServiceProvider
             return \Illuminate\Cache\RateLimiting\Limit::perMinute($limit)->by($request->ip());
         });
 
+        // API Rate Limiter - Protect against API abuse
+        \Illuminate\Support\Facades\RateLimiter::for('api', function (\Illuminate\Http\Request $request) {
+            $limit = (int) \App\Models\Setting::getValue('security.rate_limit_api', 60);
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute($limit)->by($request->user()?->id ?: $request->ip());
+        });
+
 
         \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Login::class, function ($event) {
             \App\Models\ActivityLog::create([

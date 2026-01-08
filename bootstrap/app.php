@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'user' => \App\Http\Middleware\UserMiddleware::class,
+            'throttle.ip' => \App\Http\Middleware\ThrottleRequestsByIP::class,
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\LogUserActivity::class,

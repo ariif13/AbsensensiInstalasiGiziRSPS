@@ -17,14 +17,34 @@ class EnsureSecurityHeaders
     {
         $response = $next($request);
 
+        // Core Security Headers
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         
-        // Optional: Content Security Policy (Basic)
-        // Adjust this if you use diverse CDNs or inline scripts excessively.
-        // $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';");
+        // HSTS - Force HTTPS (1 year)
+        if ($request->secure()) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        }
+
+        // Permissions Policy - Restrict sensitive browser features
+        $response->headers->set('Permissions-Policy', 'geolocation=(self), camera=(self), microphone=()');
+
+        // Content Security Policy - Protect against XSS and injection attacks
+        // Allow inline scripts/styles (needed for Livewire/Alpine) and common CDNs
+        $csp = implode('; ', [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net",
+            "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com https://cdn.jsdelivr.net",
+            "font-src 'self' https://fonts.gstatic.com data:",
+            "img-src 'self' data: blob: https: http:",
+            "connect-src 'self' https://tile.openstreetmap.org wss:",
+            "frame-ancestors 'self'",
+            "base-uri 'self'",
+            "form-action 'self'",
+        ]);
+        $response->headers->set('Content-Security-Policy', $csp);
 
         return $response;
     }
