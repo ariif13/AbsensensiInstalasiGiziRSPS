@@ -249,27 +249,7 @@
                     @endif
 
                     <div class="flex-1 space-y-4 sm:space-y-6">
-                        {{-- Today's Status Card --}}
-                        <div class="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow dark:border-gray-700 dark:bg-gray-800">
-                            <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">Today's Check In</h4>
-                                @include('components.status-badge', ['status' => $attendance->status])
-                            </div>
-                            <p class="text-3xl font-bold text-gray-900 dark:text-white">
-                                {{ \App\Helpers::format_time($attendance->time_in) }}
-                            </p>
-                        </div>
-
-                        {{-- Check In Location History --}}
-                        @include('components.location-card', [
-                            'title' => __('Check In Location'),
-                            'mapId' => 'checkInMap',
-                            'latitude' => $attendance?->latitude_in,
-                            'longitude' => $attendance?->longitude_in,
-                            'icon' =>
-                                'M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1',
-                            'iconColor' => 'blue',
-                        ])
+                        {{-- Status & Location History Removed (Integrated into Header) --}}
 
                         {{-- Current Location for Check Out --}}
                         @include('components.location-card', [
@@ -325,25 +305,7 @@
                         'iconColor' => 'green',
                     ])
 
-                    <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                        @include('components.time-card', [
-                            'icon' =>
-                                'M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1',
-                            'bgColor' => 'blue',
-                            'label' => __('Check In'),
-                            'time' => '--:--:--',
-                            'compact' => true,
-                        ])
-
-                        @include('components.time-card', [
-                            'icon' =>
-                                'M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1',
-                            'bgColor' => 'amber',
-                            'label' => __('Check Out'),
-                            'time' => '--:--:--',
-                            'compact' => true,
-                        ])
-                    </div>
+                    {{-- Time Cards Removed --}}
 
                     {{-- Action Buttons (Removed) --}}
                 </div>
