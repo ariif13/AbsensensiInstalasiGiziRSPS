@@ -103,6 +103,13 @@
                             <span class="text-xs sm:text-sm font-medium {{ !$isCurrentMonth ? 'opacity-50' : '' }}">
                                 {{ $date->day }}
                             </span>
+                            
+                            {{-- Holiday Name (visible on desktop) --}}
+                            @if($isHoliday && $isCurrentMonth)
+                                <span class="hidden sm:block text-[9px] leading-tight text-rose-500 dark:text-rose-400 font-medium truncate max-w-full px-1">
+                                    {{ Str::limit($holiday->name, 10) }}
+                                </span>
+                            @endif
 
                             {{-- Status Indicator --}}
                             @if($markerColor && $status !== '-')
