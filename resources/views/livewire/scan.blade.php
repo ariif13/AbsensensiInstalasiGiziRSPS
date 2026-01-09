@@ -28,35 +28,80 @@
         {{-- Camera Flash Effect --}}
         <div id="camera-flash" class="fixed inset-0 bg-white z-[60] pointer-events-none opacity-0 transition-opacity duration-200"></div>
 
-        {{-- Header Section --}}
-        <div class="mb-4 sm:mb-6">
-            <div class="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow dark:border-gray-700 dark:bg-gray-800">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('Attendance') }}</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            {{ now()->translatedFormat('l, d F Y') }}
-                        </p>
+        {{-- Header Section (Compact Talenta Style) --}}
+        <div class="mb-4">
+            <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 relative overflow-hidden">
+                {{-- Background Decoration --}}
+                <div class="absolute top-0 right-0 -mt-2 -mr-2 w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-full blur-xl opacity-70"></div>
+
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('Attendance') }}</p>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                {{ now()->translatedFormat('l, d F Y') }}
+                            </h3>
+                        </div>
+                         @if ($isComplete)
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                {{ __('Selesai') }}
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                <span class="relative flex h-2 w-2">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                                {{ __('Live') }}
+                            </span>
+                        @endif
                     </div>
-                    @if ($isComplete)
-                        <div
-                            class="completion-badge flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                            <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+
+                    {{-- Compact Shift Info & Work Hours --}}
+                    @if($attendance)
+                    <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 mb-4">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <span class="text-sm font-semibold text-green-600 dark:text-green-400">{{ __('Complete') }}</span>
+                            <span>{{ $attendance->shift_name ?? 'Regular Shift' }}</span>
                         </div>
-                    @else
-                        <div class="hidden md:flex items-center gap-2">
-                            <span class="pulse-dot w-3 h-3 bg-green-500 rounded-full"></span>
-                            <span class="text-sm text-gray-600 dark:text-gray-300">{{ __('Live') }}</span>
+                        <div class="h-4 w-px bg-gray-300 dark:bg-gray-600"></div>
+                        <div class="flex items-center gap-2">
+                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <span>{{ $attendance->start_time }} - {{ $attendance->end_time }}</span>
                         </div>
+                    </div>
                     @endif
+
+                    {{-- Compact Status Grid --}}
+                    <div class="grid grid-cols-2 gap-3">
+                        {{-- Check In Status --}}
+                        <div class="flex flex-col p-3 rounded-xl {{ $hasCheckedIn ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800' : 'bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-700 border-dashed' }}">
+                            <span class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('Check In') }}</span>
+                            @if($hasCheckedIn)
+                                <span class="text-base font-bold text-blue-700 dark:text-blue-300">
+                                    {{ \App\Helpers::format_time($attendance->time_in) }}
+                                </span>
+                            @else
+                                <span class="text-base font-medium text-gray-400">--:--</span>
+                            @endif
+                        </div>
+
+                         {{-- Check Out Status --}}
+                        <div class="flex flex-col p-3 rounded-xl {{ $hasCheckedOut ? 'bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800' : 'bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-700 border-dashed' }}">
+                            <span class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('Check Out') }}</span>
+                            @if($hasCheckedOut)
+                                <span class="text-base font-bold text-orange-700 dark:text-orange-300">
+                                    {{ \App\Helpers::format_time($attendance->time_out) }}
+                                </span>
+                            @else
+                                <span class="text-base font-medium text-gray-400">--:--</span>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

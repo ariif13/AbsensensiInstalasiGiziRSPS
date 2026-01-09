@@ -1,10 +1,41 @@
 <x-app-layout>
-
+    {{-- Welcome Header --}}
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
+             <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('Hi, :name', ['name' => Str::before(Auth::user()->name, ' ')]) }} 👋</h1>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ now()->translatedFormat('l, d F Y') }}</p>
+                </div>
+                {{-- Profile Pic or Avatar --}}
+                <a href="{{ route('profile.show') }}" class="flex-shrink-0">
+                    <img class="h-10 w-10 rounded-full object-cover border-2 border-indigo-100 dark:border-indigo-900" 
+                        src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                </a>
+            </div>
+        </div>
+    </div>
 
     <div class="py-6">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+             {{-- Announcements Widget (Existing) --}}
              @livewire('announcement-widget')
+
+             {{-- Quick Actions (New) --}}
+             @livewire('quick-actions')
+
+             {{-- Scan Component (Modified) --}}
              @livewire('scan-component')
+
+             {{-- Summary Stats (New) --}}
+             <div class="mt-6">
+                <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-3">{{ __('Statistik Bulan Ini') }}</h3>
+                @livewire('attendance-summary-widget')
+             </div>
+
+             {{-- Upcoming Events (Placeholder/Future) --}}
+             {{-- Could move Holiday Calendar here --}}
+             
         </div>
     </div>
 
