@@ -5,14 +5,21 @@
     @endpushOnce
 
     {{-- Main Card --}}
-    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
+    <div class="rounded-2xl border border-indigo-100 bg-white shadow-xl shadow-indigo-100/50 dark:border-gray-700 dark:bg-gray-800 dark:shadow-none relative overflow-hidden transition-all">
+        
+        {{-- Decorative Blob --}}
+        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-indigo-50 dark:bg-indigo-900/20 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+
         {{-- Header --}}
-        <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="p-4 sm:p-6 border-b border-indigo-50 dark:border-gray-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span class="p-1.5 bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </span>
                     {{ __('Attendance History') }}
                 </h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-1">
                     {{ __('Click date to view details.') }}
                 </p>
             </div>
@@ -30,11 +37,11 @@
         </div>
 
         {{-- Calendar Grid --}}
-        <div class="p-4 sm:p-6">
+        <div class="p-4 sm:p-6 relative z-10">
             {{-- Days Header --}}
-            <div class="grid grid-cols-7 mb-2">
+            <div class="grid grid-cols-7 mb-3">
                 @foreach ([__('Sun'), __('Mon'), __('Tue'), __('Wed'), __('Thu'), __('Fri'), __('Sat')] as $index => $day)
-                    <div class="text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 py-2 {{ $index === 0 ? 'text-red-500' : ($index === 5 ? 'text-green-600 dark:text-green-500' : '') }}">
+                    <div class="text-center text-[10px] uppercase tracking-wider font-bold text-gray-400 dark:text-gray-500 py-2 {{ $index === 0 ? 'text-rose-500' : ($index === 5 ? 'text-emerald-600 dark:text-emerald-500' : '') }}">
                         {{ $day }}
                     </div>
                 @endforeach
@@ -60,54 +67,56 @@
                         ])['status'];
 
                         // Styles
-                        $bgClass = $isCurrentMonth ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900/50';
-                        $textClass = $isCurrentMonth ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-600';
-                        $borderClass = $isToday ? 'ring-2 ring-blue-500 z-10' : 'border border-gray-100 dark:border-gray-700';
+                        // Use softer borders and backgrounds
+                        $bgClass = $isCurrentMonth ? 'bg-white dark:bg-gray-800' : 'bg-gray-50/50 dark:bg-gray-900/30';
+                        $textClass = $isCurrentMonth ? 'text-gray-700 dark:text-gray-200' : 'text-gray-300 dark:text-gray-600';
+                        // Replace border with ring for cleaner look or very subtle border
+                        $borderClass = $isToday ? 'ring-2 ring-indigo-500 z-10' : 'border border-gray-100 dark:border-gray-700/50';
                         
                         // Holiday styling (priority over weekend)
                         if ($isHoliday && $isCurrentMonth) {
                             $bgClass = 'bg-rose-50 dark:bg-rose-900/20';
                             $textClass = 'text-rose-600 dark:text-rose-400';
-                            $borderClass = $isToday ? 'ring-2 ring-blue-500 z-10' : 'border border-rose-200 dark:border-rose-700';
+                            $borderClass = $isToday ? 'ring-2 ring-indigo-500 z-10' : 'border border-rose-100 dark:border-rose-900/30';
                         } elseif ($date->isSunday() && $isCurrentMonth) {
-                            $textClass = 'text-red-500 dark:text-red-400 shadow-red-50';
+                            $textClass = 'text-rose-500 dark:text-rose-400';
                         } elseif ($date->isFriday() && $isCurrentMonth) {
-                            $textClass = 'text-green-600 dark:text-green-400';
+                            $textClass = 'text-emerald-600 dark:text-emerald-400';
                         }
 
                         // Status Marker
                         $markerColor = match($status) {
-                            'present' => 'bg-green-500',
-                            'late' => 'bg-amber-500',
+                            'present' => 'bg-emerald-500 shadow-sm shadow-emerald-200 dark:shadow-none',
+                            'late' => 'bg-amber-500 shadow-sm shadow-amber-200 dark:shadow-none',
                             'excused', 'sick' => match($attendance['approval_status'] ?? 'approved') {
-                                'pending' => 'bg-yellow-400 ring-2 ring-yellow-200',
-                                'rejected' => 'bg-red-600 ring-2 ring-red-200',
-                                default => $status === 'excused' ? 'bg-blue-500' : 'bg-purple-500'
+                                'pending' => 'bg-amber-300 ring-2 ring-amber-100',
+                                'rejected' => 'bg-rose-600 ring-2 ring-rose-200',
+                                default => $status === 'excused' ? 'bg-sky-500' : 'bg-violet-500'
                             },
-                            'absent' => 'bg-red-500',
-                            default => $isToday ? 'bg-blue-500' : null
+                            'absent' => 'bg-rose-500 shadow-sm shadow-rose-200 dark:shadow-none',
+                            default => $isToday ? 'bg-indigo-500' : null // Blue dot for today if no status yet
                         };
                     @endphp
 
-                    <div class="relative aspect-[1/1] sm:aspect-[4/3] group">
+                    <div class="aspect-[1/1] sm:aspect-[4/3] group relative">
                         <button type="button"
                             @if($attendance) wire:click="show({{ $attendance['id'] }})" @endif
-                            class="w-full h-full flex flex-col items-center justify-between p-1 sm:p-2 rounded-lg transition-all duration-200 {{ $bgClass }} {{ $textClass }} {{ $borderClass }} hover:bg-gray-50 dark:hover:bg-gray-700/50 {{ $attendance ? 'cursor-pointer hover:shadow-md' : 'cursor-default' }}">
+                            class="w-full h-full flex flex-col items-center justify-between p-1 sm:p-2 rounded-xl transition-all duration-200 {{ $bgClass }} {{ $textClass }} {{ $borderClass }} hover:bg-gray-50 dark:hover:bg-gray-700/50 {{ $attendance ? 'cursor-pointer hover:shadow-md hover:-translate-y-0.5' : 'cursor-default' }}">
                             
                             {{-- Holiday Indicator --}}
                             @if($isHoliday && $isCurrentMonth)
-                                <span class="absolute top-0.5 right-0.5 text-[8px] sm:text-[10px]" title="{{ $holiday->name }}">🎌</span>
+                                <span class="absolute top-1 right-1 text-[8px]" title="{{ $holiday->name }}">🔴</span>
                             @endif
                             
                             {{-- Date Number --}}
-                            <span class="text-xs sm:text-sm font-medium {{ !$isCurrentMonth ? 'opacity-50' : '' }}">
+                            <span class="text-xs sm:text-sm font-semibold {{ !$isCurrentMonth ? 'opacity-40' : '' }}">
                                 {{ $date->day }}
                             </span>
                             
                             {{-- Holiday Name (visible on desktop) --}}
                             @if($isHoliday && $isCurrentMonth)
                                 <span class="hidden sm:block text-[9px] leading-tight text-rose-500 dark:text-rose-400 font-medium truncate max-w-full px-1">
-                                    {{ Str::limit($holiday->name, 10) }}
+                                    {{ Str::limit($holiday->name, 8) }}
                                 </span>
                             @endif
 
@@ -119,7 +128,7 @@
                                     
                                     {{-- Time for desktop (optional) --}}
                                     @if($attendance && isset($attendance['time_in']))
-                                         <span class="hidden sm:inline-block text-[10px] text-gray-500 dark:text-gray-400">
+                                         <span class="hidden sm:inline-block text-[9px] text-gray-400 dark:text-gray-500 font-mono">
                                             {{ \App\Helpers::format_time($attendance['time_in']) }}
                                         </span>
                                     @endif
@@ -133,21 +142,15 @@
         
         {{-- Holidays List (like real calendar) --}}
         @if($holidays->isNotEmpty())
-        <div class="p-4 sm:p-6 bg-rose-50 dark:bg-rose-900/10 border-t border-rose-200 dark:border-rose-700/50">
-            <h4 class="text-sm font-semibold text-rose-700 dark:text-rose-400 mb-3 flex items-center gap-2">
-                🎌 {{ __('Holidays This Month') }}
+        <div class="px-4 py-3 sm:px-6 bg-rose-50/50 dark:bg-rose-900/10 border-t border-rose-100 dark:border-rose-700/30 backdrop-blur-sm">
+            <h4 class="text-xs font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-1 uppercase tracking-wide">
+                <span class="text-lg">📅</span> {{ __('Holidays') }}
             </h4>
-            <div class="space-y-2">
+            <div class="flex flex-wrap gap-2">
                 @foreach($holidays->sortBy(fn($h) => $h->date->day) as $holiday)
-                    <div class="flex items-center gap-3 text-sm">
-                        <span class="font-bold text-rose-600 dark:text-rose-400 w-8">{{ $holiday->date->day }}</span>
-                        <span class="text-gray-800 dark:text-gray-200">{{ $holiday->name }}</span>
-                        @if($holiday->description)
-                            <span class="text-gray-500 dark:text-gray-400 text-xs">- {{ $holiday->description }}</span>
-                        @endif
-                        @if($holiday->is_recurring)
-                            <span class="text-[10px] px-1.5 py-0.5 bg-rose-200 dark:bg-rose-800 text-rose-700 dark:text-rose-300 rounded">{{ __('Yearly') }}</span>
-                        @endif
+                    <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-rose-100/50 dark:bg-rose-800/30 border border-rose-200 dark:border-rose-700 text-xs text-rose-800 dark:text-rose-200">
+                        <span class="font-bold">{{ $holiday->date->day }}</span>
+                        <span>{{ $holiday->name }}</span>
                     </div>
                 @endforeach
             </div>
@@ -155,74 +158,71 @@
         @endif
         
         {{-- Summary Section (Integrated) --}}
-        <div class="p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700">
-            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
-                <span class="w-1 h-4 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full"></span>
-                {{ __('Attendance Summary') }}
+        <div class="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-700 relative z-10 bg-gray-50/30 dark:bg-gray-800/50">
+            <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">
+                {{ __('Current Month Summary') }}
             </h4>
             
             {{-- Stats Grid --}}
             <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                {{-- Present - Emerald/Teal --}}
-                <div class="relative group p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 border border-emerald-200/50 dark:border-emerald-700/30 hover:shadow-md transition-all">
-                    <div class="flex flex-col items-center">
-                        <span class="text-3xl font-black text-emerald-600 dark:text-emerald-400">{{ $counts['present'] ?? 0 }}</span>
-                        <span class="text-xs font-medium text-emerald-700 dark:text-emerald-300 mt-1">{{ __('Present') }}</span>
+                {{-- Present --}}
+                <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-3 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all group">
+                    <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <svg class="w-8 h-8 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                     </div>
-                    <div class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $counts['present'] ?? 0 }}</p>
+                    <p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-1">{{ __('Present') }}</p>
                 </div>
                 
-                {{-- Late - Orange/Amber --}}
-                <div class="relative group p-4 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/30 dark:to-amber-900/30 border border-orange-200/50 dark:border-orange-700/30 hover:shadow-md transition-all">
-                    <div class="flex flex-col items-center">
-                        <span class="text-3xl font-black text-orange-600 dark:text-orange-400">{{ $counts['late'] ?? 0 }}</span>
-                        <span class="text-xs font-medium text-orange-700 dark:text-orange-300 mt-1">{{ __('Late') }}</span>
+                {{-- Late --}}
+                <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-3 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all group">
+                    <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <svg class="w-8 h-8 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
                     </div>
-                    <div class="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-500"></div>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $counts['late'] ?? 0 }}</p>
+                    <p class="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mt-1">{{ __('Late') }}</p>
                 </div>
                 
-                {{-- Excused - Sky/Cyan --}}
-                <div class="relative group p-4 rounded-xl bg-gradient-to-br from-sky-50 to-cyan-50 dark:from-sky-900/30 dark:to-cyan-900/30 border border-sky-200/50 dark:border-sky-700/30 hover:shadow-md transition-all">
-                    <div class="flex flex-col items-center">
-                        <span class="text-3xl font-black text-sky-600 dark:text-sky-400">{{ $counts['excused'] ?? 0 }}</span>
-                        <span class="text-xs font-medium text-sky-700 dark:text-sky-300 mt-1">{{ __('Excused') }}</span>
+                {{-- Excused --}}
+                <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-3 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all group">
+                    <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <svg class="w-8 h-8 text-sky-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </div>
-                    <div class="absolute top-2 right-2 w-2 h-2 rounded-full bg-sky-500"></div>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $counts['excused'] ?? 0 }}</p>
+                    <p class="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider mt-1">{{ __('Excused') }}</p>
                 </div>
                 
-                {{-- Sick - Violet/Fuchsia --}}
-                <div class="relative group p-4 rounded-xl bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-violet-900/30 dark:to-fuchsia-900/30 border border-violet-200/50 dark:border-violet-700/30 hover:shadow-md transition-all">
-                    <div class="flex flex-col items-center">
-                        <span class="text-3xl font-black text-violet-600 dark:text-violet-400">{{ $counts['sick'] ?? 0 }}</span>
-                        <span class="text-xs font-medium text-violet-700 dark:text-violet-300 mt-1">{{ __('Sick') }}</span>
+                {{-- Sick --}}
+                <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-3 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all group">
+                    <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <svg class="w-8 h-8 text-violet-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-7.536 5.879a1 1 0 001.415 0 3 3 0 014.242 0 1 1 0 001.415-1.415 5 5 0 00-7.072 0 1 1 0 000 1.415z" clip-rule="evenodd"></path></svg>
                     </div>
-                    <div class="absolute top-2 right-2 w-2 h-2 rounded-full bg-violet-500"></div>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $counts['sick'] ?? 0 }}</p>
+                    <p class="text-[10px] font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wider mt-1">{{ __('Sick') }}</p>
                 </div>
                 
-                {{-- Absent - Slate/Zinc (clearly different from Rejected red) --}}
-                <div class="relative group p-4 rounded-xl bg-gradient-to-br from-slate-100 to-zinc-100 dark:from-slate-800/50 dark:to-zinc-800/50 border border-slate-300/50 dark:border-slate-600/30 hover:shadow-md transition-all col-span-2 sm:col-span-1">
-                    <div class="flex flex-col items-center">
-                        <span class="text-3xl font-black text-slate-600 dark:text-slate-300">{{ $counts['absent'] ?? 0 }}</span>
-                        <span class="text-xs font-medium text-slate-700 dark:text-slate-400 mt-1">{{ __('Absent') }}</span>
+                {{-- Absent --}}
+                <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-3 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all group col-span-2 sm:col-span-1">
+                    <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <svg class="w-8 h-8 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
                     </div>
-                    <div class="absolute top-2 right-2 w-2 h-2 rounded-full bg-slate-500"></div>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $counts['absent'] ?? 0 }}</p>
+                    <p class="text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider mt-1">{{ __('Absent') }}</p>
                 </div>
             </div>
         </div>
         
-        {{-- Legend Footer --}}
-        <div class="px-5 py-3 bg-white/50 dark:bg-gray-800/50 border-t border-gray-200/50 dark:border-gray-700/50">
-            <div class="flex flex-wrap justify-center gap-5 text-xs text-gray-600 dark:text-gray-400">
-                <span class="flex items-center gap-2">
-                    <span class="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-yellow-400 to-amber-400 ring-2 ring-yellow-100 dark:ring-yellow-900"></span> 
-                    {{ __('Pending') }}
+        {{-- Legenda Modern --}}
+        <div class="px-5 py-2 bg-gray-50/50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700/50">
+            <div class="flex flex-wrap justify-center gap-4 text-[10px] text-gray-500 dark:text-gray-400">
+                <span class="flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-amber-400"></span> {{ __('Pending') }}
                 </span>
-                <span class="flex items-center gap-2">
-                    <span class="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-red-500 to-rose-600 ring-2 ring-red-100 dark:ring-red-900"></span> 
-                    {{ __('Rejected') }}
+                <span class="flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-rose-500"></span> {{ __('Rejected') }}
                 </span>
-                <span class="flex items-center gap-2">
-                    🎌 {{ __('Holiday') }}
+                <span class="flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-indigo-500"></span> {{ __('Today') }}
                 </span>
             </div>
         </div>
