@@ -7,11 +7,6 @@
                     <h1 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('Hi, :name', ['name' => Str::before(Auth::user()->name, ' ')]) }} 👋</h1>
                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ now()->translatedFormat('l, d F Y') }}</p>
                 </div>
-                {{-- Profile Pic or Avatar --}}
-                <a href="{{ route('profile.show') }}" class="flex-shrink-0">
-                    <img class="h-10 w-10 rounded-full object-cover border-2 border-indigo-100 dark:border-indigo-900" 
-                        src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
-                </a>
             </div>
         </div>
     </div>
