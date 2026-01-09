@@ -18,11 +18,13 @@
 
     <div class="py-6">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-             {{-- Announcements Widget (Existing) --}}
-             @livewire('announcement-widget')
-
              {{-- Quick Actions (New) --}}
              @livewire('quick-actions')
+             
+             {{-- Upcoming Events & Announcements (Unified) --}}
+             <div class="mt-6 mb-6">
+                @livewire('upcoming-events-widget')
+             </div>
 
              {{-- Scan Component (Modified) --}}
              @livewire('scan-component')
