@@ -283,7 +283,7 @@
                             'iconColor' => 'green',
                         ])
 
-                        @include('components.action-buttons')
+                        {{-- Action Buttons (Removed) --}}
                     </div>
                 </div>
             </div>
