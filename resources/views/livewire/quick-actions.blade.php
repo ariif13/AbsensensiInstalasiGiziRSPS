@@ -8,7 +8,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
         </div>
-        <span class="text-xs font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Riwayat') }}</span>
+        <span class="text-xs font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('History') }}</span>
     </a>
 
     <a href="{{ route('apply-leave') }}" class="flex flex-col items-center gap-2 group">
@@ -17,7 +17,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
         </div>
-        <span class="text-xs font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Izin/Sakit') }}</span>
+        <span class="text-xs font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Leave/Sick') }}</span>
     </a>
 
     {{-- Schedule (Coming Soon / Disabled for now as no user view exists) --}}
@@ -27,7 +27,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
         </div>
-        <span class="text-xs font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Jadwal') }}</span>
+        <span class="text-xs font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Schedule') }}</span>
     </div>
 
      <a href="{{ route('profile.show') }}" class="flex flex-col items-center gap-2 group">
@@ -36,6 +36,6 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
             </svg>
         </div>
-        <span class="text-xs font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Profil') }}</span>
+        <span class="text-xs font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Profile') }}</span>
     </a>
 </div>
