@@ -1,20 +1,25 @@
-<div class="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow dark:border-gray-700 dark:bg-gray-800">
-    <div class="flex items-center gap-3 mb-3">
-        @if (isset($icon))
-            <div class="p-2 bg-{{ $iconColor ?? 'blue' }}-100 dark:bg-{{ $iconColor ?? 'blue' }}-900/30 rounded-lg">
-                <svg class="w-4 h-4 text-{{ $iconColor ?? 'blue' }}-600 dark:text-{{ $iconColor ?? 'blue' }}-400"
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $icon }}" />
-                </svg>
-            </div>
-        @endif
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">{{ $title }}</h3>
+<div class="rounded-2xl border border-indigo-100 bg-white p-4 sm:p-6 shadow-xl shadow-indigo-100/50 dark:border-gray-700 dark:bg-gray-800 dark:shadow-none transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-200/50 relative overflow-hidden">
+    
+    {{-- Decorative Background Blob --}}
+    <div class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-indigo-50 dark:bg-indigo-900/20 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
-        <div class="flex items-center gap-2 ml-auto">
+    <div class="flex items-center justify-between mb-3 relative z-10">
+        <div class="flex items-center gap-3">
+            @if (isset($icon))
+                <div class="p-2 bg-{{ $iconColor ?? 'blue' }}-100 dark:bg-{{ $iconColor ?? 'blue' }}-900/50 rounded-xl text-{{ $iconColor ?? 'blue' }}-600 dark:text-{{ $iconColor ?? 'blue' }}-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $icon }}" />
+                    </svg>
+                </div>
+            @endif
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white">{{ $title }}</h3>
+        </div>
+
+        <div class="flex items-center gap-2">
             @if ($showRefresh ?? false)
                 <button onclick="refreshLocation()" id="refresh-location-btn" title="{{ __('Refresh Location') }}"
-                    class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor"
+                    class="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full hover:bg-indigo-100 dark:hover:bg-indigo-900/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -22,8 +27,8 @@
                 </button>
             @endif
             <button onclick="toggleMap('{{ $mapId }}')" id="toggle-{{ $mapId }}-btn"
-                class="text-blue-600 dark:text-blue-400 text-xs hover:underline transition flex items-center gap-1">
-                <svg class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor"
+                class="text-xs font-medium px-3 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -32,12 +37,12 @@
         </div>
     </div>
 
-    <div id="location-text-{{ $mapId }}">
+    <div id="location-text-{{ $mapId }}" class="relative z-10 pl-1">
         @if ($latitude && $longitude)
             <div class="flex items-center gap-2 mt-1">
                 <a href="#" onclick="window.openMap({{ $latitude }}, {{ $longitude }}); return false;"
-                    class="inline-flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition font-medium">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition bg-gray-50 dark:bg-gray-800/50 px-2 py-1 rounded-md border border-gray-100 dark:border-gray-700">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -47,7 +52,7 @@
                 </a>
             </div>
         @else
-            <span class="text-xs text-gray-500 dark:text-gray-400 block mt-1">
+            <span class="text-xs text-gray-500 dark:text-gray-400 block mt-1 italic pl-1">
                 @if (isset($showRefresh) && $showRefresh)
                     {{ __('Detecting location...') }}
                 @else
@@ -55,11 +60,11 @@
                 @endif
             </span>
         @endif
-        <div id="location-updated-{{ $mapId }}" class="text-[10px] text-gray-400 mt-1" wire:ignore></div>
+        <div id="location-updated-{{ $mapId }}" class="text-[10px] text-gray-400 mt-1 pl-1" wire:ignore></div>
     </div>
     
     {{-- Collapsible Map Container --}}
-    <div class="map-container hidden mt-4 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-inner" id="{{ $mapId }}" style="height: 250px;" wire:ignore></div>
+    <div class="map-container hidden mt-4 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-inner relative z-10" id="{{ $mapId }}" style="height: 250px;" wire:ignore></div>
 </div>
 
 <script>
