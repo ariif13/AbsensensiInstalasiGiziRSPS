@@ -159,6 +159,8 @@ class UserAttendanceController extends Controller
             $latestAttendance = $attendance ?? \App\Models\Attendance::where('user_id', Auth::id())->latest()->first();
             
             if (class_exists(\Illuminate\Support\Facades\Notification::class) && $latestAttendance) {
+                \Illuminate\Support\Facades\Log::info('Preparing to send LeaveRequested notification.', ['count' => $admins->count(), 'admin_ids' => $admins->pluck('id')]);
+                
                 // Pass date range to notification for summary
                 $notification = new \App\Notifications\LeaveRequested($latestAttendance, $fromDate, $toDate);
                 

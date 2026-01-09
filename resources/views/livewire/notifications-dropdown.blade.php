@@ -1,4 +1,4 @@
-<div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
+<div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false" wire:poll.10s>
     <button @click="open = ! open" class="relative p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all">
         <span class="sr-only">{{ __('View notifications') }}</span>
         

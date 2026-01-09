@@ -87,6 +87,7 @@ class LeaveRequested extends Notification
         
         return [
             'type' => 'leave_request',
+            'title' => 'New Leave Request',
             'user_id' => $this->attendance->user_id,
             'user_name' => $this->attendance->user->name,
             'leave_type' => $this->attendance->status,

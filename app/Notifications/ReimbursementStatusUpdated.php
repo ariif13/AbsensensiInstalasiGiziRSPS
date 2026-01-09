@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ReimbursementStatusUpdated extends Notification implements ShouldQueue
+class ReimbursementStatusUpdated extends Notification
 {
     use Queueable;
 
@@ -45,7 +45,8 @@ class ReimbursementStatusUpdated extends Notification implements ShouldQueue
         return [
             'title' => 'Reimbursement ' . ucfirst($this->reimbursement->status),
             'message' => "Your claim for {$this->reimbursement->type} of Rp " . number_format($this->reimbursement->amount, 0, ',', '.') . " was {$this->reimbursement->status}.",
-            'action_url' => route('reimbursement'),
+            'url' => route('reimbursement'),
+            'action_url' => route('reimbursement'), // Backward compatibility
         ];
     }
 }

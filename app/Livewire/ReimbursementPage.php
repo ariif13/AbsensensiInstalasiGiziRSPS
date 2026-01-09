@@ -67,6 +67,26 @@ class ReimbursementPage extends Component
             'status' => 'pending',
         ]);
 
+        // Notify Admins
+        $newReimbursement = Reimbursement::where('user_id', Auth::id())->latest()->first();
+        if ($newReimbursement) {
+            $admins = \App\Models\User::whereIn('group', ['admin', 'superadmin'])->get();
+            if ($admins->count() > 0) {
+                 \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\ReimbursementRequested($newReimbursement));
+                 
+                 // Also try direct route for admin email setting
+                 $adminEmail = \App\Models\Setting::getValue('notif.admin_email');
+                 if (!empty($adminEmail) && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
+                     try {
+                         \Illuminate\Support\Facades\Notification::route('mail', $adminEmail)
+                             ->notify(new \App\Notifications\ReimbursementRequested($newReimbursement));
+                     } catch (\Throwable $e) {
+                         // Log ignored
+                     }
+                 }
+            }
+        }
+
         $this->isCreating = false;
         $this->dispatch('success', 'Reimbursement claim submitted successfully.');
     }
