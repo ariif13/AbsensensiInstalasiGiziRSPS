@@ -21,22 +21,16 @@
              {{-- Quick Actions (New) --}}
              @livewire('quick-actions')
              
-             {{-- Upcoming Events & Announcements (Unified) --}}
-             <div class="mt-6 mb-6">
-                @livewire('upcoming-events-widget')
-             </div>
-
-             {{-- Scan Component (Modified) --}}
-             @livewire('scan-component')
-
              {{-- Summary Stats (New) --}}
              <div class="mt-6">
                 <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-3">{{ __('Statistik Bulan Ini') }}</h3>
                 @livewire('attendance-summary-widget')
              </div>
 
-             {{-- Upcoming Events (Placeholder/Future) --}}
-             {{-- Could move Holiday Calendar here --}}
+             {{-- Upcoming Events & Announcements (Unified) --}}
+             <div class="mt-6 mb-6">
+                @livewire('upcoming-events-widget')
+             </div>
              
         </div>
     </div>
