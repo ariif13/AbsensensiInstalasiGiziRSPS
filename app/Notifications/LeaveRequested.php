@@ -20,7 +20,33 @@ class LeaveRequested extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        $channels = ['database'];
+        
+        // Add mail if admin email is configured
+        $adminEmail = \App\Models\Setting::getValue('notif.admin_email');
+        if (!empty($adminEmail) && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
+            $channels[] = 'mail';
+        }
+        
+        return $channels;
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $userName = $this->attendance->user->name ?? 'Unknown';
+        $leaveType = $this->attendance->status === 'sick' ? 'Sakit' : 'Izin';
+        $date = $this->attendance->date?->format('d M Y') ?? 'Unknown';
+        
+        return (new MailMessage)
+            ->subject("Pengajuan $leaveType Baru dari $userName")
+            ->greeting("Halo Admin!")
+            ->line("Ada pengajuan $leaveType baru yang perlu diproses:")
+            ->line("**Karyawan:** $userName")
+            ->line("**Jenis:** $leaveType")
+            ->line("**Tanggal:** $date")
+            ->line("**Keterangan:** " . ($this->attendance->note ?? '-'))
+            ->action('Lihat Pengajuan', route('admin.leaves'))
+            ->line('Silakan login untuk menyetujui atau menolak pengajuan ini.');
     }
 
     public function toArray(object $notifiable): array

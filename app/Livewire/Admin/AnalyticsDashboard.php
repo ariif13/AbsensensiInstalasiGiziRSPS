@@ -124,6 +124,7 @@ class AnalyticsDashboard extends Component
             'topDiligent' => $this->topDiligentEmployees,
             'topLate' => $this->topLateEmployees,
             'topEarlyLeavers' => $this->topEarlyLeavers,
+            'workHoursPerDay' => (int) \App\Models\Setting::getValue('attendance.work_hours_per_day', 8),
         ]);
     }
 }
