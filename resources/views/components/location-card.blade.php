@@ -34,18 +34,20 @@
 
     <div id="location-text-{{ $mapId }}">
         @if ($latitude && $longitude)
-            <a href="#" onclick="window.openMap({{ $latitude }}, {{ $longitude }}); return false;"
-                class="inline-flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                {{ $latitude . ', ' . $longitude }}
-            </a>
+            <div class="flex items-center gap-2 mt-1">
+                <a href="#" onclick="window.openMap({{ $latitude }}, {{ $longitude }}); return false;"
+                    class="inline-flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition font-medium">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {{ $latitude . ', ' . $longitude }}
+                </a>
+            </div>
         @else
-            <span class="text-xs text-gray-500 dark:text-gray-400">
+            <span class="text-xs text-gray-500 dark:text-gray-400 block mt-1">
                 @if (isset($showRefresh) && $showRefresh)
                     {{ __('Detecting location...') }}
                 @else
@@ -55,5 +57,38 @@
         @endif
         <div id="location-updated-{{ $mapId }}" class="text-[10px] text-gray-400 mt-1" wire:ignore></div>
     </div>
-    <div class="map-container hidden mt-4 rounded-lg overflow-hidden" id="{{ $mapId }}" style="height: 250px;" wire:ignore></div>
+    
+    {{-- Collapsible Map Container --}}
+    <div class="map-container hidden mt-4 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-inner" id="{{ $mapId }}" style="height: 250px;" wire:ignore></div>
 </div>
+
+<script>
+    function toggleMap(mapId) {
+        const mapContainer = document.getElementById(mapId);
+        const btn = document.getElementById('toggle-' + mapId + '-btn');
+        const icon = btn.querySelector('svg');
+        const text = btn.querySelector('span');
+        
+        if (mapContainer.classList.contains('hidden')) {
+            // Show Map
+            mapContainer.classList.remove('hidden');
+            text.textContent = "{{ __('Tutup Peta') }}";
+            icon.classList.add('rotate-180');
+            
+            // Trigger leaflet resize if needed
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+            }, 100);
+            
+            // Initialize map if function exists (handled by scan component usually)
+            if (typeof initMap === 'function') {
+                // initMap(mapId); // Might need specific logic depends on how maps are initialized
+            }
+        } else {
+            // Hide Map
+            mapContainer.classList.add('hidden');
+            text.textContent = "{{ __('Lihat Peta') }}";
+            icon.classList.remove('rotate-180');
+        }
+    }
+</script>
