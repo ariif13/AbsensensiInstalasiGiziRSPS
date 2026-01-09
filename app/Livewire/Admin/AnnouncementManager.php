@@ -4,9 +4,11 @@ namespace App\Livewire\Admin;
 
 use App\Models\Announcement;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Layout('layouts.app')]
 class AnnouncementManager extends Component
 {
     use WithPagination;

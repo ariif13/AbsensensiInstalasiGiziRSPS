@@ -3,9 +3,11 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Holiday;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Layout('layouts.app')]
 class HolidayManager extends Component
 {
     use WithPagination;
