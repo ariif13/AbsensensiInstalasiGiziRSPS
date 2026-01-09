@@ -95,13 +95,6 @@ class SystemMaintenance extends Component
         }
 
         try {
-            \Illuminate\Support\Facades\Log::info('Cleaning database...', [
-                'attendances' => $this->cleanAttendances,
-                'activity_logs' => $this->cleanActivityLogs,
-                'notifications' => $this->cleanNotifications,
-                'storage' => $this->cleanStorage,
-            ]);
-
             DB::transaction(function () {
                 // Disable Foreign Key Checks to allow truncation
                 DB::statement('SET FOREIGN_KEY_CHECKS=0;');   

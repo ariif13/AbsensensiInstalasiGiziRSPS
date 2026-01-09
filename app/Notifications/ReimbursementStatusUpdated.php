@@ -46,7 +46,6 @@ class ReimbursementStatusUpdated extends Notification
             'title' => 'Reimbursement ' . ucfirst($this->reimbursement->status),
             'message' => "Your claim for {$this->reimbursement->type} of Rp " . number_format($this->reimbursement->amount, 0, ',', '.') . " was {$this->reimbursement->status}.",
             'url' => route('reimbursement'),
-            'action_url' => route('reimbursement'), // Backward compatibility
         ];
     }
 }
