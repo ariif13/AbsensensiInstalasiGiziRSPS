@@ -39,6 +39,9 @@ Route::middleware([
 
         Route::get('/attendance-history', [UserAttendanceController::class, 'history'])
             ->name('attendance-history');
+            
+        Route::get('/scan', [UserAttendanceController::class, 'scan'])
+            ->name('scan');
     });
 
     // ADMIN AREA

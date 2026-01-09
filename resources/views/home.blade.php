@@ -16,8 +16,8 @@
              {{-- Quick Actions (New) --}}
              @livewire('quick-actions')
 
-             {{-- Scan Component (Modified) --}}
-             @livewire('scan-component')
+             {{-- Home Attendance Actions (New) --}}
+             @livewire('home-attendance-status')
              
              {{-- Summary Stats (New) --}}
              <div class="mt-6">

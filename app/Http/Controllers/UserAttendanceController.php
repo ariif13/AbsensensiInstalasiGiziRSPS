@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Auth;
 
 class UserAttendanceController extends Controller
 {
+    public function scan()
+    {
+        return view('attendances.scan');
+    }
+
     public function applyLeave()
     {
         $user = Auth::user();
