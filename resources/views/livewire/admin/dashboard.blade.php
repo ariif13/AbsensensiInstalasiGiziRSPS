@@ -26,240 +26,204 @@
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="mb-6 grid grid-cols-3 gap-2 sm:gap-4 sm:grid-cols-6">
-        <!-- Hadir -->
-        <div wire:click="showStatDetail('present')"
-            class="group cursor-pointer rounded-xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 p-3 sm:p-4 border border-green-200 dark:border-green-700 hover:scale-[1.02] transition-transform">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-green-600 dark:text-green-400 mb-1">{{ ucfirst(__('present')) }}</p>
-                    <p class="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-300">{{ $presentCount }}</p>
-                    <p class="text-xs text-green-600 dark:text-green-400 mt-1">{{ __('On Time') }}</p>
-                </div>
-                <div class="rounded-lg bg-green-200 dark:bg-green-700 p-1.5 group-hover:bg-green-300 dark:group-hover:bg-green-600 transition-colors">
-                    <svg class="w-3.5 h-3.5 text-green-700 dark:text-green-200" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                </div>
+    <!-- Talenta-Style Summary Cards -->
+    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- 1. Staff Overview -->
+        <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10">
+            <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Total Employees') }}</dt>
+            <dd class="mt-2 flex items-baseline gap-x-2">
+                <span class="text-4xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ $employeesCount }}</span>
+                <span class="text-sm text-gray-500 dark:text-gray-400">{{ __('Active') }}</span>
+            </dd>
+            <div class="mt-4 flex items-center gap-x-2 text-sm text-green-600 dark:text-green-400">
+                <svg class="h-4 w-4 flex-none" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" />
+                </svg>
+                <span class="font-medium">{{ $presentCount }} {{ __('Present Today') }}</span>
+            </div>
+            
+            <!-- Quick Link to Employees -->
+            <a href="{{ route('admin.employees') }}" class="absolute inset-0"></a>
+        </div>
+
+        <!-- 2. Action Center (Pending Tasks) -->
+        <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-sm ring-1 ring-blue-900/5 transition-all hover:shadow-md dark:from-blue-900/20 dark:to-indigo-900/20 dark:ring-white/10">
+            <div class="flex items-center justify-between">
+                <dt class="truncate text-sm font-medium text-blue-600 dark:text-blue-300">{{ __('Action Needed') }}</dt>
+                <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                    {{ $pendingLeavesCount + $pendingReimbursementsCount }} {{ __('Pending') }}
+                </span>
+            </div>
+            <div class="mt-4 space-y-3">
+                <!-- Pending Leaves -->
+                <a href="{{ route('admin.leaves') }}" class="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2 text-sm transition-colors hover:bg-white dark:bg-gray-800/40 dark:hover:bg-gray-800">
+                    <div class="flex items-center gap-2">
+                        <div class="h-2 w-2 rounded-full {{ $pendingLeavesCount > 0 ? 'bg-amber-500 animate-pulse' : 'bg-gray-300' }}"></div>
+                        <span class="text-gray-700 dark:text-gray-200">{{ __('Leave Requests') }}</span>
+                    </div>
+                    <span class="font-semibold text-gray-900 dark:text-white">{{ $pendingLeavesCount }}</span>
+                </a>
+                <!-- Pending Reimbursements -->
+                <a href="{{ route('admin.reimbursements') }}" class="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2 text-sm transition-colors hover:bg-white dark:bg-gray-800/40 dark:hover:bg-gray-800">
+                    <div class="flex items-center gap-2">
+                        <div class="h-2 w-2 rounded-full {{ $pendingReimbursementsCount > 0 ? 'bg-amber-500 animate-pulse' : 'bg-gray-300' }}"></div>
+                        <span class="text-gray-700 dark:text-gray-200">{{ __('Reimbursements') }}</span>
+                    </div>
+                    <span class="font-semibold text-gray-900 dark:text-white">{{ $pendingReimbursementsCount }}</span>
+                </a>
             </div>
         </div>
 
-        <!-- Terlambat -->
-        <div wire:click="showStatDetail('late')"
-            class="group cursor-pointer rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/30 dark:to-amber-800/30 p-3 sm:p-4 border border-amber-200 dark:border-amber-700 hover:scale-[1.02] transition-transform">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400 mb-1">{{ ucfirst(__('late')) }}</p>
-                    <p class="text-2xl sm:text-3xl font-bold text-amber-700 dark:text-amber-300">{{ $lateCount }}</p>
-                    <p class="text-xs text-amber-600 dark:text-amber-400 mt-1">{{ __('Arrived Late') }}</p>
+        <!-- 3. Attendance Health (Chart) -->
+        <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10">
+            <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Attendance Health') }}</dt>
+            <div class="mt-4 grid grid-cols-2 gap-4">
+                <!-- Present -->
+                <div class="flex flex-col rounded-xl bg-green-50 p-3 dark:bg-green-900/20">
+                    <span class="text-xs font-medium text-green-600 dark:text-green-400">{{ __('Present') }}</span>
+                    <span class="text-2xl font-bold text-green-700 dark:text-green-300">{{ $presentCount }}</span>
                 </div>
-                <div class="rounded-lg bg-amber-200 dark:bg-amber-700 p-1.5 group-hover:bg-amber-300 dark:group-hover:bg-amber-600 transition-colors">
-                    <svg class="w-3.5 h-3.5 text-amber-700 dark:text-amber-200" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+                <!-- Late -->
+                <div class="flex flex-col rounded-xl bg-amber-50 p-3 dark:bg-amber-900/20">
+                    <span class="text-xs font-medium text-amber-600 dark:text-amber-400">{{ __('Late') }}</span>
+                    <span class="text-2xl font-bold text-amber-700 dark:text-amber-300">{{ $lateCount }}</span>
                 </div>
-            </div>
-        </div>
-
-        <!-- Pulang Cepat -->
-        <div wire:click="showStatDetail('early_checkout')"
-            class="group cursor-pointer rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 p-3 sm:p-4 border border-orange-200 dark:border-orange-700 hover:scale-[1.02] transition-transform">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-orange-600 dark:text-orange-400 mb-1">{{ __('Early Checkout') }}</p>
-                    <p class="text-2xl sm:text-3xl font-bold text-orange-700 dark:text-orange-300">{{ $earlyCheckoutCount }}</p>
-                    <p class="text-xs text-orange-600 dark:text-orange-400 mt-1">{{ __('Before Time') }}</p>
-                </div>
-                <div class="rounded-lg bg-orange-200 dark:bg-orange-700 p-1.5 group-hover:bg-orange-300 dark:group-hover:bg-orange-600 transition-colors">
-                    <svg class="w-3.5 h-3.5 text-orange-700 dark:text-orange-200" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Izin -->
-        <div wire:click="showStatDetail('excused')"
-            class="group cursor-pointer rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 p-3 sm:p-4 border border-blue-200 dark:border-blue-700 hover:scale-[1.02] transition-transform">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">{{ ucfirst(__('excused')) }}</p>
-                    <p class="text-2xl sm:text-3xl font-bold text-blue-700 dark:text-blue-300">{{ $excusedCount }}</p>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">{{ __('Excused') }}</p>
-                </div>
-                <div class="rounded-lg bg-blue-200 dark:bg-blue-700 p-1.5 group-hover:bg-blue-300 dark:group-hover:bg-blue-600 transition-colors">
-                    <svg class="w-3.5 h-3.5 text-blue-700 dark:text-blue-200" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                        </path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sakit -->
-        <div wire:click="showStatDetail('sick')"
-            class="group cursor-pointer rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 p-3 sm:p-4 border border-purple-200 dark:border-purple-700 hover:scale-[1.02] transition-transform">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-purple-600 dark:text-purple-400 mb-1">{{ ucfirst(__('sick')) }}</p>
-                    <p class="text-2xl sm:text-3xl font-bold text-purple-700 dark:text-purple-300">{{ $sickCount }}
-                    </p>
-                    <p class="text-xs text-purple-600 dark:text-purple-400 mt-1 opacity-0">-</p>
-                </div>
-                <div class="rounded-lg bg-purple-200 dark:bg-purple-700 p-1.5 group-hover:bg-purple-300 dark:group-hover:bg-purple-600 transition-colors">
-                    <svg class="w-3.5 h-3.5 text-purple-700 dark:text-purple-200" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                        </path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tidak Hadir -->
-        <div wire:click="showStatDetail('absent')"
-            class="group cursor-pointer rounded-xl bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/30 dark:to-red-800/30 p-3 sm:p-4 border border-red-200 dark:border-red-700 hover:scale-[1.02] transition-transform">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-red-600 dark:text-red-400 mb-1">{{ ucfirst(__('absent')) }}</p>
-                    <p class="text-2xl sm:text-3xl font-bold text-red-700 dark:text-red-300">{{ $absentCount }}</p>
-                    <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ __('Not Present') }}</p>
-                </div>
-                <div class="rounded-lg bg-red-200 dark:bg-red-700 p-1.5 group-hover:bg-red-300 dark:group-hover:bg-red-600 transition-colors">
-                    <svg class="w-3.5 h-3.5 text-red-700 dark:text-red-200" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg>
+                <!-- Absent/Sick -->
+                <div class="col-span-2 flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-700/30">
+                     <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ __('Absent / Sick / Leave') }}</span>
+                     <span class="font-semibold text-gray-700 dark:text-gray-200">{{ $absentCount + $sickCount + $excusedCount }}</span>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Chart, Logs, Map, Calendar Grid --}}
-    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {{-- Weekly Chart --}}
-        <div class="rounded-lg border border-gray-200 bg-white p-3 shadow dark:border-gray-700 dark:bg-gray-800 flex flex-col"
+    <div class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {{-- Weekly Chart (Spans 2 columns) --}}
+        <div class="col-span-1 lg:col-span-2 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10 flex flex-col"
              wire:ignore
              x-data="weeklyAttendanceChart()"
              x-init="initChart()">
-            <h3 class="mb-2 text-sm font-semibold text-gray-900 dark:text-white flex-none">{{ __('Weekly Attendance Trends') }}</h3>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ __('Weekly Attendance Trends') }}</h3>
+                <select class="text-xs border-0 bg-gray-50 rounded-lg text-gray-500 focus:ring-0 dark:bg-gray-700 dark:text-gray-400">
+                    <option>{{ __('Last 7 Days') }}</option>
+                </select>
+            </div>
             <div class="relative w-full flex-1 min-h-[300px]">
                 <canvas x-ref="canvas"></canvas>
             </div>
         </div>
 
-        {{-- Recent Activity --}}
-        {{-- Recent Activity --}}
-        <div class="rounded-lg border border-gray-200 bg-white p-3 shadow dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center justify-between mb-2">
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ __('Recent Activity') }}</h3>
+        {{-- Live Feed / Recent Activity (1 column) --}}
+        <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ __('Live Feed') }}</h3>
                 <a href="{{ route('admin.activity-logs.export') }}" target="_system" 
-                   class="rounded bg-blue-700 px-2 py-1 text-[10px] font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    {{ __('Export') }}
+                   class="text-xs font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
+                    {{ __('View All') }}
                 </a>
             </div>
-            <div class="flow-root">
-                <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                    @foreach($recentLogs as $log)
-                    <li class="py-1.5 sm:py-2">
-                        <div class="flex items-center space-x-2">
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-gray-900 truncate dark:text-white">
-                                    {{ $log->user->name ?? 'System' }}
-                                    @if($log->count > 1)
-                                        <span class="ml-1 inline-flex items-center rounded-full bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                                            {{ $log->count }}x
-                                        </span>
-                                    @endif
-                                </p>
-                                <p class="text-[10px] sm:text-xs text-gray-500 truncate dark:text-gray-400">
-                                    {{ $log->description }}
-                                </p>
-                            </div>
-                            <div class="flex flex-col items-end text-[10px] text-gray-900 dark:text-white">
-                                <span>{{ $log->updated_at->diffForHumans() }}</span>
-                                @if($log->count > 1)
-                                    <span class="text-gray-500 dark:text-gray-400">
-                                        {{ \App\Helpers::format_time($log->created_at) }}
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                    </li>
-                    @endforeach
-                </ul>
+            
+            <div class="relative pl-4 border-l border-gray-200 dark:border-gray-700 space-y-6">
+                @foreach($recentLogs->take(5) as $log)
+                <div class="relative group">
+                    <div class="absolute -left-[21px] mt-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-gray-300 dark:border-gray-800 dark:bg-gray-600 group-hover:bg-blue-500 transition-colors"></div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-medium text-gray-900 dark:text-white">
+                            {{ $log->user->name ?? 'System' }}
+                        </span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                            {{ $log->description }}
+                        </span>
+                        <span class="mt-1 text-[10px] text-gray-400">
+                            {{ $log->updated_at->diffForHumans() }}
+                        </span>
+                    </div>
+                </div>
+                @endforeach
             </div>
         </div>
+    </div>
 
-        {{-- Overdue Checkout List --}}
-        <div class="rounded-lg border border-gray-200 bg-white p-3 shadow dark:border-gray-700 dark:bg-gray-800">
-            <h3 class="mb-2 text-sm font-semibold text-gray-900 dark:text-white">{{ __('Overdue Checkout') }}</h3>
+    {{-- Bottom Section: Overdue & Leaves --}}
+    <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+         {{-- Overdue Checkout --}}
+         <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10">
+            <h3 class="mb-4 text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <div class="h-2 w-2 rounded-full bg-red-500"></div>
+                {{ __('Overdue Checkout') }}
+            </h3>
             
-            <div class="space-y-2">
+            <div class="space-y-3">
                 @forelse($overdueUsers as $overdue)
-                    <div class="flex items-center justify-between p-2 rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
-                        <div>
-                            <p class="text-xs font-medium text-gray-900 dark:text-white">{{ $overdue->user->name }}</p>
-                            <p class="text-[10px] text-gray-500 dark:text-gray-400">
-                                {{ \Carbon\Carbon::parse($overdue->date)->format('D, d M') }} • Shift End: {{ $overdue->shift->end_time }}
-                            </p>
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-red-50/50 border border-red-100 dark:bg-red-900/10 dark:border-red-900/20">
+                        <div class="flex items-center gap-3">
+                            <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-xs font-bold dark:bg-red-900/30 dark:text-red-400">
+                                {{ substr($overdue->user->name, 0, 1) }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $overdue->user->name }}</p>
+                                <p class="text-xs text-red-600 dark:text-red-400">
+                                    {{ __('Shift End') }}: {{ $overdue->shift->end_time }}
+                                </p>
+                            </div>
                         </div>
                         <button wire:click="notifyUser('{{ $overdue->id }}')"
                                 wire:loading.attr="disabled"
-                                class="rounded bg-red-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                class="text-xs font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
                             {{ __('Remind') }}
                         </button>
                     </div>
                 @empty
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('No employees with overdue checkout.') }}</p>
+                    <div class="text-center py-6">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('All clear! No overdue checkouts.') }}</p>
+                    </div>
                 @endforelse
             </div>
         </div>
 
         {{-- Monthly Leave Calendar --}}
-        <div class="rounded-lg border border-gray-200 bg-white p-3 shadow dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center justify-between mb-2">
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ __('Leaves this Month') }}</h3>
-                <a href="{{ route('admin.reports.export-pdf') }}" target="_system" 
-                   class="rounded bg-green-700 px-2 py-1 text-[10px] font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+        <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ __('Upcoming Leaves') }}</h3>
+                 <a href="{{ route('admin.reports.export-pdf') }}" target="_system" 
+                   class="text-xs font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
                     {{ __('Export') }}
                 </a>
             </div>
-            <div class="space-y-2">
-                @forelse($calendarLeaves as $leave)
-                    <div class="flex items-center justify-between p-2 rounded-lg border {{ $leave['status'] == 'sick' ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' : 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20' }}">
-                        <div class="flex items-center gap-3">
-                            <div class="flex flex-col">
-                                <span class="text-xs font-medium text-gray-900 dark:text-white">{{ $leave['title'] }}</span>
-                                <span class="text-[10px] text-gray-500 dark:text-gray-400">{{ $leave['date_display'] }}</span>
-                            </div>
+            <div class="space-y-3">
+                @forelse($calendarLeaves->take(5) as $leave)
+                    <div class="flex items-center gap-4 p-3 rounded-xl border border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                        <div class="flex-none flex flex-col items-center justify-center h-12 w-12 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                            <span class="text-xs font-bold">{{ \Carbon\Carbon::parse($leave['date_display'])->format('d') }}</span>
+                            <span class="text-[10px] uppercase">{{ \Carbon\Carbon::parse($leave['date_display'])->format('M') }}</span>
                         </div>
-                        <span class="px-1.5 py-0.5 text-[10px] font-medium rounded {{ $leave['status'] == 'sick' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' }}">
-                            {{ ucfirst($leave['status']) }}
-                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                {{ $leave['title'] }}
+                            </p>
+                            <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium {{ $leave['status'] == 'sick' ? 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' }}">
+                                {{ ucfirst($leave['status']) }}
+                            </span>
+                        </div>
                     </div>
                 @empty
-                    <p class="text-xs text-gray-500 dark:text-gray-400 text-center py-4">{{ __('No leaves recorded this month.') }}</p>
+                     <div class="text-center py-6">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('No leaves schedule for this month.') }}</p>
+                    </div>
                 @endforelse
             </div>
         </div>
     </div>
 
     <!-- Employee Attendance Card -->
-    <div class="mt-4 rounded-lg border border-gray-200 bg-white p-3 shadow dark:border-gray-700 dark:bg-gray-800">
-        <div class="mb-2 flex items-center justify-between">
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ __('Employee Attendance') }}</h3>
-            {{-- Optional: Add filters or search here in future --}}
+    <div class="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10">
+        <div class="mb-4 flex items-center justify-between">
+            <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ __('Employee Attendance') }}</h3>
+            <div class="flex gap-2">
+                 <x-text-input type="text" placeholder="{{ __('Search...') }}" class="py-1 text-sm" />
+            </div>
         </div>
 
         <!-- Mobile Card View -->
@@ -276,114 +240,96 @@
                     switch ($status) {
                         case 'present':
                             $statusLabel = ucfirst(__('present'));
-                            $statusColor = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+                            $statusColor = 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/30 dark:text-green-400';
                             break;
                         case 'late':
                             $statusLabel = ucfirst(__('late'));
-                            $statusColor = 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
+                            $statusColor = 'bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-900/30 dark:text-amber-400';
                             break;
                         case 'excused':
                             $statusLabel = ucfirst(__('excused'));
-                            $statusColor = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+                            $statusColor = 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-400';
                             break;
                         case 'sick':
                             $statusLabel = ucfirst(__('sick'));
-                            $statusColor = 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+                            $statusColor = 'bg-purple-50 text-purple-700 ring-purple-600/20 dark:bg-purple-900/30 dark:text-purple-400';
                             break;
                         case 'absent':
                             $statusLabel = ucfirst(__('absent'));
-                            $statusColor = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+                            $statusColor = 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-900/30 dark:text-red-400';
                             break;
                         default:
                             $statusLabel = '-';
-                            $statusColor = 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+                            $statusColor = 'bg-gray-50 text-gray-600 ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400';
                             break;
                     }
                 @endphp
-                <div class="rounded-lg border border-gray-100 dark:border-gray-700/50">
-                    <div class="p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $employee->name }}</h4>
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColor }}">
-                                {{ $statusLabel }}
-                            </span>
-                        </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400 space-y-1">
-                            <p><span class="font-medium">NIP:</span> {{ $employee->nip }}</p>
-                            <p><span class="font-medium">Divisi:</span> {{ $employee->division?->name ?? '-' }}</p>
-                            <p><span class="font-medium">Jabatan:</span> {{ $employee->jobTitle?->name ?? '-' }}</p>
-                            <p><span class="font-medium">Shift:</span> {{ $attendance->shift?->name ?? '-' }}</p>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-900/50 px-4 py-3 border-t border-gray-100 dark:border-gray-700 rounded-b-lg">
-                        <div class="flex items-center justify-between">
-                            <div class="text-xs text-gray-600 dark:text-gray-400">
-                                <div class="flex gap-4">
-                                    <span>
-                                        <span class="block text-gray-400 dark:text-gray-500">{{ __('Time In') }}</span>
-                                        <span class="font-medium">{{ $timeIn ?? '-' }}</span>
-                                    </span>
-                                    <span>
-                                        <span class="block text-gray-400 dark:text-gray-500">{{ __('Time Out') }}</span>
-                                        <span class="font-medium">{{ $timeOut ?? '-' }}</span>
-                                    </span>
-                                </div>
+                <div class="rounded-xl border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-sm dark:bg-gray-700 dark:text-gray-300">
+                                {{ substr($employee->name, 0, 1) }}
                             </div>
                             <div>
-                                 @if ($attendance && ($attendance->attachment || $attendance->note || $attendance->lat_lng))
-                                    <button type="button" 
-                                        wire:click="show({{ $attendance->id }})"
-
-                                        class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-300 dark:bg-blue-900/50 dark:hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        {{ __('Detail') }}
-                                    </button>
-                                @endif
+                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white">{{ $employee->name }}</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $employee->jobTitle?->name ?? 'Staff' }}</p>
                             </div>
                         </div>
+                        <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $statusColor }}">
+                            {{ $statusLabel }}
+                        </span>
                     </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 border-t border-gray-200 pt-3 dark:border-gray-700">
+                        <div>
+                            <span class="block text-xs text-gray-500 dark:text-gray-400">{{ __('Time In') }}</span>
+                            <span class="font-mono text-sm font-medium text-gray-900 dark:text-white">{{ $timeIn ?? '--:--' }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-gray-500 dark:text-gray-400">{{ __('Time Out') }}</span>
+                            <span class="font-mono text-sm font-medium text-gray-900 dark:text-white">{{ $timeOut ?? '--:--' }}</span>
+                        </div>
+                    </div>
+
+                    @if ($attendance && ($attendance->attachment || $attendance->note || $attendance->lat_lng))
+                    <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                         <button type="button" 
+                            wire:click="show({{ $attendance->id }})"
+                            class="w-full inline-flex justify-center items-center px-2 py-1.5 text-xs font-medium rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 dark:text-blue-300 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 transition-colors">
+                            {{ __('View Details') }}
+                        </button>
+                    </div>
+                    @endif
                 </div>
             @endforeach
         </div>
 
         <!-- Desktop Table View -->
-        <div class="hidden sm:block overflow-x-auto">
+        <div class="hidden sm:block overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
             <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-900">
+                <thead class="bg-gray-50 dark:bg-gray-900/50">
                     <tr>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
-                            {{ __('Name') }}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            {{ __('Employee') }}
                         </th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
-                            {{ __('NIP') }}
-                        </th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
-                            {{ __('Division') }}
-                        </th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
-                            {{ __('Job Title') }}
-                        </th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {{ __('Shift') }}
                         </th>
-                        <th scope="col"
-                            class="text-nowrap border border-gray-300 px-1 py-3 text-center text-xs font-medium text-gray-500 dark:border-gray-600 dark:text-gray-300">
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Status
                         </th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
+                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {{ __('Time In') }}
                         </th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {{ __('Time Out') }}
                         </th>
-                        <th scope="col" class="relative">
+                        <th scope="col" class="relative px-6 py-3">
                             <span class="sr-only">Actions</span>
                         </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-                    @php
-                        $class = 'px-4 py-3 text-sm font-medium text-gray-900 dark:text-white';
-                    @endphp
                     @foreach ($employees as $employee)
                         @php
                             $attendance = $employee->attendance;
@@ -395,87 +341,70 @@
                             ])['status'];
                             switch ($status) {
                                 case 'present':
-                                    $shortStatus = 'H';
-                                    $bgColor =
-                                        'bg-green-200 dark:bg-green-800 hover:bg-green-300 dark:hover:bg-green-700 border border-green-300 dark:border-green-600';
+                                    $statusLabel = 'Present';
+                                    $statusDot = 'bg-green-500';
+                                    $statusBg = 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/30 dark:text-green-400';
                                     break;
                                 case 'late':
-                                    $shortStatus = 'T';
-                                    $bgColor =
-                                        'bg-amber-200 dark:bg-amber-800 hover:bg-amber-300 dark:hover:bg-amber-700 border border-amber-300 dark:border-amber-600';
+                                    $statusLabel = 'Late';
+                                    $statusDot = 'bg-amber-500';
+                                    $statusBg = 'bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-900/30 dark:text-amber-400';
                                     break;
                                 case 'excused':
-                                    $shortStatus = 'I';
-                                    $bgColor =
-                                        'bg-blue-200 dark:bg-blue-800 hover:bg-blue-300 dark:hover:bg-blue-700 border border-blue-300 dark:border-blue-600';
+                                    $statusLabel = 'Excused';
+                                    $statusDot = 'bg-blue-500';
+                                    $statusBg = 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-400';
                                     break;
                                 case 'sick':
-                                    $shortStatus = 'S';
-                                    $bgColor =
-                                        'hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600';
+                                    $statusLabel = 'Sick';
+                                    $statusDot = 'bg-purple-500';
+                                    $statusBg = 'bg-purple-50 text-purple-700 ring-purple-600/20 dark:bg-purple-900/30 dark:text-purple-400';
                                     break;
                                 case 'absent':
-                                    $shortStatus = 'A';
-                                    $bgColor =
-                                        'bg-red-200 dark:bg-red-800 hover:bg-red-300 dark:hover:bg-red-700 border border-red-300 dark:border-red-600';
+                                    $statusLabel = 'Absent';
+                                    $statusDot = 'bg-red-500';
+                                    $statusBg = 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-900/30 dark:text-red-400';
                                     break;
                                 default:
-                                    $shortStatus = '-';
-                                    $bgColor =
-                                        'hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600';
+                                    $statusLabel = '-';
+                                    $statusDot = 'bg-gray-400';
+                                    $statusBg = 'bg-gray-50 text-gray-600 ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400';
                                     break;
                             }
                         @endphp
-                        <tr wire:key="{{ $employee->id }}" class="group">
-                            {{-- Detail karyawan --}}
-                            <td
-                                class="{{ $class }} text-nowrap group-hover:bg-gray-100 dark:group-hover:bg-gray-700">
-                                {{ $employee->name }}
+                        <tr wire:key="{{ $employee->id }}" class="group hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                                        {{ substr($employee->name, 0, 1) }}
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $employee->name }}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $employee->jobTitle?->name ?? 'Staff' }} • {{ $employee->division?->name ?? '-' }}</div>
+                                    </div>
+                                </div>
                             </td>
-                            <td class="{{ $class }} group-hover:bg-gray-100 dark:group-hover:bg-gray-700">
-                                {{ $employee->nip }}
-                            </td>
-                            <td
-                                class="{{ $class }} text-nowrap group-hover:bg-gray-100 dark:group-hover:bg-gray-700">
-                                {{ $employee->division?->name ?? '-' }}
-                            </td>
-                            <td
-                                class="{{ $class }} text-nowrap group-hover:bg-gray-100 dark:group-hover:bg-gray-700">
-                                {{ $employee->jobTitle?->name ?? '-' }}
-                            </td>
-                            <td
-                                class="{{ $class }} text-nowrap group-hover:bg-gray-100 dark:group-hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                 {{ $attendance->shift?->name ?? '-' }}
                             </td>
-
-                            {{-- Absensi --}}
-                            <td
-                                class="{{ $bgColor }} text-nowrap px-1 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">
-                                {{ __($status) }}
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $statusBg }}">
+                                    <span class="mr-1.5 h-1.5 w-1.5 rounded-full {{ $statusDot }}"></span>
+                                    {{ __($statusLabel) }}
+                                </span>
                             </td>
-
-                            {{-- Waktu masuk/keluar --}}
-                            <td class="{{ $class }} group-hover:bg-gray-100 dark:group-hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600 dark:text-gray-300">
                                 {{ $timeIn ?? '-' }}
                             </td>
-                            <td class="{{ $class }} group-hover:bg-gray-100 dark:group-hover:bg-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600 dark:text-gray-300">
                                 {{ $timeOut ?? '-' }}
                             </td>
-
-                            {{-- Action --}}
-                            <td
-                                class="cursor-pointer text-center text-sm font-medium text-gray-900 group-hover:bg-gray-100 dark:text-white dark:group-hover:bg-gray-700">
-                                <div class="flex items-center justify-center gap-3">
-                                    @if ($attendance && ($attendance->attachment || $attendance->note || $attendance->lat_lng))
-                                        <button type="button" 
-                                            wire:click="show({{ $attendance->id }})"
-                                            class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-300 dark:bg-blue-900/50 dark:hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                            {{ __('Detail') }}
-                                        </button>
-                                    @else
-                                        -
-                                    @endif
-                                </div>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                 @if ($attendance && ($attendance->attachment || $attendance->note || $attendance->lat_lng))
+                                    <button wire:click="show({{ $attendance->id }})" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                        {{ __('Detail') }}
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

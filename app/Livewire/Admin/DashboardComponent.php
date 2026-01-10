@@ -16,6 +16,10 @@ class DashboardComponent extends Component
     public $selectedStatType = '';
     public $detailList = [];
 
+    // Pending Counts
+    public $pendingLeavesCount = 0;
+    public $pendingReimbursementsCount = 0;
+
     public function showStatDetail($type)
     {
         $this->selectedStatType = $type;
@@ -50,6 +54,10 @@ class DashboardComponent extends Component
 
     public function render()
     {
+        // Fetch Pending Counts
+        $this->pendingLeavesCount = Attendance::where('approval_status', 'pending')->count();
+        $this->pendingReimbursementsCount = \App\Models\Reimbursement::where('status', 'pending')->count();
+
         /** @var Collection<Attendance>  */
         $attendances = Attendance::with('shift')->where('date', date('Y-m-d'))->get();
 
