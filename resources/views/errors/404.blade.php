@@ -1,25 +1,29 @@
 @extends('errors::layout')
 
-@section('title', __('Not Found'))
+@section('title', __('Page Not Found'))
 
 @section('content')
-    <div class="mb-8">
-        <svg class="w-48 h-48 md:w-64 md:h-64 mx-auto text-gray-300 animate-float" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
-             <!-- Astronaut Body -->
-             <path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2Z" fill="#1f2937" stroke="#4b5563" stroke-width="1"/>
-             <circle cx="12" cy="9" r="5" fill="#111827" stroke="#60a5fa" stroke-width="0.5"/>
-             <path d="M9 18V21C9 21.55 9.45 22 10 22H14C14.55 22 15 21.55 15 21V18" stroke="#4b5563" stroke-width="1"/>
-             <!-- Cord -->
-             <path d="M16 10C19 10 22 8 23 5" stroke="#60a5fa" stroke-width="0.5" stroke-dasharray="2 2" class="opacity-50"/>
-        </svg>
-        <div class="mt-4 text-6xl sm:text-7xl md:text-[120px] font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 leading-none drop-shadow-[0_0_10px_rgba(139,92,246,0.3)]">
-            404
+    <div class="mb-6 flex justify-center">
+        <div class="p-4 bg-red-100 dark:bg-red-900/30 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
         </div>
     </div>
 
-    <h1 class="text-3xl md:text-4xl font-bold mb-4">Houston, We Have a Problem!</h1>
-    <p class="text-gray-400 text-lg md:text-xl">
-        The page you are looking for has drifted into deep space.<br>
-        We can't seem to find it in this galaxy.
+    <h1 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">404</h1>
+    <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4">{{ __('Page Not Found') }}</h2>
+
+    <p class="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+        {{ __('Sorry, the page you are looking for does not exist or has been moved.') }}
     </p>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="{{ url('/') }}" class="inline-flex items-center justify-center px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold rounded-xl shadow-lg shadow-primary-500/30 transition-all duration-200">
+            {{ __('Go Home') }}
+        </a>
+        <button onclick="history.back()" class="inline-flex items-center justify-center px-6 py-3 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 text-sm font-semibold rounded-xl transition-all duration-200">
+            {{ __('Go Back') }}
+        </button>
+    </div>
 @endsection

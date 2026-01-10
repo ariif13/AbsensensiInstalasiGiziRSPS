@@ -1,26 +1,26 @@
 @extends('errors::layout')
 
-@section('title', __('Forbidden'))
+@section('title', __('Access Denied'))
 
 @section('content')
-    <div class="mb-8">
-        <svg class="w-48 h-48 md:w-64 md:h-64 mx-auto text-gray-300 animate-float" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
-             <!-- Planet -->
-             <circle cx="12" cy="12" r="8" fill="#1f2937" stroke="#ef4444" stroke-width="1"/>
-             <path d="M4 12H20" stroke="#ef4444" stroke-width="0.5" stroke-dasharray="2 2"/>
-             
-             <!-- Sign -->
-             <rect x="8" y="8" width="8" height="8" rx="1" fill="#7f1d1d" stroke="#ef4444"/>
-             <path d="M10 10L14 14M14 10L10 14" stroke="#fecaca" stroke-width="1.5"/>
-        </svg>
-        <div class="mt-4 text-6xl sm:text-7xl md:text-[120px] font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-600 leading-none drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]">
-            403
+    <div class="mb-6 flex justify-center">
+        <div class="p-4 bg-orange-100 dark:bg-orange-900/30 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-orange-500 dark:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
         </div>
     </div>
 
-    <h1 class="text-3xl md:text-4xl font-bold mb-4">Restricted Sector</h1>
-    <p class="text-gray-400 text-lg md:text-xl">
-        Access denied, Commander.<br>
-        You don't have clearance for this planet.
+    <h1 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">403</h1>
+    <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4">{{ __('Access Denied') }}</h2>
+
+    <p class="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+        {{ __($exception->getMessage() ?: 'You do not have permission to access this page.') }}
     </p>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="{{ url('/') }}" class="inline-flex items-center justify-center px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold rounded-xl shadow-lg shadow-primary-500/30 transition-all duration-200">
+            {{ __('Return to Dashboard') }}
+        </a>
+    </div>
 @endsection

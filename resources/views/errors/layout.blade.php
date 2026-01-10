@@ -1,83 +1,53 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark overflow-hidden">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title')</title>
-    @vite(['resources/css/app.css'])
-    <script>
-        // Inline Critical Dark Mode Script to prevent FOUC & remove heavy JS bundle dependency
-        (function() {
-            try {
-                var isDark = localStorage.getItem('isDark') === 'true' || 
-                            (!('isDark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                if (isDark) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            } catch (_) {}
-        })();
-    </script>
-    <style>
-        .stars {
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            animation: stars 40s linear infinite;
-            will-change: background-position;
-        }
-        
-        @keyframes stars {
-             from { background-position: 0 0; }
-             to { background-position: 0 1000px; }
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(2deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
-            will-change: transform;
-        }
-
-        .planet {
-            background: radial-gradient(circle at 30% 30%, #4c1d95, #000);
-            box-shadow: 0 0 20px #8b5cf6;
-            will-change: transform;
-        }
-    </style>
-</head>
-<body class="bg-[#0B1120] text-white h-screen overflow-hidden flex items-center justify-center relative font-sans antialiased">
     
-    <!-- Background Elements -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="stars absolute inset-0 opacity-50"></div>
-        <div class="absolute bottom-[-100px] right-[-100px] w-64 h-64 rounded-full planet opacity-80 animate-float" style="animation-delay: -2s;"></div>
-        <div class="absolute top-[10%] left-[10%] w-4 h-4 rounded-full bg-blue-400 blur-[2px] animate-pulse"></div>
-        <div class="absolute top-[20%] right-[20%] w-2 h-2 rounded-full bg-purple-400 blur-[1px] animate-pulse" style="animation-delay: 1s;"></div>
-    </div>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800,900&display=swap" rel="stylesheet" />
+    
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <script>
+        if (localStorage.getItem('isDark') === 'true' || (!('isDark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="h-full font-sans antialiased text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-900 selection:bg-primary-500 selection:text-white">
 
-    <!-- Content -->
-    <div class="relative z-10 text-center w-full max-w-2xl px-4 md:px-6">
-        @yield('content')
+    <div class="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
         
-        <div class="mt-12">
-            <a href="{{ url('/') }}" class="inline-flex items-center gap-2 px-8 py-3 bg-primary-600 hover:bg-primary-500 text-white rounded-full font-bold transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                </svg>
-                Return to Earth
-            </a>
+        {{-- Background Blobs --}}
+        <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary-400/20 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-green-400/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+        </div>
+
+        <div class="w-full max-w-lg text-center">
+            {{-- Logo --}}
+            <div class="flex justify-center mb-8">
+                <x-application-logo class="h-20 w-auto text-primary-600 dark:text-primary-400" />
+            </div>
+
+            {{-- Glass Card --}}
+            <div class="relative backdrop-blur-xl bg-white/60 dark:bg-gray-800/60 rounded-3xl shadow-2xl ring-1 ring-gray-900/5 dark:ring-white/10 p-10 overflow-hidden transform transition-all hover:scale-[1.01]">
+                
+                {{-- Decorative Top Border --}}
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-green-500"></div>
+
+                @yield('content')
+                
+            </div>
+
+            {{-- Footer / Links --}}
+            <div class="mt-8 text-sm text-gray-500 dark:text-gray-400">
+                &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+            </div>
         </div>
     </div>
 

@@ -95,30 +95,28 @@ class SystemMaintenance extends Component
         }
 
         try {
-            DB::transaction(function () {
-                // Disable Foreign Key Checks to allow truncation
-                DB::statement('SET FOREIGN_KEY_CHECKS=0;');   
-                
-                if ($this->cleanAttendances) {
-                    Attendance::truncate();
-                }
+            // Disable Foreign Key Checks to allow truncation
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');   
+            
+            if ($this->cleanAttendances) {
+                Attendance::truncate();
+            }
 
-                if ($this->cleanActivityLogs) {
-                    DB::table('activity_logs')->truncate();
-                }
+            if ($this->cleanActivityLogs) {
+                DB::table('activity_logs')->truncate();
+            }
 
-                if ($this->cleanNotifications) {
-                    DB::table('notifications')->truncate();
-                }
+            if ($this->cleanNotifications) {
+                DB::table('notifications')->truncate();
+            }
 
-                if ($this->cleanNonAdminUsers) {
-                    // Delete users who are NOT admin or superadmin
-                    User::where('group', 'user')->delete();
-                }
+            if ($this->cleanNonAdminUsers) {
+                // Delete users who are NOT admin or superadmin
+                User::where('group', 'user')->delete();
+            }
 
-                // Re-enable Foreign Key Checks
-                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-            });
+            // Re-enable Foreign Key Checks
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
             if ($this->cleanStorage) {
                 // Delete physical files
