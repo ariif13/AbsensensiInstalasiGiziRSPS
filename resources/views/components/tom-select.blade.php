@@ -4,20 +4,20 @@
 <style>
     /* Default (Light Mode) */
     .ts-control {
-        background-color: #f9fafb; /* bg-gray-50 */
+        background-color: #ffffff; /* bg-white */
         border-color: #d1d5db; /* border-gray-300 */
         color: #111827; /* text-gray-900 */
-        border-radius: 0.375rem; /* rounded-md to match x-input */
-        padding-top: 0.5rem;   /* Increased from 0.4rem */
-        padding-bottom: 0.5rem; /* Increased from 0.4rem */
+        border-radius: 0.5rem; /* rounded-lg */
+        padding-top: 0.375rem;   /* reduced from 0.5rem */
+        padding-bottom: 0.375rem; /* reduced from 0.5rem */
         padding-left: 0.75rem;
         padding-right: 2.5rem; /* Space for arrow */
         box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
-        font-size: 0.875rem;
+        font-size: 0.875rem; /* text-sm */
         line-height: 1.25rem;
-        min-height: 42px; /* Ensure consistent height */
+        min-height: 36px; /* Tighter admin height */
         display: flex;
-        flex-wrap: nowrap; /* Prevent cursor/input from dropping to next line */
+        flex-wrap: nowrap;
         align-items: center;
         overflow: hidden;
     }
@@ -67,11 +67,11 @@
     .dark .ts-control {
         background-color: #111827 !important; /* bg-gray-900 */
         border-color: #374151 !important; /* border-gray-700 */
-        color: #ffffff !important; /* text-white */
+        color: #d1d5db !important; /* text-gray-300 */
     }
 
     .dark .ts-control input {
-        color: #ffffff !important;
+        color: #d1d5db !important; /* text-gray-300 */
     }
 
     .dark .ts-wrapper.focus .ts-control {
@@ -80,7 +80,7 @@
     }
 
     .dark .ts-dropdown {
-        background-color: #1f2937 !important; /* bg-gray-800 - Match card bg for better blend or use 900 */
+        background-color: #1f2937 !important; /* bg-gray-800 */
         border-color: #374151 !important; /* border-gray-700 */
         color: #d1d5db !important; /* text-gray-300 */
     }

@@ -1,12 +1,13 @@
+```html
     <div class="relative z-20">
-        <x-tom-select id="shift"
-            class="w-full"
-            wire:model="shift_id"
-            :options="$shifts->map(fn($shift) => [
-                'id' => $shift->id,
-                'name' => $shift->name . ' | ' . \App\Helpers::format_time($shift->start_time) . ' - ' . \App\Helpers::format_time($shift->end_time)
-            ])->values()->toArray()"
-            placeholder="{{ __('Select Shift') }}" />
+        <x-tom-select-user
+        id="shift_id"
+        name="shift_id"
+        wire:model.live="shift_id"
+        placeholder="{{ __('Select Shift') }}"
+        :options="$shifts"
+        class="w-full"
+    />
         @error('shift_id')
             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
         @enderror

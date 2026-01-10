@@ -86,6 +86,20 @@ class EmployeeComponent extends Component
         $this->banner(__('Deleted successfully.'));
     }
 
+    public function updated($property, $value)
+    {
+        if ($property === 'form.job_title_id' && $value) {
+            $jobTitle = \App\Models\JobTitle::find($value);
+            if ($jobTitle && $jobTitle->division_id) {
+                $this->form->division_id = $jobTitle->division_id;
+            }
+        }
+
+        if ($property === 'form.division_id') {
+            $this->form->job_title_id = null;
+        }
+    }
+
     public function render()
     {
         $users = User::where('group', 'user')
@@ -101,6 +115,17 @@ class EmployeeComponent extends Component
             ->with(['division', 'jobTitle', 'education'])
             ->orderBy('name')
             ->paginate(20);
-        return view('livewire.admin.employees', ['users' => $users]);
+
+        $availableJobTitles = \App\Models\JobTitle::query()
+            ->when($this->form->division_id, function ($q) {
+                $q->where('division_id', $this->form->division_id)
+                  ->orWhereNull('division_id'); // Include global titles if any
+            })
+            ->get();
+
+        return view('livewire.admin.employees', [
+            'users' => $users,
+            'availableJobTitles' => $availableJobTitles,
+        ]);
     }
 }

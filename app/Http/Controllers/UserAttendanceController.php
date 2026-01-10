@@ -154,15 +154,17 @@ class UserAttendanceController extends Controller
 
             \App\Models\ActivityLog::record('Leave Request', "User submitted {$request->status} request from {$fromDate->format('Y-m-d')} to {$toDate->format('Y-m-d')}");
 
-            // Notify Admins (single notification for the entire date range)
-            $admins = \App\Models\User::whereIn('group', ['admin', 'superadmin'])->get();
+            // Notify Supervisor (or fallback to Admins)
+            $supervisor = Auth::user()->supervisor;
+            $notifiable = $supervisor ? collect([$supervisor]) : \App\Models\User::whereIn('group', ['admin', 'superadmin'])->get();
+            
             $latestAttendance = $attendance ?? \App\Models\Attendance::where('user_id', Auth::id())->latest()->first();
             
-            if (class_exists(\Illuminate\Support\Facades\Notification::class) && $latestAttendance) {
+            if (class_exists(\Illuminate\Support\Facades\Notification::class) && $latestAttendance && $notifiable->count() > 0) {
                 // Pass date range to notification for summary
                 $notification = new \App\Notifications\LeaveRequested($latestAttendance, $fromDate, $toDate);
                 
-                \Illuminate\Support\Facades\Notification::send($admins, $notification);
+                \Illuminate\Support\Facades\Notification::send($notifiable, $notification); // Send to Supervisor/Admins
                 
                 // Also send email to configured admin email
                 $adminEmail = \App\Models\Setting::getValue('notif.admin_email');

@@ -340,7 +340,7 @@
         <div class="mt-4">
           <x-label for="create_division" value="{{ __('Division') }}" />
           <div class="mt-1 block w-full">
-            <x-tom-select id="create_division" wire:model="form.division_id" placeholder="{{ __('Select Division') }}"
+            <x-tom-select id="create_division" wire:model.live="form.division_id" placeholder="{{ __('Select Division') }}"
                 :options="App\Models\Division::all()->map(fn($d) => ['id' => $d->id, 'name' => $d->name])" />
           </div>
           @error('form.division_id')
@@ -349,9 +349,9 @@
         </div>
         <div class="mt-4">
           <x-label for="create_jobTitle" value="{{ __('Job Title') }}" />
-          <div class="mt-1 block w-full">
-            <x-tom-select id="create_jobTitle" wire:model="form.job_title_id" placeholder="{{ __('Select Job Title') }}"
-                :options="App\Models\JobTitle::all()->map(fn($j) => ['id' => $j->id, 'name' => $j->name])" />
+          <div class="mt-1 block w-full" wire:key="create-job-title-wrapper-{{ $form->division_id ?? 'all' }}">
+            <x-tom-select id="create_jobTitle" wire:model.live="form.job_title_id" placeholder="{{ __('Select Job Title') }}"
+                :options="$availableJobTitles->map(fn($j) => ['id' => $j->id, 'name' => $j->name])" />
           </div>
           @error('form.job_title_id')
             <x-input-error for="form.job_title_id" class="mt-2" message="{{ $message }}" />
@@ -529,7 +529,7 @@
         <div class="mt-4">
           <x-label for="edit_division" value="{{ __('Division') }}" />
           <div class="mt-1 block w-full">
-            <x-tom-select id="edit_division" wire:model="form.division_id" placeholder="{{ __('Select Division') }}"
+            <x-tom-select id="edit_division" wire:model.live="form.division_id" placeholder="{{ __('Select Division') }}"
                 :options="App\Models\Division::all()->map(fn($d) => ['id' => $d->id, 'name' => $d->name])" />
           </div>
           @error('form.division_id')
@@ -538,9 +538,9 @@
         </div>
         <div class="mt-4">
           <x-label for="edit_jobTitle" value="{{ __('Job Title') }}" />
-          <div class="mt-1 block w-full">
-            <x-tom-select id="edit_jobTitle" wire:model="form.job_title_id" placeholder="{{ __('Select Job Title') }}"
-                :options="App\Models\JobTitle::all()->map(fn($j) => ['id' => $j->id, 'name' => $j->name])" />
+          <div class="mt-1 block w-full" wire:key="edit-job-title-wrapper-{{ $form->division_id ?? 'all' }}">
+            <x-tom-select id="edit_jobTitle" wire:model.live="form.job_title_id" placeholder="{{ __('Select Job Title') }}"
+                :options="$availableJobTitles->map(fn($j) => ['id' => $j->id, 'name' => $j->name])" />
           </div>
           @error('form.job_title_id')
             <x-input-error for="form.job_title_id" class="mt-2" message="{{ $message }}" />

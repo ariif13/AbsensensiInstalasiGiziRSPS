@@ -1,113 +1,124 @@
 <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6">
-            
-            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
                     {{ __('Reimbursement Requests') }}
                 </h2>
-                
-                <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-                    {{-- Search --}}
-                    <div class="relative">
-                        <x-input wire:model.live.debounce.300ms="search" placeholder="{{ __('Search Employee...') }}" class="w-full md:w-64 pl-10" />
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
-                    </div>
-
-                    {{-- Status Filter --}}
-                    <select wire:model.live="statusFilter" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-primary-500 dark:focus:border-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 rounded-md shadow-sm">
-                        <option value="pending">{{ __('Pending') }}</option>
-                        <option value="approved">{{ __('Approved') }}</option>
-                        <option value="rejected">{{ __('Rejected') }}</option>
-                        <option value="">{{ __('All Status') }}</option>
-                    </select>
-                </div>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    {{ __('Manage and approve employee expense claims.') }}
+                </p>
             </div>
+            <div class="flex flex-col sm:flex-row gap-3">
+                 <div class="relative">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <x-heroicon-m-magnifying-glass class="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="{{ __('Search...') }}" class="block w-full rounded-lg border-0 py-2 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 dark:bg-gray-800 dark:text-white dark:ring-gray-700 sm:text-sm sm:leading-6">
+                </div>
+                <select wire:model.live="statusFilter" class="block w-full rounded-lg border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 dark:bg-gray-800 dark:text-white dark:ring-gray-700 sm:text-sm sm:leading-6">
+                    <option value="pending">{{ __('Pending') }}</option>
+                    <option value="approved">{{ __('Approved') }}</option>
+                    <option value="rejected">{{ __('Rejected') }}</option>
+                    <option value="">{{ __('All Status') }}</option>
+                </select>
+            </div>
+        </div>
 
+        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
+                <table class="w-full whitespace-nowrap text-left text-sm">
+                    <thead class="bg-gray-50 text-gray-500 dark:bg-gray-700/50 dark:text-gray-400">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Employee') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Date') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Type') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Amount') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Description') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Attachment') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Status') }}</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Actions') }}</th>
+                            <th scope="col" class="px-6 py-4 font-medium">{{ __('Employee') }}</th>
+                            <th scope="col" class="px-6 py-4 font-medium">{{ __('Date') }}</th>
+                            <th scope="col" class="px-6 py-4 font-medium">{{ __('Type') }}</th>
+                            <th scope="col" class="px-6 py-4 font-medium">{{ __('Amount') }}</th>
+                            <th scope="col" class="px-6 py-4 font-medium">{{ __('Description') }}</th>
+                            <th scope="col" class="px-6 py-4 font-medium">{{ __('Attachment') }}</th>
+                            <th scope="col" class="px-6 py-4 font-medium">{{ __('Status') }}</th>
+                            <th scope="col" class="px-6 py-4 text-right font-medium">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                         @forelse($reimbursements as $claim)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10">
-                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ $claim->user->profile_photo_url }}" alt="{{ $claim->user->name }}">
+                            <tr class="group hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-9 w-9 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+                                            <img src="{{ $claim->user->profile_photo_url }}" alt="{{ $claim->user->name }}" class="h-full w-full object-cover">
                                         </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                                {{ $claim->user->name }}
-                                            </div>
-                                            <div class="text-sm text-gray-500">
-                                                {{ $claim->user->email }}
-                                            </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900 dark:text-white">{{ $claim->user->name }}</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ $claim->user->email }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                <td class="px-6 py-4 text-gray-600 dark:text-gray-300">
                                     {{ \Carbon\Carbon::parse($claim->date)->format('d M Y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 capitalize">
+                                <td class="px-6 py-4 capitalize text-gray-600 dark:text-gray-300">
                                     {{ $claim->type }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">
+                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                     Rp {{ number_format($claim->amount, 0, ',', '.') }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate">
+                                <td class="px-6 py-4 text-gray-600 dark:text-gray-300 max-w-xs truncate">
                                     {{ $claim->description }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                                    @if($claim->attachment)
-                                        <a href="{{ Storage::url($claim->attachment) }}" target="_blank">{{ __('View File') }}</a>
+                                <td class="px-6 py-4 text-gray-600 dark:text-gray-300">
+                                    @if ($claim->attachment)
+                                        <a href="{{ Storage::url($claim->attachment) }}" target="_blank" class="flex items-center gap-1 text-primary-600 hover:text-primary-700 transition-colors">
+                                            <x-heroicon-m-paper-clip class="h-4 w-4" />
+                                            <span>{{ __('View') }}</span>
+                                        </a>
                                     @else
                                         <span class="text-gray-400 text-xs">{{ __('No File') }}</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        @if($claim->status === 'approved') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                                        @elseif($claim->status === 'rejected') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
-                                        @else bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 @endif">
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset 
+                                        @if($claim->status === 'approved') bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/30 dark:text-green-400 dark:ring-green-500/50
+                                        @elseif($claim->status === 'rejected') bg-red-50 text-red-700 ring-red-600/10 dark:bg-red-900/30 dark:text-red-400 dark:ring-red-500/50
+                                        @else bg-yellow-50 text-yellow-800 ring-yellow-600/20 dark:bg-yellow-900/30 dark:text-yellow-400 dark:ring-yellow-500/50 @endif">
                                         {{ ucfirst($claim->status) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <td class="px-6 py-4 text-right">
                                     @if($claim->status === 'pending')
-                                        <button wire:click="approve('{{ $claim->id }}')" wire:confirm="{{ __('Are you sure you want to approve this claim?') }}" class="text-green-600 hover:text-green-900 dark:hover:text-green-400 mr-3">{{ __('Approve') }}</button>
-                                        <button wire:click="reject('{{ $claim->id }}')" wire:confirm="{{ __('Are you sure you want to reject this claim?') }}" class="text-red-600 hover:text-red-900 dark:hover:text-red-400">{{ __('Reject') }}</button>
+                                        <div class="flex justify-end gap-2">
+                                        <x-button wire:click="approve('{{ $claim->id }}')" wire:confirm="{{ __('Approve this claim?') }}" class="!bg-green-600 hover:!bg-green-700 focus:!ring-green-500 !px-3 !py-1.5 transition-colors">
+                                            <x-heroicon-m-check class="mr-1.5 h-4 w-4" />
+                                            {{ __('Approve') }}
+                                        </x-button>
+                                        <x-danger-button wire:click="reject('{{ $claim->id }}')" wire:confirm="{{ __('Reject this claim?') }}" class="!px-3 !py-1.5 transition-colors">
+                                            <x-heroicon-m-x-mark class="mr-1.5 h-4 w-4" />
+                                            {{ __('Reject') }}
+                                        </x-danger-button>
+                                    </div>
+                                    @else
+                                        <span class="text-xs text-gray-400">{{ __('Completed') }}</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                    {{ __('No reimbursement requests found.') }}
+                                <td colspan="8" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <x-heroicon-o-currency-dollar class="h-12 w-12 text-gray-300 dark:text-gray-600 mb-3" />
+                                        <p class="font-medium">{{ __('No requests found') }}</p>
+                                    </div>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-
-            <div class="mt-4">
-                {{ $reimbursements->links() }}
-            </div>
+            @if($reimbursements->hasPages())
+                <div class="border-t border-gray-200 bg-gray-50 px-6 py-3 dark:border-gray-700 dark:bg-gray-800">
+                    {{ $reimbursements->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </div>

@@ -12,6 +12,19 @@ class JobTitle extends Model
     use HasTimestamps;
 
     protected $fillable = [
-        'name'
+        'name',
+        'level', // Deprecated, use job_level_id
+        'job_level_id',
+        'division_id',
     ];
+
+    public function jobLevel()
+    {
+        return $this->belongsTo(JobLevel::class);
+    }
+
+    public function division()
+    {
+        return $this->belongsTo(Division::class);
+    }
 }

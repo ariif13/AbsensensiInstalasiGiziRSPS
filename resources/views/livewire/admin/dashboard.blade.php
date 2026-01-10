@@ -51,7 +51,9 @@
         <!-- 2. Action Center (Pending Tasks) -->
         <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-sm ring-1 ring-blue-900/5 transition-all hover:shadow-md dark:from-blue-900/20 dark:to-indigo-900/20 dark:ring-white/10">
             <div class="flex items-center justify-between">
-                <dt class="truncate text-sm font-medium text-blue-600 dark:text-blue-300">{{ __('Action Needed') }}</dt>
+                <dt class="truncate text-sm font-medium text-blue-600 dark:text-blue-300">
+                    {{ (auth()->user()->is_admin || auth()->user()->is_superadmin) ? __('Action Needed') : __('My Team Requests') }}
+                </dt>
                 <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                     {{ $pendingLeavesCount + $pendingReimbursementsCount }} {{ __('Pending') }}
                 </span>
@@ -122,7 +124,7 @@
         <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10" wire:poll.10s>
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ __('Live Feed') }}</h3>
-                <a href="{{ route('admin.activity-logs.export') }}" target="_system" 
+                <a href="{{ route('admin.activity-logs') }}" 
                    class="text-xs font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
                     {{ __('View All') }}
                 </a>
@@ -199,8 +201,8 @@
                 @forelse($calendarLeaves->take(5) as $leave)
                     <div class="flex items-center gap-4 p-3 rounded-xl border border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                         <div class="flex-none flex flex-col items-center justify-center h-12 w-12 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                            <span class="text-xs font-bold">{{ \Carbon\Carbon::parse($leave['date_display'])->format('d') }}</span>
-                            <span class="text-[10px] uppercase">{{ \Carbon\Carbon::parse($leave['date_display'])->format('M') }}</span>
+                            <span class="text-xs font-bold">{{ \Carbon\Carbon::parse($leave['start_date'])->format('d') }}</span>
+                            <span class="text-[10px] uppercase">{{ \Carbon\Carbon::parse($leave['start_date'])->format('M') }}</span>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
@@ -521,6 +523,18 @@
                     if (this.chart) {
                         this.chart.destroy();
                     }
+
+                    // Watch for Livewire Event
+                    Livewire.on('chart-updated', (data) => {
+                         // Parse the data correctly since it comes as array
+                         const chartData = data[0]; 
+                         
+                         this.chart.data.labels = chartData.labels;
+                         this.chart.data.datasets[0].data = chartData.present;
+                         this.chart.data.datasets[1].data = chartData.late;
+                         this.chart.data.datasets[2].data = chartData.other;
+                         this.chart.update();
+                    });
 
                     this.chart = new Chart(ctx, {
                         type: 'bar',

@@ -12,6 +12,9 @@ class JobTitleComponent extends Component
     use InteractsWithBanner;
 
     public $name;
+    public $job_level_id;
+    public $division_id;
+    
     public $deleteName = null;
     public $creating = false;
     public $editing = false;
@@ -19,7 +22,9 @@ class JobTitleComponent extends Component
     public $selectedId = null;
 
     protected $rules = [
-        'name' => ['required', 'string', 'max:255', 'unique:job_titles'],
+        'name' => ['required', 'string', 'max:255'], // Unique validation needs more complex logic if scoping by division, but simple global unique is fine for now or scope later.
+        'job_level_id' => ['required', 'exists:job_levels,id'],
+        'division_id' => ['nullable', 'exists:divisions,id'],
     ];
 
     public function showCreating()
@@ -35,9 +40,15 @@ class JobTitleComponent extends Component
             return abort(403);
         }
         $this->validate();
-        JobTitle::create(['name' => $this->name]);
+        JobTitle::create([
+            'name' => $this->name,
+            'job_level_id' => $this->job_level_id,
+            'division_id' => $this->division_id,
+        ]);
         $this->creating = false;
         $this->name = null;
+        $this->job_level_id = null;
+        $this->division_id = null;
         $this->banner(__('Created successfully.'));
     }
 
@@ -47,6 +58,8 @@ class JobTitleComponent extends Component
         $this->editing = true;
         $jobTitle = JobTitle::find($id);
         $this->name = $jobTitle->name;
+        $this->job_level_id = $jobTitle->job_level_id;
+        $this->division_id = $jobTitle->division_id;
         $this->selectedId = $id;
     }
 
@@ -57,7 +70,11 @@ class JobTitleComponent extends Component
         }
         $this->validate();
         $jobTitle = JobTitle::find($this->selectedId);
-        $jobTitle->update(['name' => $this->name]);
+        $jobTitle->update([
+            'name' => $this->name,
+            'job_level_id' => $this->job_level_id,
+            'division_id' => $this->division_id,
+        ]);
         $this->editing = false;
         $this->selectedId = null;
         $this->banner(__('Updated successfully.'));
@@ -85,7 +102,11 @@ class JobTitleComponent extends Component
 
     public function render()
     {
-        $jobTitles = JobTitle::all();
-        return view('livewire.admin.master-data.job-title', ['jobTitles' => $jobTitles]);
+        $jobTitles = JobTitle::with(['jobLevel', 'division'])->get();
+        return view('livewire.admin.master-data.job-title', [
+            'jobTitles' => $jobTitles,
+            'jobLevels' => \App\Models\JobLevel::orderBy('rank')->get(),
+            'divisions' => \App\Models\Division::all(),
+        ]);
     }
 }

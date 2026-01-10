@@ -26,6 +26,15 @@ class ReimbursementManager extends Component
     public function approve($id)
     {
         $reimbursement = Reimbursement::findOrFail($id);
+
+        // Auth Check
+        $user = auth()->user();
+        if (!$user->is_admin && !$user->is_superadmin) {
+            if (!$user->subordinates->contains('id', $reimbursement->user_id)) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
         $reimbursement->update(['status' => 'approved']);
         
         $reimbursement->user->notify(new \App\Notifications\ReimbursementStatusUpdated($reimbursement));
@@ -36,6 +45,15 @@ class ReimbursementManager extends Component
     public function reject($id)
     {
         $reimbursement = Reimbursement::findOrFail($id);
+        
+        // Auth Check
+        $user = auth()->user();
+        if (!$user->is_admin && !$user->is_superadmin) {
+            if (!$user->subordinates->contains('id', $reimbursement->user_id)) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
         $reimbursement->update(['status' => 'rejected']);
         
         $reimbursement->user->notify(new \App\Notifications\ReimbursementStatusUpdated($reimbursement));
@@ -45,8 +63,13 @@ class ReimbursementManager extends Component
 
     public function render()
     {
+        $user = auth()->user();
+        
         $reimbursements = Reimbursement::query()
             ->with('user')
+            ->when(!$user->is_admin && !$user->is_superadmin, function ($q) use ($user) {
+                 return $q->whereIn('user_id', $user->subordinates->pluck('id'));
+            })
             ->when($this->statusFilter, function ($query) {
                 return $query->where('status', $this->statusFilter);
             })

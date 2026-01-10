@@ -45,13 +45,13 @@
                                 {{-- Type --}}
                                 <div>
                                     <x-label for="type" value="{{ __('Claim Type') }}" />
-                                    <x-tom-select id="type" wire:model="type" placeholder="{{ __('Select Claim Type') }}">
-                                        <option value="medical">{{ __('Medical') }}</option>
-                                        <option value="transport">{{ __('Transport') }}</option>
-                                        <option value="optical">{{ __('Optical') }}</option>
-                                        <option value="dental">{{ __('Dental') }}</option>
-                                        <option value="other">{{ __('Other') }}</option>
-                                    </x-tom-select>
+                                    <x-tom-select-user id="type" wire:model="type" placeholder="{{ __('Select Type') }}" class="mt-1 block w-full">
+                                <option value="" disabled>{{ __('Select Type') }}</option>
+                                <option value="medical">{{ __('Medical') }}</option>
+                                <option value="transport">{{ __('Transport') }}</option>
+                                <option value="project">{{ __('Project') }}</option>
+                                <option value="other">{{ __('Other') }}</option>
+                            </x-tom-select-user>
                                     <x-input-error for="type" class="mt-2" />
                                 </div>
                             </div>

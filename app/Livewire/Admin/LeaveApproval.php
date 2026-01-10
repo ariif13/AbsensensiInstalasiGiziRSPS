@@ -22,10 +22,16 @@ class LeaveApproval extends Component
     public function render()
     {
         // Fetch all pending requests
-        $allLeaves = Attendance::pending()
-            ->with(['user.division']) // Eager load
-            ->orderBy('date', 'asc')
-            ->get();
+        $user = Auth::user();
+        $query = Attendance::pending()->with(['user.division']);
+
+        if (!$user->is_admin && !$user->is_superadmin) {
+             // Only subordinates
+             $subordinateIds = $user->subordinates->pluck('id');
+             $query->whereIn('user_id', $subordinateIds);
+        }
+
+        $allLeaves = $query->orderBy('date', 'asc')->get();
 
         // Group by User ID, Status, and Note to combine related requests
         $groupedLeaves = $allLeaves->groupBy(function ($item) {
@@ -41,6 +47,19 @@ class LeaveApproval extends Component
     {
         if (!is_array($ids)) {
             $ids = [$ids];
+        }
+
+        // Authorization Check
+        $user = Auth::user();
+        if (!$user->is_admin && !$user->is_superadmin) {
+            $validIds = Attendance::whereIn('id', $ids)
+                ->whereIn('user_id', $user->subordinates->pluck('id'))
+                ->pluck('id')
+                ->toArray();
+            
+            if (count($validIds) !== count($ids)) {
+                abort(403, 'Unauthorized action.');
+            }
         }
 
         Attendance::whereIn('id', $ids)->update([
@@ -68,6 +87,19 @@ class LeaveApproval extends Component
 
     public function reject()
     {
+        // Authorization Check (Same as approve)
+        $user = Auth::user();
+        if (!$user->is_admin && !$user->is_superadmin) {
+            $validIds = Attendance::whereIn('id', $this->selectedIds)
+                ->whereIn('user_id', $user->subordinates->pluck('id'))
+                ->pluck('id')
+                ->toArray();
+            
+            if (count($validIds) !== count($this->selectedIds)) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
         Attendance::whereIn('id', $this->selectedIds)->update([
             'approval_status' => Attendance::STATUS_REJECTED,
             'status' => 'rejected', // Revert: Set explicit rejected status

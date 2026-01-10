@@ -55,11 +55,11 @@
 
                         <div>
                             <x-label for="status" value="{{ __('Leave Type') }}" class="mb-2 font-bold text-gray-700 dark:text-gray-300" />
-                            <x-tom-select name="status" id="status" placeholder="{{ __('Select Leave Type') }}" selected="{{ old('status') }}" required>
+                            <x-tom-select-user name="status" id="status" placeholder="{{ __('Select Leave Type') }}" selected="{{ old('status') }}" required>
                                 <option value="" disabled selected>{{ __('Select Leave Type') }}</option>
                                 <option value="excused">{{ __('Excused (Annual Leave)') }}</option>
                                 <option value="sick">{{ __('Sick (Requires Certificate)') }}</option>
-                            </x-tom-select>
+                            </x-tom-select-user>
                             <x-input-error for="status" class="mt-2" />
                         </div>
 

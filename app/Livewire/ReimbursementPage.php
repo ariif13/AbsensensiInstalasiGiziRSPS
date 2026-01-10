@@ -67,12 +67,14 @@ class ReimbursementPage extends Component
             'status' => 'pending',
         ]);
 
-        // Notify Admins
+        // Notify Supervisor (or fallback to Admins)
         $newReimbursement = Reimbursement::where('user_id', Auth::id())->latest()->first();
         if ($newReimbursement) {
-            $admins = \App\Models\User::whereIn('group', ['admin', 'superadmin'])->get();
-            if ($admins->count() > 0) {
-                 \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\ReimbursementRequested($newReimbursement));
+            $supervisor = Auth::user()->supervisor;
+            $notifiable = $supervisor ? collect([$supervisor]) : \App\Models\User::whereIn('group', ['admin', 'superadmin'])->get();
+
+            if ($notifiable->count() > 0) {
+                 \Illuminate\Support\Facades\Notification::send($notifiable, new \App\Notifications\ReimbursementRequested($newReimbursement));
                  
                  // Also try direct route for admin email setting
                  $adminEmail = \App\Models\Setting::getValue('notif.admin_email');
