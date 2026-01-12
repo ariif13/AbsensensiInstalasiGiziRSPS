@@ -82,7 +82,7 @@
                                                 {{ substr($log->user->name ?? '?', 0, 1) }}
                                             </div>
                                             <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $log->user->name ?? 'Unknown' }}</div>
+                                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $log->user->name ?? __('Unknown') }}</div>
                                                 <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->nip ?? '-' }}</div>
                                             </div>
                                         </div>

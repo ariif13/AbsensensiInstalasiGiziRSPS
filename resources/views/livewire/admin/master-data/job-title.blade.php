@@ -41,7 +41,7 @@
             {{ __('Level / Rank') }}
           </th>
           <th scope="col" class="relative px-6 py-3">
-            <span class="sr-only">Actions</span>
+            <span class="sr-only">{{ __('Actions') }}</span>
           </th>
         </tr>
       </thead>
@@ -127,7 +127,7 @@
                 <select id="job_level_id" wire:model.defer="job_level_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                     <option value="">{{ __('Select Level') }}</option>
                     @foreach($jobLevels as $level)
-                        <option value="{{ $level->id }}">{{ $level->name }} (Rank {{ $level->rank }})</option>
+                        <option value="{{ $level->id }}">{{ $level->name }} ({{ __('Rank') }} {{ $level->rank }})</option>
                     @endforeach
                 </select>
                 <x-input-error for="job_level_id" class="mt-2" />
@@ -176,7 +176,7 @@
                 <select id="edit_job_level_id" wire:model.defer="job_level_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                     <option value="">{{ __('Select Level') }}</option>
                     @foreach($jobLevels as $level)
-                        <option value="{{ $level->id }}">{{ $level->name }} (Rank {{ $level->rank }})</option>
+                        <option value="{{ $level->id }}">{{ $level->name }} ({{ __('Rank') }} {{ $level->rank }})</option>
                     @endforeach
                 </select>
                 <x-input-error for="job_level_id" class="mt-2" />

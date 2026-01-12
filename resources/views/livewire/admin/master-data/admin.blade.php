@@ -42,7 +42,7 @@
           
            <div class="text-sm text-gray-600 dark:text-gray-300 mb-4" {{ $wireClick }}>
               <div class="flex justify-between">
-                  <span class="text-gray-500">Phone</span>
+                  <span class="text-gray-500">{{ __('Phone') }}</span>
                   <span class="font-medium">{{ $user->phone ?? '-' }}</span>
               </div>
           </div>
@@ -70,7 +70,7 @@
       <thead class="bg-gray-50 dark:bg-gray-900">
         <tr>
           <th scope="col" class="relative px-2 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300">
-            No.
+            {{ __('No.') }}
           </th>
           <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
             {{ __('Name') }}
@@ -85,7 +85,7 @@
             {{ __('Phone Number') }}
           </th>
           <th scope="col" class="relative px-6 py-3">
-            <span class="sr-only">Actions</span>
+            <span class="sr-only">{{ __('Actions') }}</span>
           </th>
         </tr>
       </thead>

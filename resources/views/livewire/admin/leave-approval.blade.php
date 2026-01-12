@@ -58,7 +58,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $firstLeave->status === 'sick' ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20 dark:bg-yellow-900/30 dark:text-yellow-400 dark:ring-yellow-500/50' : 'bg-blue-50 text-blue-700 ring-blue-700/10 dark:bg-blue-900/30 dark:text-blue-400 dark:ring-blue-500/50' }}">
-                                        {{ ucfirst($firstLeave->status) }}
+                                        {{ __(ucfirst($firstLeave->status)) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-gray-600 dark:text-gray-300 max-w-xs truncate">

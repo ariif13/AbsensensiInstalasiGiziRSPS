@@ -61,6 +61,12 @@
     <div id="scanner-error" class="hidden mt-3 text-red-600 dark:text-red-400 font-medium text-center text-sm">
     </div>
 
+    @if(isset($slot) && $slot->isNotEmpty())
+        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+            {{ $slot }}
+        </div>
+    @endif
+
     <style>
         /* Force Video Clean Look */
         #scanner video {

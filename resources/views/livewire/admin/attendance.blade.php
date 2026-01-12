@@ -1,8 +1,7 @@
 @php
     use Illuminate\Support\Carbon;
-    $m = Carbon::parse($month);
-    $showUserDetail = !$month || $week || $date; // is week or day filter
-    $isPerDayFilter = isset($date);
+    $isPerDayFilter = $startDate === $endDate;
+    $showUserDetail = true; // Always show user details for clarity in Admin View
 @endphp
 <div>
     @pushOnce('styles')
@@ -12,20 +11,17 @@
     <h3 class="col-span-2 mb-4 text-lg font-semibold leading-tight text-gray-800 dark:text-gray-200">
         {{ __('Attendance Data') }}
     </h3>
-    <div class="mb-1 text-sm dark:text-white">{{ __('Filter') }}:</div>
+    <div class="mb-1 text-sm dark:text-white">{{ __('Filter Range') }}:</div>
     <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-end gap-4">
         <div class="flex flex-col gap-1 w-full lg:w-auto">
-            <x-label for="month_filter" value="{{ __('By Month') }}"></x-label>
-            <x-input type="month" name="month_filter" id="month_filter" wire:model.live="month" class="w-full" />
+            <x-label for="start_date" value="{{ __('Start Date') }}"></x-label>
+            <x-input type="date" name="start_date" id="start_date" wire:model.live="startDate" class="w-full" />
         </div>
         <div class="flex flex-col gap-1 w-full lg:w-auto">
-            <x-label for="week_filter" value="{{ __('By Week') }}"></x-label>
-            <x-input type="week" name="week_filter" id="week_filter" wire:model.live="week" class="w-full" />
+            <x-label for="end_date" value="{{ __('End Date') }}"></x-label>
+            <x-input type="date" name="end_date" id="end_date" wire:model.live="endDate" class="w-full" />
         </div>
-        <div class="flex flex-col gap-1 w-full lg:w-auto sm:col-span-2 lg:col-span-1">
-            <x-label for="day_filter" value="{{ __('By Day') }}"></x-label>
-            <x-input type="date" name="day_filter" id="day_filter" wire:model.live="date" class="w-full" />
-        </div>
+
         <div class="w-full lg:w-48">
             <x-tom-select id="division" wire:model.live="division" placeholder="{{ __('Select Division') }}"
                 :options="\App\Models\Division::all()->map(fn($d) => ['id' => $d->id, 'name' => $d->name])" />
@@ -39,11 +35,10 @@
                 <x-input type="text" class="w-full" name="search" id="seacrh" wire:model.live.debounce.500ms="search"
                     placeholder="{{ __('Search') }}" />
             </div>
-            {{-- <x-button type="button" wire:click="$refresh" wire:loading.attr="disabled">{{ __('Search') }}</x-button> --}}
         </div>
          <div class="w-full lg:w-auto sm:col-span-2 lg:col-span-1 lg:ml-auto">
              <x-secondary-button
-                href="{{ route('admin.attendances.report', ['month' => $month, 'week' => $week, 'date' => $date, 'division' => $division, 'jobTitle' => $jobTitle]) }}"
+                href="{{ route('admin.attendances.report', ['startDate' => $startDate, 'endDate' => $endDate, 'division' => $division, 'jobTitle' => $jobTitle]) }}"
                 class="flex justify-center w-full lg:w-auto gap-2">
                 {{ __('Print Report') }}
                 <x-heroicon-o-printer class="h-5 w-5" />
@@ -61,21 +56,17 @@
                 <div class="flex justify-between items-start mb-3">
                     <div>
                         <h4 class="text-base font-bold text-gray-900 dark:text-white">{{ $employee->name }}</h4>
-                        @if ($showUserDetail)
                              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ $employee->nip }}</p>
-                        @endif
                     </div>
                 </div>
-                 @if ($showUserDetail)
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                             {{ $employee->division?->name ?? '-' }}
-                        </span>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                             {{ $employee->jobTitle?->name ?? '-' }}
-                        </span>
-                    </div>
-                @endif
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                            {{ $employee->division?->name ?? '-' }}
+                    </span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                            {{ $employee->jobTitle?->name ?? '-' }}
+                    </span>
+                </div>
 
                 @if ($isPerDayFilter)
                     <!-- Day View Content -->
@@ -86,9 +77,9 @@
                         
                          // Calculate status for day view
                          if ($attendance) {
-                            $status = $attendance['status']; // Assuming status is set in controller/resource
+                            $status = $attendance['status'];
                          } else {
-                             $isWeekend = isset($date) ? Carbon::parse($date)->isWeekend() : false;
+                             $isWeekend = \Carbon\Carbon::parse($startDate)->isWeekend();
                              $status = $isWeekend ? '-' : 'absent';
                          }
                          
@@ -245,13 +236,13 @@
                         @foreach (['H', 'T', 'I', 'S', 'A'] as $_st)
                             <th scope="col"
                                 class="text-nowrap border border-gray-300 px-1 py-3 text-center text-xs font-medium text-gray-500 dark:border-gray-600 dark:text-gray-300">
-                                {{ $_st }}
+                                {{ __($_st) }}
                             </th>
                         @endforeach
                     @endif
                     @if ($isPerDayFilter)
                         <th scope="col" class="relative">
-                            <span class="sr-only">Actions</span>
+                            <span class="sr-only">{{ __('Actions') }}</span>
                         </th>
                     @endif
                 </tr>

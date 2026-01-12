@@ -42,7 +42,7 @@
       <thead class="bg-gray-50 dark:bg-gray-900">
         <tr>
           <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
-            Shift
+            {{ __('Shift') }}
           </th>
           <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
             {{ __('Time Start') }}
@@ -51,7 +51,7 @@
             {{ __('Time End') }}
           </th>
           <th scope="col" class="relative px-6 py-3">
-            <span class="sr-only">Actions</span>
+            <span class="sr-only">{{ __('Actions') }}</span>
           </th>
         </tr>
       </thead>

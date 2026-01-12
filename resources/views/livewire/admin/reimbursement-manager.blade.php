@@ -58,7 +58,7 @@
                                     {{ \Carbon\Carbon::parse($claim->date)->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4 capitalize text-gray-600 dark:text-gray-300">
-                                    {{ $claim->type }}
+                                    {{ __($claim->type) }}
                                 </td>
                                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                     Rp {{ number_format($claim->amount, 0, ',', '.') }}
@@ -81,7 +81,7 @@
                                         @if($claim->status === 'approved') bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/30 dark:text-green-400 dark:ring-green-500/50
                                         @elseif($claim->status === 'rejected') bg-red-50 text-red-700 ring-red-600/10 dark:bg-red-900/30 dark:text-red-400 dark:ring-red-500/50
                                         @else bg-yellow-50 text-yellow-800 ring-yellow-600/20 dark:bg-yellow-900/30 dark:text-yellow-400 dark:ring-yellow-500/50 @endif">
-                                        {{ ucfirst($claim->status) }}
+                                        {{ __(ucfirst($claim->status)) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right">

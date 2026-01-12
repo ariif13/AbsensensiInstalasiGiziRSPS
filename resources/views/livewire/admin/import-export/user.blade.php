@@ -85,43 +85,43 @@
         <thead class="bg-gray-50 dark:bg-gray-900">
           <tr class="{{ $trClass }}">
             <th scope="col" class="px-2 py-3 text-left font-semibold dark:text-white">
-              No
+              {{ __('No.') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              NIP
+              {{ __('NIP') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Name
+              {{ __('Name') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Email
+              {{ __('Email') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Phone
+              {{ __('Phone') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Gender
+              {{ __('Gender') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Birth Date
+              {{ __('Birth Date') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Birth Place
+              {{ __('Birth Place') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Address
+              {{ __('Address') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              City
+              {{ __('City') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Education
+              {{ __('Education') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Division
+              {{ __('Division') }}
             </th>
             <th scope="col" class="{{ $thClass }}">
-              Job Title
+              {{ __('Job Title') }}
             </th>
           </tr>
         </thead>

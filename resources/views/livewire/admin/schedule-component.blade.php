@@ -29,9 +29,9 @@
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
              {{-- Days Header --}}
             <div class="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                @foreach (['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] as $index => $day)
+                @foreach (['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $index => $day)
                     <div class="text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 py-3 {{ $index === 0 ? 'text-red-500' : '' }}">
-                        {{ $day }}
+                        {{ __($day) }}
                     </div>
                 @endforeach
             </div>
@@ -78,7 +78,7 @@
                         <div class="px-1 text-center">
                             @if ($schedule)
                                 <div class="text-xs font-medium rounded px-1 py-1 {{ $shiftColor }} truncate">
-                                    {{ $schedule->is_off ? 'OFF' : ($schedule->shift->name ?? 'Deleted') }}
+                                    {{ $schedule->is_off ? __('OFF') : ($schedule->shift->name ?? 'Deleted') }}
                                     @if(!$schedule->is_off && $schedule->shift)
                                         <div class="text-[10px] opacity-75">
                                             {{ \App\Helpers::format_time($schedule->shift->start_time) }} - {{ $schedule->shift->end_time ? \App\Helpers::format_time($schedule->shift->end_time) : '?' }}
@@ -86,7 +86,7 @@
                                     @endif
                                 </div>
                             @elseif($isCurrentMonth)
-                                <div class="text-[10px] text-gray-400 italic">Auto</div>
+                                <div class="text-[10px] text-gray-400 italic">{{ __('Auto') }}</div>
                             @endif
                         </div>
                     </div>

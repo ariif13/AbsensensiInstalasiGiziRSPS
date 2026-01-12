@@ -1,4 +1,4 @@
-@props(['options' => [], 'placeholder' => 'Select an option', 'selected' => null])
+@props(['options' => [], 'placeholder' => 'Select an option', 'selected' => null, 'disabled' => false])
 
 @once
 <style>
@@ -106,7 +106,7 @@
         @js($options), 
         '{{ $placeholder }}', 
         @if(isset($__livewire) && $attributes->wire('model')->value()) @entangle($attributes->wire('model')) @else @js($selected) @endif,
-        {{ $attributes->has('disabled') ? 'true' : 'false' }}
+        {{ $disabled ? 'true' : 'false' }}
      )"
      class="w-full ts-wrapper-user">
     

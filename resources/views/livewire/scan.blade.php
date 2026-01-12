@@ -1,4 +1,4 @@
-<div class="w-full to-slate-100 dark:from-slate-900 dark:to-slate-800">
+<div class="w-full to-slate-100 dark:from-slate-900 dark:to-slate-800 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
     @php
         use Illuminate\Support\Carbon;
         $hasCheckedIn = !is_null($attendance?->time_in);
@@ -74,59 +74,63 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-4 sm:gap-6 lg:flex-row">
-                    @if (!$isAbsence)
-                        <div class="flex flex-col gap-4 sm:gap-6 lg:w-2/5">
-                            @include('components.shift-selector', ['disabled' => true])
-                            
-                            <div id="scanner-card-container">
-                                @include('components.scanner-card', ['title' => __('Scan to Check Out')])
-                            </div>
-                            
-                            {{-- Selfie UI (Hidden by default) --}}
-                            <div id="selfie-card-container" class="hidden rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow dark:border-gray-700 dark:bg-gray-800">
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 text-center">{{ __('Take a Selfie') }}</h3>
-                                <div class="relative w-full aspect-square bg-gray-900 rounded-xl overflow-hidden mb-4">
-                                    <video id="selfie-video" autoplay playsinline class="w-full h-full object-cover transform -scale-x-100"></video>
-                                    <div class="absolute inset-0 border-[3px] border-white/50 rounded-[50%] m-8 pointer-events-none"></div> {{-- Face Guide --}}
-                                </div>
-                                <button onclick="window.captureAndSubmit()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                    {{ __('Capture & Check Out') }}
-                                </button>
-                            </div>
-                        </div>
-                    @endif
+                <div class="w-full">
+                    <div id="scanner-card-container">
+                         @component('components.scanner-card', ['title' => __('Scan to Check Out')])
+                            @slot('headerActions')
+                                @include('components.shift-selector', ['disabled' => true])
+                            @endslot
 
-                    <div class="flex-1 space-y-4 sm:space-y-6">
-                        {{-- Status & Location History Removed (Integrated into Header) --}}
-
-                        {{-- Current Location for Check Out --}}
-                        @include('components.location-card', [
-                            'title' => __('Current Location'),
-                            'mapId' => 'currentLocationMap',
-                            'latitude' => $currentLiveCoords[0] ?? null,
-                            'longitude' => $currentLiveCoords[1] ?? null,
-                            'showRefresh' => true,
-                            'icon' =>
-                                'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z',
-                            'iconColor' => 'green',
-                        ])
-
-                        {{-- Action Buttons (Removed) --}}
+                            {{-- Nested Location Card --}}
+                            <x-location-card 
+                                :title="__('Current Location')"
+                                mapId="currentLocationMap"
+                                :latitude="$currentLiveCoords[0] ?? null"
+                                :longitude="$currentLiveCoords[1] ?? null"
+                                :showRefresh="true"
+                                icon="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                iconColor="green"
+                                class="!p-0"
+                            />
+                         @endcomponent
                     </div>
+
+                     {{-- Selfie UI (Hidden by default) --}}
+                     <div id="selfie-card-container" class="hidden rounded-2xl border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-gray-800 relative overflow-hidden">
+                         <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-3 text-center uppercase tracking-wider">{{ __('Take a Selfie') }}</h3>
+                         <div class="relative w-full aspect-square bg-gray-900 rounded-xl overflow-hidden mb-4">
+                             <video id="selfie-video" autoplay playsinline class="w-full h-full object-cover transform -scale-x-100"></video>
+                             <div class="absolute inset-0 border-[3px] border-white/50 rounded-[50%] m-8 pointer-events-none"></div> {{-- Face Guide --}}
+                         </div>
+                         <button onclick="window.captureAndSubmit()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg flex items-center justify-center gap-2">
+                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                             {{ __('Capture & Check Out') }}
+                         </button>
+                     </div>
                 </div>
             </div>
         @else
             {{-- Initial State - Not Checked In --}}
             <div class="flex flex-col gap-4 sm:gap-6 lg:flex-row">
                 @if (!$isAbsence)
-                    <div class="flex flex-col gap-4 sm:gap-6 lg:w-2/5">
+                    <div class="w-full">
                         <div id="scanner-card-container">
                              @component('components.scanner-card', ['title' => __('Scan QR Code')])
                                 @slot('headerActions')
-                                    @include('components.shift-selector')
+                                    @include('components.shift-selector', ['disabled' => false])
                                 @endslot
+
+                                {{-- Nested Location Card --}}
+                                <x-location-card 
+                                    :title="__('Current Location')"
+                                    mapId="currentLocationMap"
+                                    :latitude="$currentLiveCoords[0] ?? null"
+                                    :longitude="$currentLiveCoords[1] ?? null"
+                                    :showRefresh="true"
+                                    icon="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                    iconColor="green"
+                                    class="!p-0"
+                                />
                              @endcomponent
                         </div>
 
@@ -144,23 +148,6 @@
                          </div>
                     </div>
                 @endif
-
-                <div class="flex-1 space-y-4 sm:space-y-6">
-                    @include('components.location-card', [
-                        'title' => __('Current Location'),
-                        'mapId' => 'currentLocationMap',
-                        'latitude' => $currentLiveCoords[0] ?? null,
-                        'longitude' => $currentLiveCoords[1] ?? null,
-                        'showRefresh' => true,
-                        'icon' =>
-                            'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z',
-                        'iconColor' => 'green',
-                    ])
-
-                    {{-- Time Cards Removed --}}
-
-                    {{-- Action Buttons (Removed) --}}
-                </div>
             </div>
         @endif
     </div>

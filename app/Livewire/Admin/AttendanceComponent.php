@@ -19,54 +19,39 @@ class AttendanceComponent extends Component
     use WithPagination, InteractsWithBanner;
 
     # filter
-    public ?string $month;
-    public ?string $week = null;
-    public ?string $date = null;
+    public $startDate;
+    public $endDate;
     public ?string $division = null;
     public ?string $jobTitle = null;
     public ?string $search = null;
 
     public function mount()
     {
-        $this->date = date('Y-m-d');
+        $this->startDate = now()->format('Y-m-d');
+        $this->endDate = now()->format('Y-m-d');
     }
 
     public function updating($key): void
     {
-        if ($key === 'search' || $key === 'division' || $key === 'jobTitle') {
+        if ($key === 'search' || $key === 'division' || $key === 'jobTitle' || $key === 'startDate' || $key === 'endDate') {
             $this->resetPage();
-        }
-        if ($key === 'month') {
-            $this->resetPage();
-            $this->week = null;
-            $this->date = null;
-        }
-        if ($key === 'week') {
-            $this->resetPage();
-            $this->month = null;
-            $this->date = null;
-        }
-        if ($key === 'date') {
-            $this->resetPage();
-            $this->month = null;
-            $this->week = null;
         }
     }
 
     public function render()
     {
-        $dates = [];
-        if ($this->date) {
-            $dates = [Carbon::parse($this->date)];
-        } else if ($this->week) {
-            $start = Carbon::parse($this->week)->startOfWeek();
-            $end = Carbon::parse($this->week)->endOfWeek();
-            $dates = $start->range($end)->toArray();
-        } else if ($this->month) {
-            $start = Carbon::parse($this->month)->startOfMonth();
-            $end = Carbon::parse($this->month)->endOfMonth();
-            $dates = $start->range($end)->toArray();
+        $start = Carbon::parse($this->startDate);
+        $end = Carbon::parse($this->endDate);
+        
+        // Validation: Prevent inverted range
+        if ($start->gt($end)) {
+            $temp = $start;
+            $start = $end;
+            $end = $temp;
         }
+        
+        $dates = $start->range($end)->toArray();
+
         $employees = User::where('group', 'user')
             ->when($this->search, function (Builder $q) {
                 return $q->where('name', 'like', '%' . $this->search . '%')
@@ -75,95 +60,40 @@ class AttendanceComponent extends Component
             ->when($this->division, fn(Builder $q) => $q->where('division_id', $this->division))
             ->when($this->jobTitle, fn(Builder $q) => $q->where('job_title_id', $this->jobTitle))
             ->with(['division', 'jobTitle'])
-            ->paginate(20)->through(function (User $user) {
-                if ($this->date) {
-                    $cached = Cache::remember(
-                        "attendance-$user->id-$this->date",
-                        now()->addDay(),
-                        function () use ($user) {
-                            /** @var Collection<Attendance>  */
-                            $attendances = Attendance::filter(
-                                userId: $user->id,
-                                date: $this->date,
-                            )->get();
+            ->paginate(20)->through(function (User $user) use ($start, $end) {
+                $cacheKey = "attendance-{$user->id}-{$start->format('Ymd')}-{$end->format('Ymd')}";
+                
+                $cached = Cache::remember(
+                    $cacheKey,
+                    now()->addMinutes(5), // Short cache for active admin usage
+                    function () use ($user, $start, $end) {
+                        /** @var Collection<Attendance>  */
+                        // Adjust to fetch range
+                        $attendances = Attendance::where('user_id', $user->id)
+                            ->whereBetween('date', [$start->format('Y-m-d'), $end->format('Y-m-d')])
+                            ->get(['id', 'status', 'date', 'latitude_in', 'longitude_in', 'attachment', 'note', 'time_in', 'time_out', 'shift_id']);
 
-                            return $attendances->map(
-                                function (Attendance $v) {
-                                    $v->setAttribute('coordinates', $v->lat_lng);
-                                    $v->setAttribute('lat', $v->latitude_in);
-                                    $v->setAttribute('lng', $v->longitude_in);
-                                    if ($v->attachment) {
-                                        $v->setAttribute('attachment', $v->attachment_url);
-                                    }
-                                    if ($v->shift) {
-                                        $v->setAttribute('shift', $v->shift->name);
-                                    }
-                                    return $v->getAttributes();
+                        return $attendances->map(
+                            function (Attendance $v) {
+                                $v->setAttribute('coordinates', $v->lat_lng);
+                                $v->setAttribute('lat', $v->latitude_in);
+                                $v->setAttribute('lng', $v->longitude_in);
+                                if ($v->attachment) {
+                                    $v->setAttribute('attachment', $v->attachment_url);
                                 }
-                            )->toArray();
-                        }
-                    ) ?? [];
-                    $user->setRelation('attendances', Attendance::hydrate($cached));
-                } else if ($this->week) {
-                    $cached = Cache::remember(
-                        "attendance-$user->id-$this->week",
-                        now()->addDay(),
-                        function () use ($user) {
-                            /** @var Collection<Attendance>  */
-                            $attendances = Attendance::filter(
-                                userId: $user->id,
-                                week: $this->week,
-                            )->get(['id', 'status', 'date', 'latitude_in', 'longitude_in', 'attachment', 'note']);
-
-                            return $attendances->map(
-                                function (Attendance $v) {
-                                    $v->setAttribute('coordinates', $v->lat_lng);
-                                    $v->setAttribute('lat', $v->latitude_in);
-                                    $v->setAttribute('lng', $v->longitude_in);
-                                    if ($v->attachment) {
-                                        $v->setAttribute('attachment', $v->attachment_url);
-                                    }
-                                    return $v->getAttributes();
+                                if ($v->shift) {
+                                    $v->setAttribute('shift', $v->shift->name);
                                 }
-                            )->toArray();
-                        }
-                    ) ?? [];
-                    $user->setRelation('attendances', Attendance::hydrate($cached));
-                } else if ($this->month) {
-                    $my = Carbon::parse($this->month);
-                    $cached = Cache::remember(
-                        "attendance-$user->id-$my->month-$my->year",
-                        now()->addDay(),
-                        function () use ($user) {
-                            /** @var Collection<Attendance>  */
-                            $attendances = Attendance::filter(
-                                month: $this->month,
-                                userId: $user->id,
-                            )->get(['id', 'status', 'date', 'latitude_in', 'longitude_in', 'attachment', 'note']);
-
-                            return $attendances->map(
-                                function (Attendance $v) {
-                                    $v->setAttribute('coordinates', $v->lat_lng);
-                                    $v->setAttribute('lat', $v->latitude_in);
-                                    $v->setAttribute('lng', $v->longitude_in);
-                                    if ($v->attachment) {
-                                        $v->setAttribute('attachment', $v->attachment_url);
-                                    }
-                                    return $v->getAttributes();
-                                }
-                            )->toArray();
-                        }
-                    ) ?? [];
-                    $user->setRelation('attendances', Attendance::hydrate($cached));
-                } else {
-                    /** @var Collection */
-                    $attendances = Attendance::where('user_id', $user->id)
-                        ->get(['id', 'status', 'date', 'latitude_in', 'longitude_in', 'attachment', 'note']);
-                    
-                    $user->setRelation('attendances', $attendances);
-                }
+                                return $v->getAttributes();
+                            }
+                        )->toArray();
+                    }
+                ) ?? [];
+                
+                $user->setRelation('attendances', Attendance::hydrate($cached));
                 return $user;
             });
+
         return view('livewire.admin.attendance', ['employees' => $employees, 'dates' => $dates]);
     }
 }

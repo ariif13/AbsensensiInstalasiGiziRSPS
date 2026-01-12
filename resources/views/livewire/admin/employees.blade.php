@@ -80,11 +80,11 @@
           <div class="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
               <x-secondary-button wire:click="edit('{{ $user->id }}')" class="justify-center">
                   <x-heroicon-o-pencil class="mr-2 h-4 w-4" />
-                  Edit
+                  {{ __('Edit') }}
               </x-secondary-button>
               <x-danger-button wire:click="confirmDeletion('{{ $user->id }}', '{{ $user->name }}')" class="justify-center">
                   <x-heroicon-o-trash class="mr-2 h-4 w-4" />
-                  Delete
+                  {{ __('Delete') }}
               </x-danger-button>
           </div>
       </div>
@@ -98,7 +98,7 @@
         <tr>
           <th scope="col"
             class="relative px-2 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300">
-            No.
+            {{ __('No.') }}
           </th>
           <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">
             {{ __('Name') }}
@@ -117,7 +117,7 @@
             {{ __('City') }}
           </th>
           <th scope="col" class="relative px-6 py-3">
-            <span class="sr-only">Actions</span>
+            <span class="sr-only">{{ __('Actions') }}</span>
           </th>
         </tr>
       </thead>
@@ -257,7 +257,7 @@
             @enderror
           </div>
           <div class="w-full">
-            <x-label for="create_nip">NIP</x-label>
+            <x-label for="create_nip">{{ __('NIP') }}</x-label>
             <x-input id="create_nip" class="mt-1 block w-full" type="text" wire:model="form.nip"
               placeholder="12345678" required autocomplete="off" />
             @error('form.nip')
@@ -447,7 +447,7 @@
             @enderror
           </div>
           <div class="w-full">
-            <x-label for="edit_nip">NIP</x-label>
+            <x-label for="edit_nip">{{ __('NIP') }}</x-label>
             <x-input id="edit_nip" class="mt-1 block w-full" type="text" wire:model="form.nip"
               placeholder="12345678" required autocomplete="off" />
             @error('form.nip')
@@ -589,7 +589,7 @@
 
         <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
           <div class="mt-4">
-            <x-label value="NIP" />
+            <x-label value="{{ __('NIP') }}" />
             <p>{{ $form->user->nip }}</p>
           </div>
           <div class="mt-4">

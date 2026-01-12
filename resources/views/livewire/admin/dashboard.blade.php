@@ -12,7 +12,7 @@
                 {{ __("Today's Attendance") }}
             </h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {{ $date->format('l, d F Y') }}
+                {{ $date->translatedFormat('l, d F Y') }}
             </p>
         </div>
         <div class="inline-flex items-center gap-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 p-2">
@@ -136,10 +136,10 @@
                     <div class="absolute -left-[21px] mt-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-gray-300 dark:border-gray-800 dark:bg-gray-600 group-hover:bg-blue-500 transition-colors"></div>
                     <div class="flex flex-col">
                         <span class="text-sm font-medium text-gray-900 dark:text-white">
-                            {{ $log->user->name ?? 'System' }}
+                            {{ $log->user->name ?? __('System') }}
                         </span>
                         <span class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ $log->description }}
+                            {{ __($log->description) }}
                         </span>
                         <span class="mt-1 text-[10px] text-gray-400">
                             {{ $log->updated_at->diffForHumans() }}
@@ -202,14 +202,14 @@
                     <div class="flex items-center gap-4 p-3 rounded-xl border border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                         <div class="flex-none flex flex-col items-center justify-center h-12 w-12 rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
                             <span class="text-xs font-bold">{{ \Carbon\Carbon::parse($leave['start_date'])->format('d') }}</span>
-                            <span class="text-[10px] uppercase">{{ \Carbon\Carbon::parse($leave['start_date'])->format('M') }}</span>
+                            <span class="text-[10px] uppercase">{{ \Carbon\Carbon::parse($leave['start_date'])->translatedFormat('M') }}</span>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
                                 {{ $leave['title'] }}
                             </p>
                             <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium {{ $leave['status'] == 'sick' ? 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' }}">
-                                {{ ucfirst($leave['status']) }}
+                                {{ __(ucfirst($leave['status'])) }}
                             </span>
                         </div>
                     </div>
@@ -289,7 +289,7 @@
                             </div>
                             <div>
                                 <h4 class="text-sm font-semibold text-gray-900 dark:text-white">{{ $employee->name }}</h4>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $employee->jobTitle?->name ?? 'Staff' }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $employee->jobTitle?->name ?? __('Staff') }}</p>
                             </div>
                         </div>
                         <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $statusColor }}">
@@ -333,7 +333,7 @@
                             {{ __('Shift') }}
                         </th>
                         <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Status
+                            {{ __('Status') }}
                         </th>
                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {{ __('Time In') }}
@@ -342,7 +342,7 @@
                             {{ __('Time Out') }}
                         </th>
                         <th scope="col" class="relative px-6 py-3">
-                            <span class="sr-only">Actions</span>
+                            <span class="sr-only">{{ __('Actions') }}</span>
                         </th>
                     </tr>
                 </thead>
@@ -397,7 +397,7 @@
                                     </div>
                                     <div class="ml-4">
                                         <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $employee->name }}</div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $employee->jobTitle?->name ?? 'Staff' }} • {{ $employee->division?->name ?? '-' }}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $employee->jobTitle?->name ?? __('Staff') }} • {{ $employee->division?->name ?? '-' }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -440,7 +440,7 @@
         <x-slot name="title">
             {{ __('Detail List') }}: 
             <span class="capitalize">
-                {{ str_replace('_', ' ', $selectedStatType) == 'absent' ? __('Not Present') : ucfirst(str_replace('_', ' ', $selectedStatType)) }}
+                {{ str_replace('_', ' ', $selectedStatType) == 'absent' ? __('Not Present') : __(ucfirst(str_replace('_', ' ', $selectedStatType))) }}
             </span>
         </x-slot>
 
@@ -449,11 +449,11 @@
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-900">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">NIP</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Name') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('NIP') }}</th>
                             @if($selectedStatType !== 'absent')
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Time</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Status') }}</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Time') }}</th>
                             @endif
                         </tr>
                     </thead>
@@ -473,7 +473,7 @@
                                            ($item->status === 'late' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' : 
                                            ($item->status === 'sick' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : 
                                            'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300')) }}">
-                                        {{ ucfirst($item->status) }}
+                                        {{ __(ucfirst($item->status)) }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -510,8 +510,9 @@
         window.dashboardChartData = @json($chartData);
 
         function weeklyAttendanceChart() {
+            let chart = null;
+
             return {
-                chart: null,
                 initChart() {
                     if (typeof Chart === 'undefined') {
                         setTimeout(() => this.initChart(), 100);
@@ -520,8 +521,8 @@
                     const ctx = this.$refs.canvas;
                     if (!ctx) return;
                     
-                    if (this.chart) {
-                        this.chart.destroy();
+                    if (chart) {
+                        chart.destroy();
                     }
 
                     // Watch for Livewire Event
@@ -529,32 +530,34 @@
                          // Parse the data correctly since it comes as array
                          const chartData = data[0]; 
                          
-                         this.chart.data.labels = chartData.labels;
-                         this.chart.data.datasets[0].data = chartData.present;
-                         this.chart.data.datasets[1].data = chartData.late;
-                         this.chart.data.datasets[2].data = chartData.other;
-                         this.chart.update();
+                         if (chart) {
+                             chart.data.labels = chartData.labels;
+                             chart.data.datasets[0].data = chartData.present;
+                             chart.data.datasets[1].data = chartData.late;
+                             chart.data.datasets[2].data = chartData.other;
+                             chart.update();
+                         }
                     });
 
-                    this.chart = new Chart(ctx, {
+                    chart = new Chart(ctx, {
                         type: 'bar',
                         data: {
                             labels: window.dashboardChartData.labels,
                             datasets: [
                                 {
-                                    label: '{{ __("present") }}',
+                                    label: '{{ __("Present") }}',
                                     data: window.dashboardChartData.present,
                                     backgroundColor: '#22c55e',
                                     borderRadius: 4
                                 },
                                 {
-                                    label: '{{ __("late") }}',
+                                    label: '{{ __("Late") }}',
                                     data: window.dashboardChartData.late,
                                     backgroundColor: '#eab308',
                                     borderRadius: 4
                                 },
                                 {
-                                    label: '{{ __("Excused") }}/{{ __("sick") }}',
+                                    label: '{{ __("Excused") }}/{{ __("Sick") }}',
                                     data: window.dashboardChartData.other,
                                     backgroundColor: '#3b82f6',
                                     borderRadius: 4

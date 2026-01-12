@@ -79,19 +79,19 @@
         <thead class="bg-gray-50 dark:bg-gray-900">
           <tr class="{{ $trClass }}">
             <th scope="col" class="px-2 py-3 text-left font-semibold dark:text-white">
-              No
+              {{ __('No.') }}
             </th>
-            <th class="{{ $thClass }}">Date</th>
-            <th class="{{ $thClass }}">Name</th>
-            <th class="{{ $thClass }}">NIP</th>
-            <th class="{{ $thClass }} text-nowrap">Time In</th>
-            <th class="{{ $thClass }} text-nowrap">Time Out</th>
-            <th class="{{ $thClass }}">Shift</th>
-            <th class="{{ $thClass }} text-nowrap">Barcode Id</th>
-            <th class="{{ $thClass }}">Coordinates</th>
-            <th class="{{ $thClass }}">Status</th>
-            <th class="{{ $thClass }}">Note</th>
-            <th class="{{ $thClass }}">Attachment</th>
+            <th class="{{ $thClass }}">{{ __('Date') }}</th>
+            <th class="{{ $thClass }}">{{ __('Name') }}</th>
+            <th class="{{ $thClass }}">{{ __('NIP') }}</th>
+            <th class="{{ $thClass }} text-nowrap">{{ __('Time In') }}</th>
+            <th class="{{ $thClass }} text-nowrap">{{ __('Time Out') }}</th>
+            <th class="{{ $thClass }}">{{ __('Shift') }}</th>
+            <th class="{{ $thClass }} text-nowrap">{{ __('Barcode Id') }}</th>
+            <th class="{{ $thClass }}">{{ __('Coordinates') }}</th>
+            <th class="{{ $thClass }}">{{ __('Status') }}</th>
+            <th class="{{ $thClass }}">{{ __('Note') }}</th>
+            <th class="{{ $thClass }}">{{ __('Attachment') }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">

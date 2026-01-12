@@ -27,7 +27,10 @@ class AnalyticsDashboard extends Component
         if (in_array($property, ['month', 'year'])) {
             $this->dispatch('chart-update', 
                 trend: $this->attendanceTrend, 
-                metrics: $this->attendanceMetrics
+                metrics: $this->attendanceMetrics,
+                divisionStats: $this->divisionStats,
+                lateBuckets: $this->lateBuckets,
+                absentStats: $this->absentStats
             );
         }
     }
@@ -116,11 +119,109 @@ class AnalyticsDashboard extends Component
             ->get();
     }
 
+    public function getDivisionStatsProperty()
+    {
+        // Get total users per division (active only)
+        $divisionUsers = User::where('group', 'user')
+            ->select('division_id', DB::raw('count(*) as total_users'))
+            ->whereNotNull('division_id')
+            ->groupBy('division_id')
+            ->pluck('total_users', 'division_id');
+
+        // Get present count per division for selected month/year
+        $attendanceCounts = Attendance::join('users', 'attendances.user_id', '=', 'users.id')
+            ->whereMonth('attendances.date', $this->month)
+            ->whereYear('attendances.date', $this->year)
+            ->where('attendances.status', 'present')
+            ->select('users.division_id', DB::raw('count(*) as present_count'))
+            ->whereNotNull('users.division_id')
+            ->groupBy('users.division_id')
+            ->pluck('present_count', 'users.division_id');
+            
+        $divisions = \App\Models\Division::all();
+        
+        $labels = [];
+        $data = [];
+        
+        foreach ($divisions as $div) {
+            $labels[] = $div->name;
+            $totalPossible = ($divisionUsers[$div->id] ?? 0) * 20; // Approx 20 working days
+            $present = $attendanceCounts[$div->id] ?? 0;
+            // Avoid division by zero, just raw count for now might be safer or relative percentage
+            // Let's return raw "Present" count for now as "Performance" volume
+            $data[] = $present; 
+        }
+
+        return ['labels' => $labels, 'data' => $data];
+    }
+
+    public function getLateBucketsProperty()
+    {
+        // Get late attendances with their shifts
+        $lates = Attendance::with('shift')
+            ->whereMonth('date', $this->month)
+            ->whereYear('date', $this->year)
+            ->where('status', 'late')
+            ->whereNotNull('time_in')
+            ->whereNotNull('shift_id')
+            ->get();
+            
+        $buckets = [
+            '1-15m' => 0,
+            '16-30m' => 0,
+            '31-60m' => 0,
+            '> 60m' => 0,
+        ];
+
+        foreach ($lates as $att) {
+            if (!$att->shift) continue;
+            
+            // Normalize times
+            $shiftStart = Carbon::parse($att->date->format('Y-m-d') . ' ' . $att->shift->start_time);
+            // $att->time_in is already Carbon/Datetime or string "H:i:s"? 
+            // Model cast says 'datetime:H:i:s', so it returns Carbon object but with mock date? 
+            // In DB it might be full datetime or time. Attendance usually stores actual time.
+            // Let's assume time_in is the actual check-in datetime.
+            
+            $checkIn = Carbon::parse($att->time_in);
+            
+            // If checkIn is just H:i:s string, we need date
+            if (is_string($att->time_in)) {
+                 $checkIn = Carbon::parse($att->date->format('Y-m-d') . ' ' . $att->time_in);
+            }
+
+            $diffInMinutes = $shiftStart->diffInMinutes($checkIn, false); // negative if early? No, late means checkIn > shiftStart
+            
+            if ($diffInMinutes <= 0) continue; // Should not happen if status is late
+            
+            if ($diffInMinutes <= 15) $buckets['1-15m']++;
+            elseif ($diffInMinutes <= 30) $buckets['16-30m']++;
+            elseif ($diffInMinutes <= 60) $buckets['31-60m']++;
+            else $buckets['> 60m']++;
+        }
+        
+        return $buckets;
+    }
+
+    public function getAbsentStatsProperty()
+    {
+        return Attendance::whereMonth('date', $this->month)
+            ->whereYear('date', $this->year)
+            ->whereIn('status', ['sick', 'excused', 'alpha'])
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+    }
+
     public function render()
     {
         return view('livewire.admin.analytics-dashboard', [
             'metrics' => $this->attendanceMetrics,
             'trend' => $this->attendanceTrend,
+            'divisionStats' => $this->divisionStats,
+            'lateBuckets' => $this->lateBuckets,
+            'absentStats' => $this->absentStats,
             'topDiligent' => $this->topDiligentEmployees,
             'topLate' => $this->topLateEmployees,
             'topEarlyLeavers' => $this->topEarlyLeavers,
