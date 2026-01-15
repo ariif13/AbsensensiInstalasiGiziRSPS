@@ -3,7 +3,7 @@
     {{-- Decorative Background Blob --}}
     <div class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-primary-50 dark:bg-primary-900/20 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
-    <div class="flex flex-col gap-4 mb-4 relative z-10">
+    <div class="flex flex-col gap-4 mb-3 relative z-[60]">
         <div class="flex justify-between items-center">
             <h3 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <div class="p-1.5 bg-primary-100 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400 rounded-lg">
@@ -33,18 +33,16 @@
         <!-- Custom Overlay (Visible when scanning) -->
         <div id="scanner-overlay" class="absolute inset-0 z-10 pointer-events-none hidden">
             <!-- Scan Line Animation -->
-            <div class="absolute inset-x-4 h-0.5 bg-red-500/80 shadow-[0_0_15px_rgba(239,68,68,0.8)] z-20 animate-scan-line"></div>
+            <div class="absolute inset-x-4 h-0.5 bg-blue-500/80 shadow-[0_0_15px_rgba(59,130,246,0.8)] z-20 animate-scan-line"></div>
             
-            <!-- Corners (Brackets) -->
-            <div class="absolute top-6 left-6 w-12 h-12 border-l-4 border-t-4 border-gray-300/80 rounded-tl-xl"></div>
-            <div class="absolute top-6 right-6 w-12 h-12 border-r-4 border-t-4 border-gray-300/80 rounded-tr-xl"></div>
-            <div class="absolute bottom-6 left-6 w-12 h-12 border-l-4 border-b-4 border-gray-300/80 rounded-bl-xl"></div>
-            <div class="absolute bottom-6 right-6 w-12 h-12 border-r-4 border-b-4 border-gray-300/80 rounded-br-xl"></div>
+            <!-- Standard QR Box Border (For Both Web & Native) -->
+            <div class="absolute inset-4 border-2 border-white/50 rounded-xl"></div>
             
-            <!-- Pulse Effect Center (Subtle Target) -->
-            <div class="absolute inset-0 flex items-center justify-center">
-                 <div class="w-48 h-48 border border-white/10 rounded-xl"></div>
-            </div>
+            <!-- Corner Accents -->
+            <div class="absolute top-4 left-4 w-6 h-6 border-l-4 border-t-4 border-blue-500 rounded-tl-xl"></div>
+            <div class="absolute top-4 right-4 w-6 h-6 border-r-4 border-t-4 border-blue-500 rounded-tr-xl"></div>
+            <div class="absolute bottom-4 left-4 w-6 h-6 border-l-4 border-b-4 border-blue-500 rounded-bl-xl"></div>
+            <div class="absolute bottom-4 right-4 w-6 h-6 border-r-4 border-b-4 border-blue-500 rounded-br-xl"></div>
         </div>
 
         <span id="scanner-placeholder" class="text-gray-400 dark:text-gray-500 z-0">
@@ -66,94 +64,4 @@
             {{ $slot }}
         </div>
     @endif
-
-    <style>
-        /* Force Video Clean Look */
-        #scanner video {
-            object-fit: cover !important;
-            border-radius: 1rem !important;
-            width: 100% !important;
-            height: 100% !important;
-        }
-        
-        #scanner.mirrored video {
-            transform: scaleX(-1) !important;
-        }
-
-        /* Animation Keyframes */
-        @keyframes scan-line {
-            0% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        .animate-scan-line {
-            animation: scan-line 2s linear infinite;
-        }
-        
-        /* Hide Default Library Elements if any leak through */
-        #html5-qrcode-anchor-scan-type-change, 
-        #html5-qrcode-button-camera-permission,
-        #html5-qrcode-select-camera {
-             display: none !important;
-        }
-
-        /* Native Scanning Transparency - Double Donut Strategy */
-        body.is-native-scanning {
-            background-color: transparent !important;
-        }
-
-        /* 1. Make Main Wrapper Transparent */
-        body.is-native-scanning #scan-wrapper, 
-        body.is-native-scanning .min-h-screen,
-        body.is-native-scanning main, 
-        body.is-native-scanning #app {
-            background-color: transparent !important;
-            background-image: none !important;
-        }
-
-        /* 2. The Card Container */
-        body.is-native-scanning #scanner-card {
-            background-color: transparent !important;
-            border-color: transparent !important;
-            /* Clip the inner shadow (Card BG) to the rounded corners */
-            overflow: hidden !important; 
-            /* Create the Page Background (Outer Ring) */
-            box-shadow: 0 0 0 9999px #f1f5f9 !important; /* light: slate-100 */
-        }
-        :root.dark body.is-native-scanning #scanner-card {
-            box-shadow: 0 0 0 9999px #0f172a !important; /* dark: slate-900 */
-        }
-
-        /* 3. The Scanner Hole */
-        body.is-native-scanning #scanner {
-            background-color: transparent !important;
-            /* Create the Card Background (Inner Ring) */
-            box-shadow: 0 0 0 9999px #ffffff !important; /* light: white */
-            border-color: transparent !important;
-            /* Ensure it sits below text but above transparency */
-            z-index: 0;
-            position: relative;
-        }
-        :root.dark body.is-native-scanning #scanner {
-            box-shadow: 0 0 0 9999px #1f2937 !important; /* dark: gray-800 */
-        }
-
-        /* 4. Hide Web Video */
-        body.is-native-scanning #scanner video {
-            display: none !important; 
-        }
-
-        /* 5. Ensure UI elements sit on top */
-        #scanner-card h3, 
-        #scanner-card button,
-        #scanner-placeholder,
-        #scanner-overlay,
-        #scanner-result,
-        #scanner-error {
-            position: relative;
-            z-index: 10;
-        }
-    </style>
 </div>

@@ -171,8 +171,11 @@ class ScanComponent extends Component
             Attendance::clearUserAttendanceCache(Auth::user(), Carbon::parse($attendance->date));
             $this->dispatch('attendance-recorded'); // Trigger update for other components
             
-            // Redirect to home as requested
-            return redirect()->route('home');
+            // Flash success to session for the next page load (Home)
+            session()->flash('success', $this->successMsg);
+            
+            // Return true to allow frontend to handle smooth transition & redirect
+            return true;
         }
     }
 

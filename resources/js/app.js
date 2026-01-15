@@ -148,6 +148,12 @@ window.setMapLocation = ({ location }) => {
     map.setView(location, 13);
 };
 
+import { startNativeBarcodeScanner, stopNativeBarcodeScanner, switchNativeCamera } from './services/native/barcode';
+
+window.startNativeBarcodeScanner = startNativeBarcodeScanner;
+window.stopNativeBarcodeScanner = stopNativeBarcodeScanner;
+window.switchNativeCamera = switchNativeCamera;
+
 window.isNativeApp = () =>
     !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
 

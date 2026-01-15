@@ -28,8 +28,6 @@
         {{-- Camera Flash Effect --}}
         <div id="camera-flash" class="fixed inset-0 bg-white z-[60] pointer-events-none opacity-0 transition-opacity duration-200"></div>
 
-        {{-- Header Section Removed --}}
-
         @include('components.alert-messages')
 
         @if ($isComplete)
@@ -59,7 +57,7 @@
             {{-- Checked In View --}}
             <div class="space-y-4 sm:space-y-6">
                 {{-- Status Banner --}}
-                <div class="py-2">
+                <div class="py-2 relative z-[60]">
                     <div class="flex items-center gap-4">
                         <div class="p-3 bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 rounded-xl">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,6 +143,23 @@
                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                  {{ __('Capture & Check In') }}
                              </button>
+
+                             {{-- Processing UI (Hidden by default) --}}
+                             <div id="processing-card-container" class="hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-lg dark:border-gray-700 dark:bg-gray-800 text-center">
+                                <div class="relative w-20 h-20 mx-auto mb-6">
+                                    <div class="absolute inset-0 border-4 border-gray-200 dark:border-gray-700 rounded-full"></div>
+                                    <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+                                    
+                                    {{-- Checkmark for final transition --}}
+                                    <div id="processing-success" class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300">
+                                        <svg class="w-10 h-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <h3 id="processing-title" class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('Verifying...') }}</h3>
+                                <p id="processing-text" class="text-sm text-gray-500 dark:text-gray-400 animate-pulse">{{ __('Syncing attendance data safely') }}</p>
+                             </div>
                          </div>
                     </div>
                 @endif
@@ -440,7 +455,11 @@
                     }
 
                     if (window.isNativeApp()) {
-                        await window.startNativeBarcodeScanner(onScanSuccess);
+                        try {
+                            await window.startNativeBarcodeScanner(onScanSuccess);
+                        } finally {
+                            // No cleanup needed
+                        }
                         return;
                     }
 
@@ -522,7 +541,9 @@
                         });
                         
                         setTimeout(() => {
-                            if (scanner.getState() === Html5QrcodeScannerState.PAUSED) {
+                            if (window.isNativeApp()) {
+                                startScanning();
+                            } else if (scanner.getState() === Html5QrcodeScannerState.PAUSED) {
                                 scanner.resume();
                                 setShowOverlay(true);
                             }
@@ -582,8 +603,10 @@
             window.captureAndSubmit = async function() {
                  const video = document.getElementById('selfie-video');
                  const canvas = document.getElementById('capture-canvas');
+                 const selfieContainer = document.getElementById('selfie-card-container');
+                 const processingContainer = document.getElementById('processing-card-container');
                  
-                 // Flash
+                 // Flash Effect
                  const flash = document.getElementById('camera-flash');
                  if (flash) {
                      flash.style.opacity = '0.8';
@@ -592,19 +615,53 @@
 
                  if (!video || !canvas) return;
                  
+                 // 1. Instant Transition: Hide Selfie, Show Processing
+                 if (selfieContainer) selfieContainer.classList.add('hidden');
+                 if (processingContainer) processingContainer.classList.remove('hidden');
+
+                 // 2. Capture Frame
                  const context = canvas.getContext('2d');
-                 canvas.width = video.videoWidth;
-                 canvas.height = video.videoHeight;
-                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                  
-                 const photo = canvas.toDataURL('image/jpeg', 0.8);
+                 // Resize Logic (Max 800px)
+                 const MAX_WIDTH = 800;
+                 const MAX_HEIGHT = 800;
+                 let width = video.videoWidth;
+                 let height = video.videoHeight;
+
+                 if (width > height) {
+                     if (width > MAX_WIDTH) {
+                         height *= MAX_WIDTH / width;
+                         width = MAX_WIDTH;
+                     }
+                 } else {
+                     if (height > MAX_HEIGHT) {
+                         width *= MAX_HEIGHT / height;
+                         height = MAX_HEIGHT;
+                     }
+                 }
+
+                 canvas.width = width;
+                 canvas.height = height;
+                 context.drawImage(video, 0, 0, width, height);
+                 
+                 // Compression: 0.6 quality
+                 const photo = canvas.toDataURL('image/jpeg', 0.6);
                  state.lastPhoto = photo;
                  
                  // Stop Stream
                  const stream = video.srcObject;
                  if(stream) stream.getTracks().forEach(track => track.stop());
 
-                 await submitAttendance(state.scannedCode, photo);
+                 try {
+                     await submitAttendance(state.scannedCode, photo);
+                 } catch (e) {
+                     // Reset UI on error
+                     if (processingContainer) processingContainer.classList.add('hidden');
+                     if (selfieContainer) selfieContainer.classList.remove('hidden');
+                     
+                     // Restart Camera
+                     await startSelfieCamera();
+                 }
             }
 
             async function submitAttendance(code, photo) {
@@ -706,7 +763,26 @@
                         state.errorMsg.classList.add('hidden');
                         state.errorMsg.innerHTML = '';
                     }
+
+                    // Handling via Processing UI (Selfie Mode)
+                    if (state.isSelfieMode) {
+                        const successIcon = document.getElementById('processing-success');
+                        const spinner = document.querySelector('#processing-card-container .animate-spin');
+                        const title = document.getElementById('processing-title');
+                        const text = document.getElementById('processing-text');
+                        
+                        if (successIcon) successIcon.classList.remove('opacity-0');
+                        if (spinner) spinner.style.opacity = '0';
+                        if (title) title.innerText = "{{ __('Success!') }}";
+                        if (text) text.innerText = "{{ __('Attendance Recorded') }}";
+
+                        setTimeout(() => {
+                            window.location.href = "{{ route('home') }}";
+                        }, 1500);
+                        return;
+                    }
                     
+                    // Fallback/Standard QR Success
                     Swal.fire({
                         icon: 'success',
                         title: "{{ __('Success!') }}",
@@ -719,9 +795,32 @@
                         background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
                         color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#1f2937'
                     }).then(() => {
-                        window.location.reload();
+                        window.location.href = "{{ route('home') }}";
                     });
+
                 } else if (typeof result === 'string') {
+                    // Handle Selfie Mode Error
+                    if (state.isSelfieMode) {
+                         const selfieContainer = document.getElementById('selfie-card-container');
+                         const processingContainer = document.getElementById('processing-card-container');
+                         
+                         // Revert UI
+                         if (processingContainer) processingContainer.classList.add('hidden');
+                         if (selfieContainer) selfieContainer.classList.remove('hidden');
+                         
+                         Swal.fire({
+                            icon: 'error',
+                            title: '{{ __("Error") }}',
+                            text: result,
+                            background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+                            color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#1f2937'
+                         });
+                         
+                         // Restart Camera
+                         startSelfieCamera();
+                         return;
+                    }
+
                     if (state.errorMsg) {
                         state.errorMsg.classList.remove('hidden');
                         state.errorMsg.innerHTML = result;
@@ -894,56 +993,4 @@
 
     });
 </script>
-<script>
-    window.startNativeBarcodeScanner = async function(onSuccess) {
-        try {
-            if (!window.Capacitor?.Plugins?.BarcodeScanner) {
-                throw new Error('BarcodeScanner plugin not available');
-            }
 
-            const {
-                BarcodeScanner
-            } = window.Capacitor.Plugins;
-
-            // Permission
-            const perm = await BarcodeScanner.checkPermission({
-                force: true
-            });
-            if (!perm.granted) {
-                throw new Error('Camera permission denied');
-            }
-
-            // Hide WebView background
-            await BarcodeScanner.hideBackground();
-            document.body.classList.add('scanner-active');
-
-            // Start scan (FULLSCREEN)
-            const result = await BarcodeScanner.startScan({
-                targetedFormats: ['QR_CODE'],
-                cameraDirection: 'rear'
-            });
-
-            // Restore UI
-            await BarcodeScanner.showBackground();
-            await BarcodeScanner.stopScan();
-            document.body.classList.remove('scanner-active');
-
-            if (result?.hasContent) {
-                onSuccess(result.content);
-            }
-
-        } catch (err) {
-            console.error('[Native Scanner Error]', err);
-
-            await window.Capacitor.Plugins.BarcodeScanner?.showBackground();
-            await window.Capacitor.Plugins.BarcodeScanner?.stopScan();
-            document.body.classList.remove('scanner-active');
-
-            const errorEl = document.getElementById('scanner-error');
-            if (errorEl) {
-                errorEl.classList.remove('hidden');
-                errorEl.innerHTML = err.message || 'Failed to open camera';
-            }
-        }
-    };
-</script>
