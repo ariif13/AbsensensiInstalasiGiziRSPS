@@ -301,18 +301,5 @@ Use these accounts to explore the restricted demo environment:
 ---
 
 
-### ☕ Traktir Developer Kopi
 
-<img src="./screenshots/donation-qr.jpeg" width="180px" style="border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-
----
-
----
-
-### 💖 Special Thanks & Credits
-This project was initially built upon the solid core foundation provided by:
-*   [**Absensi Karyawan GPS Barcode**](https://github.com/ikhsan3adi/absensi-karyawan-gps-barcode) by [**Ikhsan3adi**](https://github.com/ikhsan3adi).
-*   Modified and enhanced for enterprise scalability by [**RiprLutuk**](https://github.com/RiprLutuk) in collaboration with **Vibecode**.
-
-Developed by <a href="https://github.com/RiprLutuk"><b>RiprLutuk</b></a>
 
