@@ -8,6 +8,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureSecurityHeaders
 {
+    private function viteDevOrigins(): array
+    {
+        $origins = ['http://127.0.0.1:5173', 'http://localhost:5173'];
+
+        $hotFile = public_path('hot');
+        if (is_file($hotFile)) {
+            $hotUrl = trim((string) file_get_contents($hotFile));
+            if ($hotUrl !== '') {
+                $origins[] = rtrim($hotUrl, '/');
+            }
+        }
+
+        return array_values(array_unique($origins));
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -31,15 +46,28 @@ class EnsureSecurityHeaders
         // Permissions Policy - Restrict sensitive browser features
         $response->headers->set('Permissions-Policy', 'geolocation=(self), camera=(self), microphone=()');
 
-        // Content Security Policy - Protect against XSS and injection attacks
-        // Allow inline scripts/styles (needed for Livewire/Alpine) and common CDNs
+        $scriptSrc = ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://unpkg.com', 'https://cdn.jsdelivr.net'];
+        $styleSrc = ["'self'", "'unsafe-inline'", 'https://unpkg.com', 'https://fonts.googleapis.com', 'https://cdn.jsdelivr.net', 'https://fonts.bunny.net'];
+        $connectSrc = ["'self'", 'https://tile.openstreetmap.org', 'https://cdn.jsdelivr.net', 'wss:'];
+
+        if (app()->environment('local')) {
+            $viteOrigins = $this->viteDevOrigins();
+            $scriptSrc = array_merge($scriptSrc, $viteOrigins);
+            $styleSrc = array_merge($styleSrc, $viteOrigins);
+            $connectSrc = array_merge($connectSrc, $viteOrigins);
+
+            foreach ($viteOrigins as $origin) {
+                $connectSrc[] = preg_replace('/^http:/', 'ws:', $origin);
+            }
+        }
+
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net",
-            "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com https://cdn.jsdelivr.net https://fonts.bunny.net",
+            'script-src '.implode(' ', array_values(array_unique($scriptSrc))),
+            'style-src '.implode(' ', array_values(array_unique($styleSrc))),
             "font-src 'self' https://fonts.gstatic.com https://fonts.bunny.net data:",
             "img-src 'self' data: blob: https: http:",
-            "connect-src 'self' https://tile.openstreetmap.org https://cdn.jsdelivr.net wss:",
+            'connect-src '.implode(' ', array_values(array_unique($connectSrc))),
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self'",

@@ -21,6 +21,7 @@
   <link rel="preconnect" href="https://fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+  @if (app()->environment('production'))
   <script>
       if ('serviceWorker' in navigator) {
           window.addEventListener('load', () => {
@@ -28,6 +29,27 @@
           });
       }
   </script>
+  @endif
+
+  @if (app()->environment('local'))
+  <script>
+      if ('serviceWorker' in navigator) {
+          window.addEventListener('load', async () => {
+              const registrations = await navigator.serviceWorker.getRegistrations();
+              await Promise.all(registrations.map((registration) => registration.unregister()));
+
+              if ('caches' in window) {
+                  const cacheKeys = await caches.keys();
+                  await Promise.all(
+                      cacheKeys
+                          .filter((key) => key.startsWith('paspapan-'))
+                          .map((key) => caches.delete(key))
+                  );
+              }
+          });
+      }
+  </script>
+  @endif
 
   <script>
       if (localStorage.getItem('isDark') === 'true' || (!('isDark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
