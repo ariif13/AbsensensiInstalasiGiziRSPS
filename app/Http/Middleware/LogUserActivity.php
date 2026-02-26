@@ -29,8 +29,18 @@ class LogUserActivity
                 $request->is('livewire/*') ||
                 $request->expectsJson() ||
                 $request->ajax() ||
-                $request->is('up')
+                $request->is('up') ||
+                $request->is('login') ||
+                $request->is('logout') ||
+                $request->is('admin') ||
+                $request->is('admin/dashboard') ||
+                $request->is('home')
             ) {
+                return $response;
+            }
+
+            // Reduce DB write load: only log data-changing requests.
+            if ($method === 'GET') {
                 return $response;
             }
             
@@ -46,7 +56,11 @@ class LogUserActivity
             // Enhance description for distinctiveness
             $description = "$method /" . $path;
 
-            ActivityLog::record($action, $description);
+            try {
+                ActivityLog::record($action, $description);
+            } catch (\Throwable $e) {
+                // Never block user flow because audit log insert fails.
+            }
         }
 
         return $response;

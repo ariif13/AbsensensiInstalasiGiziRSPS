@@ -28,10 +28,10 @@ class FortifyServiceProvider extends ServiceProvider
             public function toResponse($request)
             {
                 if (Auth::user() && Auth::user()->isAdmin) {
-                    return redirect('/admin');
+                    return redirect('/admin/dashboard');
                 }
 
-                return redirect('/');
+                return redirect('/home');
             }
         });
     }
