@@ -10,10 +10,13 @@ class AuthenticateLoginAttempt
 {
     public function __invoke(Request $request)
     {
-        if (filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
-            $user = User::where('email', $request->email)->first();
+        $identity = trim((string) $request->email);
+
+        if (filter_var($identity, FILTER_VALIDATE_EMAIL)) {
+            $user = User::query()->where('email', mb_strtolower($identity))->first();
         } else {
-            $user = User::where('phone', $request->email)->first();
+            $digitsOnly = preg_replace('/\D+/', '', $identity) ?: $identity;
+            $user = User::query()->where('phone', $digitsOnly)->first();
         }
 
         if ($user && Hash::check($request->password, $user->password)) {

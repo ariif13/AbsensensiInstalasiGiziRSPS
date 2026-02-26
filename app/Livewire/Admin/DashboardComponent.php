@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Livewire\Traits\AttendanceDetailTrait;
 use App\Models\Attendance;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
@@ -113,33 +114,79 @@ class DashboardComponent extends Component
     public function render()
     {
         $reimbursementEnabled = \App\Helpers\Editions::reimbursementEnabled();
+        $today = now()->format('Y-m-d');
 
         // Fetch Pending Counts
         $user = auth()->user();
         if ($user->group === 'admin' || $user->group === 'superadmin') {
-            $this->pendingLeavesCount = Attendance::where('approval_status', 'pending')->count();
+            $this->pendingLeavesCount = Cache::remember('admin-dashboard:pending-leaves:all', now()->addSeconds(20), function () {
+                return Attendance::where('approval_status', 'pending')->count();
+            });
             $this->pendingReimbursementsCount = $reimbursementEnabled
-                ? \App\Models\Reimbursement::where('status', 'pending')->count()
+                ? Cache::remember('admin-dashboard:pending-reimbursements:all', now()->addSeconds(20), function () {
+                    return \App\Models\Reimbursement::where('status', 'pending')->count();
+                })
                 : 0;
         } else {
             // Only show requests from my subordinates
             $subordinateIds = $user->subordinates->pluck('id');
             
-            $this->pendingLeavesCount = Attendance::where('approval_status', 'pending')
-                ->whereIn('user_id', $subordinateIds)
-                ->count();
+            $this->pendingLeavesCount = Cache::remember('admin-dashboard:pending-leaves:'.$user->id, now()->addSeconds(20), function () use ($subordinateIds) {
+                return Attendance::where('approval_status', 'pending')
+                    ->whereIn('user_id', $subordinateIds)
+                    ->count();
+            });
                 
             $this->pendingReimbursementsCount = $reimbursementEnabled
-                ? \App\Models\Reimbursement::where('status', 'pending')
-                    ->whereIn('user_id', $subordinateIds)
-                    ->count()
+                ? Cache::remember('admin-dashboard:pending-reimbursements:'.$user->id, now()->addSeconds(20), function () use ($subordinateIds) {
+                    return \App\Models\Reimbursement::where('status', 'pending')
+                        ->whereIn('user_id', $subordinateIds)
+                        ->count();
+                })
                 : 0;
         }
 
-        /** @var Collection<Attendance>  */
-        $attendances = Attendance::with('shift')->where('date', date('Y-m-d'))->get();
+        $stats = Cache::remember('admin-dashboard:stats:'.$today, now()->addSeconds(30), function () use ($today) {
+            $employeesCount = User::where('group', 'user')->count();
 
-        /** @var Collection<User>  */
+            $presentCount = Attendance::whereDate('date', $today)
+                ->where('status', 'present')
+                ->count();
+
+            $lateCount = Attendance::whereDate('date', $today)
+                ->where('status', 'late')
+                ->count();
+
+            $excusedCount = Attendance::whereDate('date', $today)
+                ->where('status', 'excused')
+                ->where('approval_status', 'approved')
+                ->count();
+
+            $sickCount = Attendance::whereDate('date', $today)
+                ->where('status', 'sick')
+                ->where('approval_status', 'approved')
+                ->count();
+
+            $earlyCheckoutCount = Attendance::query()
+                ->join('shifts', 'attendances.shift_id', '=', 'shifts.id')
+                ->whereDate('attendances.date', $today)
+                ->whereNotNull('attendances.time_out')
+                ->whereRaw('attendances.time_out < shifts.end_time')
+                ->count();
+
+            $absentCount = max(0, $employeesCount - ($presentCount + $lateCount + $excusedCount + $sickCount));
+
+            return [
+                'employeesCount' => $employeesCount,
+                'presentCount' => $presentCount,
+                'lateCount' => $lateCount,
+                'excusedCount' => $excusedCount,
+                'sickCount' => $sickCount,
+                'earlyCheckoutCount' => $earlyCheckoutCount,
+                'absentCount' => $absentCount,
+            ];
+        });
+
         $employees = User::where('group', 'user')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
@@ -148,116 +195,111 @@ class DashboardComponent extends Component
                 });
             })
             ->paginate(20)
-            ->through(function (User $user) use ($attendances) {
-                return $user->setAttribute(
-                    'attendance',
-                    $attendances
-                        ->where(fn (Attendance $attendance) => $attendance->user_id === $user->id)
-                        ->first(),
-                );
-            });
+            ;
 
-        $employeesCount = User::where('group', 'user')->count();
-        $presentCount = $attendances->where(fn ($attendance) => $attendance->status === 'present')->count();
-        $lateCount = $attendances->where(fn ($attendance) => $attendance->status === 'late')->count();
-        
-        // Filter stats to approved only for leaves
-        $excusedCount = $attendances->where(fn ($attendance) => $attendance->status === 'excused' && $attendance->approval_status === 'approved')->count();
-        $sickCount = $attendances->where(fn ($attendance) => $attendance->status === 'sick' && $attendance->approval_status === 'approved')->count();
-        
-        $absentCount = $employeesCount - ($presentCount + $lateCount + $excusedCount + $sickCount);
+        $todayAttendances = Attendance::with('shift')
+            ->whereDate('date', $today)
+            ->whereIn('user_id', $employees->getCollection()->pluck('id'))
+            ->get()
+            ->keyBy('user_id');
 
-        // Early Checkout Calculation
-        $earlyCheckoutCount = $attendances->filter(function ($attendance) {
-            if (!$attendance->time_out || !$attendance->shift) return false;
-            // time_out is Carbon, shift->end_time is String 'H:i:s'
-            return $attendance->time_out->format('H:i:s') < $attendance->shift->end_time;
-        })->count();
+        $employees->setCollection(
+            $employees->getCollection()->map(function (User $employee) use ($todayAttendances) {
+                return $employee->setAttribute('attendance', $todayAttendances->get($employee->id));
+            })
+        );
 
         // Activity Logs (Optimized Storage - User Activities Only)
-        $recentLogs = \App\Models\ActivityLog::with('user')
+        $recentLogs = Cache::remember('admin-dashboard:recent-logs', now()->addSeconds(30), function () {
+            return ActivityLog::with('user')
             ->whereHas('user', function ($query) {
                 $query->where('group', 'user');
             })
             ->latest('updated_at')
             ->take(5)
             ->get();
+        });
 
         // Users checked in but not checked out (Overdue)
         // Includes today (if shift ended) and previous days
-        $overdueUsers = Attendance::with(['user', 'shift'])
-            ->whereNotNull('time_in')
-            ->whereNull('time_out')
-            ->orderByDesc('date')
-            ->take(10) // Limit to prevent overflow
-            ->get()
-            ->filter(function ($attendance) {
-                if (!$attendance->shift) return false;
-                
-                // If date is before today, it's definitely overdue
-                if ($attendance->date < now()->format('Y-m-d')) {
-                    return true;
-                }
-                
-                // If date is today, check if current time > shift end time
-                if ($attendance->date === now()->format('Y-m-d')) {
-                    return now()->format('H:i:s') > $attendance->shift->end_time;
-                }
-                
-                return false;
-            });
+        $overdueUsers = Cache::remember('admin-dashboard:overdue-users:'.$today, now()->addSeconds(30), function () use ($today) {
+            return Attendance::with(['user', 'shift'])
+                ->whereNotNull('time_in')
+                ->whereNull('time_out')
+                ->orderByDesc('date')
+                ->take(20)
+                ->get()
+                ->filter(function ($attendance) use ($today) {
+                    if (!$attendance->shift) {
+                        return false;
+                    }
+
+                    if ($attendance->date < $today) {
+                        return true;
+                    }
+
+                    if ($attendance->date === $today) {
+                        return now()->format('H:i:s') > $attendance->shift->end_time;
+                    }
+
+                    return false;
+                })
+                ->take(10)
+                ->values();
+        });
 
         // Calendar Data: Leaves in current month (Grouped)
-        $rawLeaves = Attendance::with('user')
-            ->whereMonth('date', now()->month)
-            ->whereYear('date', now()->year)
-            ->whereIn('status', ['sick', 'excused'])
-            ->where('approval_status', 'approved') // Only approved
-            ->orderBy('user_id')
-            ->orderBy('date')
-            ->get();
+        $calendarLeaves = Cache::remember('admin-dashboard:calendar-leaves:'.now()->format('Y-m'), now()->addSeconds(60), function () {
+            $rawLeaves = Attendance::with('user')
+                ->whereMonth('date', now()->month)
+                ->whereYear('date', now()->year)
+                ->whereIn('status', ['sick', 'excused'])
+                ->where('approval_status', 'approved')
+                ->orderBy('user_id')
+                ->orderBy('date')
+                ->get();
 
-        $calendarLeaves = collect();
-        if ($rawLeaves->isNotEmpty()) {
-            $grouped = $rawLeaves->groupBy(function ($item) {
-                return $item->user_id . '-' . $item->status;
-            });
+            $calendarLeaves = collect();
+            if ($rawLeaves->isNotEmpty()) {
+                $grouped = $rawLeaves->groupBy(function ($item) {
+                    return $item->user_id . '-' . $item->status;
+                });
 
-            foreach ($grouped as $group) {
-                // Determine consecutive dates
-                $tempGroup = [];
-                foreach ($group as $leave) {
-                    if (empty($tempGroup)) {
-                        $tempGroup[] = $leave;
-                        continue;
+                foreach ($grouped as $group) {
+                    $tempGroup = [];
+                    foreach ($group as $leave) {
+                        if (empty($tempGroup)) {
+                            $tempGroup[] = $leave;
+                            continue;
+                        }
+
+                        $last = end($tempGroup);
+                        if ($last->date->diffInDays($leave->date) == 1) {
+                            $tempGroup[] = $leave;
+                        } else {
+                            $calendarLeaves->push($this->formatLeaveGroup($tempGroup));
+                            $tempGroup = [$leave];
+                        }
                     }
 
-                    $last = end($tempGroup);
-                    // Check if consecutive (1 day difference)
-                    if ($last->date->diffInDays($leave->date) == 1) {
-                        $tempGroup[] = $leave;
-                    } else {
-                        // Push previous group
+                    if (!empty($tempGroup)) {
                         $calendarLeaves->push($this->formatLeaveGroup($tempGroup));
-                        $tempGroup = [$leave];
                     }
-                }
-                // Push last group
-                if (!empty($tempGroup)) {
-                    $calendarLeaves->push($this->formatLeaveGroup($tempGroup));
                 }
             }
-        }
+
+            return $calendarLeaves;
+        });
 
         return view('livewire.admin.dashboard', [
             'employees' => $employees,
-            'employeesCount' => $employeesCount,
-            'presentCount' => $presentCount,
-            'lateCount' => $lateCount,
-            'earlyCheckoutCount' => $earlyCheckoutCount,
-            'excusedCount' => $excusedCount,
-            'sickCount' => $sickCount,
-            'absentCount' => $absentCount,
+            'employeesCount' => $stats['employeesCount'],
+            'presentCount' => $stats['presentCount'],
+            'lateCount' => $stats['lateCount'],
+            'earlyCheckoutCount' => $stats['earlyCheckoutCount'],
+            'excusedCount' => $stats['excusedCount'],
+            'sickCount' => $stats['sickCount'],
+            'absentCount' => $stats['absentCount'],
             'recentLogs' => $recentLogs,
             'chartData' => $this->calculateChartData(),
             'overdueUsers' => $overdueUsers,
