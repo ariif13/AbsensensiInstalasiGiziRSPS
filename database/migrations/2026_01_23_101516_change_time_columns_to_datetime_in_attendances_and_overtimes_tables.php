@@ -12,6 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        $driver = DB::getDriverName();
+
         // 1. Add temporary datetime columns
         Schema::table('attendances', function (Blueprint $table) {
             $table->dateTime('time_in_dt')->nullable()->after('time_in');
@@ -34,16 +36,26 @@ return new class extends Migration
         // but using Laravel query builder for safety where possible.
         
         // ATTENDANCES
-        DB::statement("UPDATE attendances SET time_in_dt = CONCAT(date, ' ', time_in) WHERE time_in IS NOT NULL");
-        DB::statement("UPDATE attendances SET time_out_dt = CONCAT(date, ' ', time_out) WHERE time_out IS NOT NULL");
-        
-        // Naive fix for cross-day: if time_out_dt < time_in_dt, add 1 day to time_out_dt
-        DB::statement("UPDATE attendances SET time_out_dt = DATE_ADD(time_out_dt, INTERVAL 1 DAY) WHERE time_out_dt < time_in_dt");
+        if ($driver === 'sqlite') {
+            DB::statement("UPDATE attendances SET time_in_dt = datetime(date || ' ' || time_in) WHERE time_in IS NOT NULL");
+            DB::statement("UPDATE attendances SET time_out_dt = datetime(date || ' ' || time_out) WHERE time_out IS NOT NULL");
+            DB::statement("UPDATE attendances SET time_out_dt = datetime(time_out_dt, '+1 day') WHERE time_out_dt < time_in_dt");
+        } else {
+            DB::statement("UPDATE attendances SET time_in_dt = CONCAT(date, ' ', time_in) WHERE time_in IS NOT NULL");
+            DB::statement("UPDATE attendances SET time_out_dt = CONCAT(date, ' ', time_out) WHERE time_out IS NOT NULL");
+            DB::statement("UPDATE attendances SET time_out_dt = DATE_ADD(time_out_dt, INTERVAL 1 DAY) WHERE time_out_dt < time_in_dt");
+        }
 
         // OVERTIMES
-        DB::statement("UPDATE overtimes SET start_time_dt = CONCAT(date, ' ', start_time) WHERE start_time IS NOT NULL");
-        DB::statement("UPDATE overtimes SET end_time_dt = CONCAT(date, ' ', end_time) WHERE end_time IS NOT NULL");
-        DB::statement("UPDATE overtimes SET end_time_dt = DATE_ADD(end_time_dt, INTERVAL 1 DAY) WHERE end_time_dt < start_time_dt");
+        if ($driver === 'sqlite') {
+            DB::statement("UPDATE overtimes SET start_time_dt = datetime(date || ' ' || start_time) WHERE start_time IS NOT NULL");
+            DB::statement("UPDATE overtimes SET end_time_dt = datetime(date || ' ' || end_time) WHERE end_time IS NOT NULL");
+            DB::statement("UPDATE overtimes SET end_time_dt = datetime(end_time_dt, '+1 day') WHERE end_time_dt < start_time_dt");
+        } else {
+            DB::statement("UPDATE overtimes SET start_time_dt = CONCAT(date, ' ', start_time) WHERE start_time IS NOT NULL");
+            DB::statement("UPDATE overtimes SET end_time_dt = CONCAT(date, ' ', end_time) WHERE end_time IS NOT NULL");
+            DB::statement("UPDATE overtimes SET end_time_dt = DATE_ADD(end_time_dt, INTERVAL 1 DAY) WHERE end_time_dt < start_time_dt");
+        }
 
         // 3. Drop old columns and rename new ones
         Schema::table('attendances', function (Blueprint $table) {
@@ -68,6 +80,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        $driver = DB::getDriverName();
+
         // Reverting this is complex (lossy). We will just convert back to time only.
         
         Schema::table('attendances', function (Blueprint $table) {
@@ -75,7 +89,11 @@ return new class extends Migration
             $table->time('time_out_old')->nullable();
         });
         
-        DB::statement("UPDATE attendances SET time_in_old = TIME(time_in), time_out_old = TIME(time_out)");
+        if ($driver === 'sqlite') {
+            DB::statement("UPDATE attendances SET time_in_old = time(time_in), time_out_old = time(time_out)");
+        } else {
+            DB::statement("UPDATE attendances SET time_in_old = TIME(time_in), time_out_old = TIME(time_out)");
+        }
         
         Schema::table('attendances', function (Blueprint $table) {
             $table->dropColumn(['time_in', 'time_out']);
@@ -88,7 +106,11 @@ return new class extends Migration
             $table->time('end_time_old')->nullable();
         });
 
-        DB::statement("UPDATE overtimes SET start_time_old = TIME(start_time), end_time_old = TIME(end_time)");
+        if ($driver === 'sqlite') {
+            DB::statement("UPDATE overtimes SET start_time_old = time(start_time), end_time_old = time(end_time)");
+        } else {
+            DB::statement("UPDATE overtimes SET start_time_old = TIME(start_time), end_time_old = TIME(end_time)");
+        }
 
         Schema::table('overtimes', function (Blueprint $table) {
             $table->dropColumn(['start_time', 'end_time']);

@@ -33,27 +33,16 @@
         </a>
     @endif
 
-    {{-- 4. Reimbursement (Replaces Calendar) --}}
-    <a href="{{ route('reimbursement') }}" class="flex flex-col items-center gap-2 group">
-        <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
-             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </div>
-        <span class="text-[10px] font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Reimbursement') }}</span>
-    </a>
-
-    {{-- 5. Payslip --}}
-    {{-- 5. Payslip --}}
-    @if(\App\Helpers\Editions::payrollLocked())
-        <button type="button" @click.prevent="$dispatch('feature-lock', { title: 'Payroll Locked', 'message': 'Payroll Access is an Enterprise Feature 🔒. Please Upgrade.' })" class="flex flex-col items-center gap-2 group w-full">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 relative">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                <span class="absolute -top-1 -right-1 w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center border border-white dark:border-gray-800">
-                    <span class="text-[10px]">🔒</span>
-                </span>
+    @if(\App\Helpers\Editions::reimbursementEnabled())
+        <a href="{{ route('reimbursement') }}" class="flex flex-col items-center gap-2 group">
+            <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
-            <span class="text-[10px] font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Payslip') }}</span>
-        </button>
-    @else
+            <span class="text-[10px] font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Reimbursement') }}</span>
+        </a>
+    @endif
+
+    @if(\App\Helpers\Editions::payrollEnabled())
         <a href="{{ route('my-payslips') }}" class="flex flex-col items-center gap-2 group">
             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -76,6 +65,13 @@
              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
         </div>
         <span class="text-[10px] font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('My Schedule') }}</span>
+    </a>
+
+    <a href="{{ route('shift-change') }}" class="flex flex-col items-center gap-2 group">
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7h11m0 0L12 4m3 3l-3 3M20 17H9m0 0l3-3m-3 3l3 3"></path></svg>
+        </div>
+        <span class="text-[10px] font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Shift Change') }}</span>
     </a>
 
     {{-- 8. Face ID --}}

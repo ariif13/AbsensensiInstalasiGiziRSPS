@@ -21,7 +21,7 @@
                         </x-nav-link>
 
                         {{-- 2. Attendance Group --}}
-                        <x-nav-dropdown :active="request()->routeIs('admin.attendances') || request()->routeIs('admin.leaves') || request()->routeIs('admin.analytics') || request()->routeIs('admin.schedules') || request()->routeIs('admin.holidays') || request()->routeIs('admin.announcements')" triggerClasses="text-nowrap">
+                        <x-nav-dropdown :active="request()->routeIs('admin.attendances') || request()->routeIs('admin.leaves') || request()->routeIs('admin.shift-change-requests') || request()->routeIs('admin.analytics') || request()->routeIs('admin.schedules') || request()->routeIs('admin.holidays') || request()->routeIs('admin.announcements')" triggerClasses="text-nowrap">
                             <x-slot name="trigger">
                                 {{ __('Attendance') }}
                                 <x-heroicon-o-chevron-down class="ms-2 h-5 w-5 text-gray-400" />
@@ -41,6 +41,9 @@
                                 </x-dropdown-link>
                                 <x-dropdown-link href="{{ route('admin.schedules') }}" :active="request()->routeIs('admin.schedules')" wire:navigate>
                                     {{ __('Schedules (Roster)') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link href="{{ route('admin.shift-change-requests') }}" :active="request()->routeIs('admin.shift-change-requests')" wire:navigate>
+                                    {{ __('Shift Change Requests') }}
                                 </x-dropdown-link>
                                 <div class="border-t border-gray-200 dark:border-gray-600"></div>
                                 @if(\App\Helpers\Editions::reportingLocked())
@@ -62,40 +65,32 @@
                             </x-slot>
                         </x-nav-dropdown>
 
-                        {{-- 2.5 Finance Group --}}
-                        <x-nav-dropdown :active="request()->routeIs('admin.payrolls') || request()->routeIs('admin.reimbursements')" triggerClasses="text-nowrap">
-                            <x-slot name="trigger">
-                                {{ __('Finance') }}
-                                <x-heroicon-o-chevron-down class="ms-2 h-5 w-5 text-gray-400" />
-                            </x-slot>
-                            <x-slot name="content">
-                                <div class="block px-4 py-2 text-xs text-gray-400">
-                                    {{ __('Financial Management') }}
-                                </div>
-                                @if(\App\Helpers\Editions::payrollLocked())
-                                    <button type="button" @click.prevent="$dispatch('feature-lock', { title: 'Payroll Locked', message: 'Payroll Management is an Enterprise Feature 🔒. Please Upgrade.' })" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-800 transition duration-150 ease-in-out">
-                                        {{ __('Payroll') }} 🔒
-                                    </button>
-                                @else
-                                    <x-dropdown-link href="{{ route('admin.payrolls') }}" :active="request()->routeIs('admin.payrolls')" wire:navigate>
-                                        {{ __('Payroll') }}
-                                    </x-dropdown-link>
-                                @endif
-                                <x-dropdown-link href="{{ route('admin.reimbursements') }}" :active="request()->routeIs('admin.reimbursements')" wire:navigate>
-                                    {{ __('Reimbursements') }}
-                                </x-dropdown-link>
-                                <div class="border-t border-gray-200 dark:border-gray-600"></div>
-                                @if(\App\Helpers\Editions::payrollLocked())
-                                    <button type="button" @click.prevent="$dispatch('feature-lock', { title: 'Settings Locked', message: 'Payroll Settings is an Enterprise Feature 🔒. Please Upgrade.' })" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-800 transition duration-150 ease-in-out">
-                                        {{ __('Payroll Settings') }} 🔒
-                                    </button>
-                                @else
-                                    <x-dropdown-link href="{{ route('admin.payroll.settings') }}" :active="request()->routeIs('admin.payroll.settings')" wire:navigate>
-                                        {{ __('Payroll Settings') }}
-                                    </x-dropdown-link>
-                                @endif
-                            </x-slot>
-                        </x-nav-dropdown>
+                        @if(\App\Helpers\Editions::payrollEnabled() || \App\Helpers\Editions::reimbursementEnabled())
+                            <x-nav-dropdown :active="request()->routeIs('admin.payrolls') || request()->routeIs('admin.reimbursements')" triggerClasses="text-nowrap">
+                                <x-slot name="trigger">
+                                    {{ __('Finance') }}
+                                    <x-heroicon-o-chevron-down class="ms-2 h-5 w-5 text-gray-400" />
+                                </x-slot>
+                                <x-slot name="content">
+                                    <div class="block px-4 py-2 text-xs text-gray-400">
+                                        {{ __('Financial Management') }}
+                                    </div>
+                                    @if(\App\Helpers\Editions::payrollEnabled())
+                                        <x-dropdown-link href="{{ route('admin.payrolls') }}" :active="request()->routeIs('admin.payrolls')" wire:navigate>
+                                            {{ __('Payroll') }}
+                                        </x-dropdown-link>
+                                        <x-dropdown-link href="{{ route('admin.payroll.settings') }}" :active="request()->routeIs('admin.payroll.settings')" wire:navigate>
+                                            {{ __('Payroll Settings') }}
+                                        </x-dropdown-link>
+                                    @endif
+                                    @if(\App\Helpers\Editions::reimbursementEnabled())
+                                        <x-dropdown-link href="{{ route('admin.reimbursements') }}" :active="request()->routeIs('admin.reimbursements')" wire:navigate>
+                                            {{ __('Reimbursements') }}
+                                        </x-dropdown-link>
+                                    @endif
+                                </x-slot>
+                            </x-nav-dropdown>
+                        @endif
 
                         {{-- 3. Master Data Group --}}
                         <x-nav-dropdown :active="request()->routeIs('admin.masters.*') || request()->routeIs('admin.employees') || request()->routeIs('admin.barcodes') || request()->routeIs('admin.barcodes.*')" triggerClasses="text-nowrap">
@@ -172,11 +167,24 @@
                                         {{ __('Import/Export Attendance') }}
                                     </x-dropdown-link>
                                 @endif
+                                @if(\App\Helpers\Editions::reportingLocked())
+                                    <button type="button" @click.prevent="$dispatch('feature-lock', { title: 'Import/Export Locked', message: 'Schedule Import/Export is an Enterprise Feature 🔒. Please Upgrade.' })" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-800 transition duration-150 ease-in-out">
+                                        {{ __('Import/Export Schedule') }} 🔒
+                                    </button>
+                                @else
+                                    <x-dropdown-link href="{{ route('admin.import-export.schedules') }}" :active="request()->routeIs('admin.import-export.schedules')" wire:navigate>
+                                        {{ __('Import/Export Schedule') }}
+                                    </x-dropdown-link>
+                                @endif
                             </x-slot>
                         </x-nav-dropdown>
                     @else
                         <x-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')" wire:navigate>
                             {{ __('Home') }}
+                        </x-nav-link>
+
+                        <x-nav-link href="{{ route('shift-change') }}" :active="request()->routeIs('shift-change')" wire:navigate>
+                            {{ __('Shift Change') }}
                         </x-nav-link>
 
                         @if(Auth::user()->subordinates->isNotEmpty())
@@ -362,6 +370,9 @@
                         <x-responsive-nav-link href="{{ route('admin.schedules') }}" :active="request()->routeIs('admin.schedules')" wire:navigate>
                             {{ __('Schedules (Roster)') }}
                         </x-responsive-nav-link>
+                        <x-responsive-nav-link href="{{ route('admin.shift-change-requests') }}" :active="request()->routeIs('admin.shift-change-requests')" wire:navigate>
+                            {{ __('Shift Change Requests') }}
+                        </x-responsive-nav-link>
                         <x-responsive-nav-link href="{{ route('admin.analytics') }}" :active="request()->routeIs('admin.analytics')" wire:navigate>
                             {{ __('Analytics') }}
                         </x-responsive-nav-link>
@@ -374,23 +385,28 @@
                     </div>
                 </div>
 
-                {{-- 2.5 Finance Group --}}
-                <div x-data="{ expanded: false }" class="border-t border-gray-100 dark:border-gray-700/50">
-                    <button @click="expanded = !expanded" class="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                        <span>{{ __('Finance') }}</span>
-                        <svg class="h-4 w-4 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div x-show="expanded" style="display: none;" class="bg-gray-50/50 dark:bg-black/20 pb-2">
-                        <x-responsive-nav-link href="{{ route('admin.payrolls') }}" :active="request()->routeIs('admin.payrolls')" wire:navigate>
-                            {{ __('Payroll') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link href="{{ route('admin.reimbursements') }}" :active="request()->routeIs('admin.reimbursements')" wire:navigate>
-                            {{ __('Reimbursements') }}
-                        </x-responsive-nav-link>
+                @if(\App\Helpers\Editions::payrollEnabled() || \App\Helpers\Editions::reimbursementEnabled())
+                    <div x-data="{ expanded: false }" class="border-t border-gray-100 dark:border-gray-700/50">
+                        <button @click="expanded = !expanded" class="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <span>{{ __('Finance') }}</span>
+                            <svg class="h-4 w-4 transform transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="expanded" style="display: none;" class="bg-gray-50/50 dark:bg-black/20 pb-2">
+                            @if(\App\Helpers\Editions::payrollEnabled())
+                                <x-responsive-nav-link href="{{ route('admin.payrolls') }}" :active="request()->routeIs('admin.payrolls')" wire:navigate>
+                                    {{ __('Payroll') }}
+                                </x-responsive-nav-link>
+                            @endif
+                            @if(\App\Helpers\Editions::reimbursementEnabled())
+                                <x-responsive-nav-link href="{{ route('admin.reimbursements') }}" :active="request()->routeIs('admin.reimbursements')" wire:navigate>
+                                    {{ __('Reimbursements') }}
+                                </x-responsive-nav-link>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 {{-- 3. Master Data Group --}}
                 <div x-data="{ expanded: false }" class="border-t border-gray-100 dark:border-gray-700/50">
@@ -450,11 +466,19 @@
                             {{ __('Import/Export Attendance') }}
                             @if(\App\Helpers\Editions::reportingLocked()) 🔒 @endif
                         </x-responsive-nav-link>
+                        <x-responsive-nav-link href="{{ route('admin.import-export.schedules') }}" :active="request()->routeIs('admin.import-export.schedules')" wire:navigate>
+                            {{ __('Import/Export Schedule') }}
+                            @if(\App\Helpers\Editions::reportingLocked()) 🔒 @endif
+                        </x-responsive-nav-link>
                     </div>
                 </div>
             @else
                 <x-responsive-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')" wire:navigate>
                     {{ __('Home') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link href="{{ route('shift-change') }}" :active="request()->routeIs('shift-change')" wire:navigate>
+                    {{ __('Shift Change') }}
                 </x-responsive-nav-link>
 
                 @if(Auth::user()->subordinates->isNotEmpty())

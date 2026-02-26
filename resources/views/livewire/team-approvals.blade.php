@@ -6,7 +6,7 @@
                     {{ __('Team Approvals') }}
                 </h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    {{ __('Manage leave and reimbursement requests from your team.') }}
+                    {{ __('Manage leave and overtime requests from your team.') }}
                 </p>
             </div>
             <a href="{{ route('approvals.history') }}" 
@@ -26,10 +26,12 @@
                     class="{{ $activeTab === 'leaves' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                     {{ __('Leave Requests') }}
                 </button>
-                <button wire:click="switchTab('reimbursements')"
-                    class="{{ $activeTab === 'reimbursements' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-                    {{ __('Reimbursements') }}
-                </button>
+                @if(\App\Helpers\Editions::reimbursementEnabled())
+                    <button wire:click="switchTab('reimbursements')"
+                        class="{{ $activeTab === 'reimbursements' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                        {{ __('Reimbursements') }}
+                    </button>
+                @endif
                 <button wire:click="switchTab('overtimes')"
                     class="{{ $activeTab === 'overtimes' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                     {{ __('Overtime Requests') }}
@@ -249,7 +251,7 @@
                 <div class="px-4 py-3">
                     {{ $leaves->links() }}
                 </div>
-            @elseif ($activeTab === 'reimbursements')
+            @elseif ($activeTab === 'reimbursements' && \App\Helpers\Editions::reimbursementEnabled())
                 <!-- Reimbursement Desktop/Mobile Table (Existing Code) -->
                 <!-- Desktop Table -->
                 <div class="hidden md:block bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">

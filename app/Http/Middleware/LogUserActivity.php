@@ -23,18 +23,18 @@ class LogUserActivity
         if (Auth::check()) {
             $method = $request->method();
             $path = $request->path();
-            
-            // Skip logging for debugbar, horizon, telescope if any, or assets
-            if ($request->is('livewire/*') || $request->is('filament/*')) {
-                // For Livewire, we might want to log specific actions if possible, 
-                // but usually it's too noisy. User asked for "doing changes".
-                // Let's log 'livewire/update' only if we can extract component name, otherwise skip to avoid noise?
-                // Or just log it. "semua aktifitas" means ALL.
-                // Let's log it but keep description short.
+
+            // Skip high-frequency internal requests to keep UI snappy.
+            if (
+                $request->is('livewire/*') ||
+                $request->expectsJson() ||
+                $request->ajax() ||
+                $request->is('up')
+            ) {
+                return $response;
             }
             
-            // Avoid logging simple asset requests (though middleware usually doesn't run on them)
-            
+            // Skip logging for debugbar, horizon, telescope if any, or assets
             $action = match ($method) {
                 'GET' => 'Visited Page',
                 'POST' => 'Form Submission',
@@ -45,16 +45,6 @@ class LogUserActivity
 
             // Enhance description for distinctiveness
             $description = "$method /" . $path;
-
-            // Optional: Identify Livewire component updates
-            if ($request->is('livewire/update')) {
-                $components = $request->input('components', []);
-                if (!empty($components)) {
-                    $names = collect($components)->pluck('name')->join(', ');
-                    $description .= " ($names)";
-                    $action = "Livewire Action";
-                }
-            }
 
             ActivityLog::record($action, $description);
         }

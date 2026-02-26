@@ -27,6 +27,11 @@ class ImportExportController extends Controller
         return view('admin.import-export.attendances');
     }
 
+    public function schedules()
+    {
+        return view('admin.import-export.schedules');
+    }
+
     public function exportUsers(Request $request)
     {
         $groups = $request->input('groups', ['user']); 

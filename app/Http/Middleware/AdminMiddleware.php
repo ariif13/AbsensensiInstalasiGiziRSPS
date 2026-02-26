@@ -21,7 +21,10 @@ class AdminMiddleware
             return $next($request);
         }
 
-        // If the user is not an admin, return a 403 Forbidden response
+        if (Auth::check()) {
+            return redirect('/home');
+        }
+
         abort(403);
     }
 }

@@ -13,6 +13,16 @@ use App\Services\Audit\CommunityAuditService;
 
 class Editions
 {
+    public static function payrollEnabled(): bool
+    {
+        return (bool) env('FEATURE_PAYROLL', false);
+    }
+
+    public static function reimbursementEnabled(): bool
+    {
+        return (bool) env('FEATURE_REIMBURSEMENT', false);
+    }
+
     /**
      * Check if a specific feature service is running in Community Mode (Locked).
      */
@@ -28,7 +38,7 @@ class Editions
 
     public static function payrollLocked(): bool
     {
-        return self::isLocked(PayrollServiceInterface::class);
+        return !self::payrollEnabled() || self::isLocked(PayrollServiceInterface::class);
     }
 
     public static function reportingLocked(): bool

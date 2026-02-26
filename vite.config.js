@@ -8,9 +8,20 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
             ],
-            refresh: true,
+            refresh: [
+                'resources/views/**',
+                'resources/js/**',
+                'resources/css/**',
+                'app/Livewire/**',
+                'routes/**',
+            ],
         }),
     ],
+    server: {
+        watch: {
+            ignored: ['**/storage/**', '**/bootstrap/cache/**', '**/vendor/**'],
+        },
+    },
     build: {
         chunkSizeWarningLimit: 1000,
         rollupOptions: {

@@ -201,6 +201,13 @@ window.openMap = async (lat, lng) => {
 document.addEventListener('DOMContentLoaded', () => {
     const refreshContainer = document.querySelector(".refresh-container");
     const spinner = document.querySelector(".spinner");
+
+    const isNativePlatform = !!(
+        window.Capacitor &&
+        window.Capacitor.isNativePlatform &&
+        window.Capacitor.isNativePlatform()
+    );
+    if (!isNativePlatform) return;
     
     // We don't strictly need 'main' for Overlay style if we aren't moving it
     // But we might want to check if it exists purely for safety
@@ -346,4 +353,3 @@ if (window.Capacitor?.Plugins?.App) {
         }
     });
 }
-

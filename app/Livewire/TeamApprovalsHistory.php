@@ -21,10 +21,19 @@ class TeamApprovalsHistory extends Component
         if ($user->subordinates->isEmpty()) {
             return redirect()->route('home');
         }
+
+        if (!\App\Helpers\Editions::reimbursementEnabled() && $this->activeTab === 'reimbursements') {
+            $this->activeTab = 'leaves';
+        }
     }
 
     public function switchTab($tab)
     {
+        if ($tab === 'reimbursements' && !\App\Helpers\Editions::reimbursementEnabled()) {
+            $this->activeTab = 'leaves';
+            return;
+        }
+
         $this->activeTab = $tab;
         $this->resetPage();
     }
@@ -52,7 +61,7 @@ class TeamApprovalsHistory extends Component
 
             $leaves = $query->orderBy('updated_at', 'desc')
                 ->paginate(10);
-        } else {
+        } elseif (\App\Helpers\Editions::reimbursementEnabled()) {
             $query = Reimbursement::whereIn('user_id', $subordinateIds)
                 ->whereIn('status', ['approved', 'rejected']);
 

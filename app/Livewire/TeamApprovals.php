@@ -16,6 +16,24 @@ class TeamApprovals extends Component
     public $activeTab = 'leaves'; // leaves, reimbursements, overtimes
     public $search = '';
 
+    public function mount()
+    {
+        if (!\App\Helpers\Editions::reimbursementEnabled() && $this->activeTab === 'reimbursements') {
+            $this->activeTab = 'leaves';
+        }
+    }
+
+    public function switchTab($tab)
+    {
+        if ($tab === 'reimbursements' && !\App\Helpers\Editions::reimbursementEnabled()) {
+            $this->activeTab = 'leaves';
+            return;
+        }
+
+        $this->activeTab = $tab;
+        $this->resetPage();
+    }
+
     // ... mount and switchTab
 
     public function approveOvertime($id)
@@ -69,7 +87,7 @@ class TeamApprovals extends Component
                 ->where('status', '!=', 'present') // Only leaves
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
-        } elseif ($this->activeTab === 'reimbursements') {
+        } elseif ($this->activeTab === 'reimbursements' && \App\Helpers\Editions::reimbursementEnabled()) {
             $reimbursements = Reimbursement::whereIn('user_id', $subordinateIds)
                 ->where('status', 'pending')
                 ->orderBy('created_at', 'desc')

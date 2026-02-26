@@ -97,14 +97,14 @@
             <div class="col-span-1">
                  <x-label value="{{ __('Division') }}" class="mb-1" />
                  <x-tom-select id="filter_division" wire:model.live="division" placeholder="{{ __('All') }}"
-                    :options="\App\Models\Division::all()->map(fn($d) => ['id' => $d->id, 'name' => $d->name])" />
+                    :options="$divisionOptions" />
             </div>
 
             <!-- Job Title -->
              <div class="col-span-1">
                  <x-label value="{{ __('Job Title') }}" class="mb-1" />
                 <x-tom-select id="filter_jobTitle" wire:model.live="jobTitle" placeholder="{{ __('All') }}"
-                    :options="\App\Models\JobTitle::all()->map(fn($j) => ['id' => $j->id, 'name' => $j->name])" />
+                    :options="$jobTitleOptions" />
             </div>
 
             <!-- Search -->

@@ -64,16 +64,32 @@ class Holiday extends Model
     {
         $today = Carbon::today();
         $endDate = $today->copy()->addDays($days);
-        
-        return self::whereBetween('date', [$today, $endDate])
-            ->orWhere(function ($query) use ($today, $endDate) {
-                $query->where('is_recurring', true)
-                    ->whereRaw('DAYOFYEAR(date) BETWEEN DAYOFYEAR(?) AND DAYOFYEAR(?)', [
-                        $today->format('Y-m-d'),
-                        $endDate->format('Y-m-d')
-                    ]);
+
+        $exactHolidays = self::whereBetween('date', [$today, $endDate])->get();
+
+        $monthDayPairs = collect(range(0, $days))
+            ->map(fn ($offset) => $today->copy()->addDays($offset))
+            ->map(fn (Carbon $date) => ['month' => $date->month, 'day' => $date->day])
+            ->unique(fn (array $pair) => $pair['month'].'-'.$pair['day'])
+            ->values();
+
+        $recurringHolidays = self::where('is_recurring', true)
+            ->where(function ($query) use ($monthDayPairs) {
+                foreach ($monthDayPairs as $pair) {
+                    $query->orWhere(function ($subQuery) use ($pair) {
+                        $subQuery->whereMonth('date', $pair['month'])
+                            ->whereDay('date', $pair['day']);
+                    });
+                }
             })
-            ->orderBy('date')
             ->get();
+
+        return $exactHolidays
+            ->concat($recurringHolidays)
+            ->unique(fn ($holiday) => $holiday->is_recurring ? 'R-'.$holiday->date->format('m-d') : 'E-'.$holiday->date->format('Y-m-d'))
+            ->sortBy(fn ($holiday) => $holiday->is_recurring
+                ? Carbon::create($today->year, $holiday->date->month, $holiday->date->day)->format('Y-m-d')
+                : $holiday->date->format('Y-m-d'))
+            ->values();
     }
 }

@@ -98,9 +98,9 @@ class AttendanceHistoryComponent extends Component
         // Get holidays for this month (including recurring)
         $holidays = Holiday::where(function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('date', [$startOfMonth, $endOfMonth])
-                ->orWhere(function ($q) use ($startOfMonth, $endOfMonth) {
+                ->orWhere(function ($q) use ($startOfMonth) {
                     $q->where('is_recurring', true)
-                        ->whereRaw('MONTH(date) = ?', [$startOfMonth->month]);
+                        ->whereMonth('date', $startOfMonth->month);
                 });
         })->get()->keyBy(function ($holiday) use ($startOfMonth) {
             // For recurring holidays, use current year's date as key

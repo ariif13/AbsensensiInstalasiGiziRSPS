@@ -1,11 +1,8 @@
 @php
     $date = Carbon\Carbon::now();
+    $reimbursementEnabled = \App\Helpers\Editions::reimbursementEnabled();
 @endphp
 <div class="mx-auto max-w-7xl px-2 sm:px-2 lg:px-2 py-2">
-    @pushOnce('styles')
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    @endpushOnce
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200">
@@ -27,7 +24,7 @@
     </div>
 
     <!-- Talenta-Style Summary Cards -->
-    <div wire:poll.15s class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div wire:poll.45s class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <!-- 1. Staff Overview -->
         <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10">
             <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Total Employees') }}</dt>
@@ -55,7 +52,7 @@
                     {{ (auth()->user()->is_admin || auth()->user()->is_superadmin) ? __('Action Needed') : __('My Team Requests') }}
                 </dt>
                 <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                    {{ $pendingLeavesCount + $pendingReimbursementsCount }} {{ __('Pending') }}
+                    {{ $pendingLeavesCount + ($reimbursementEnabled ? $pendingReimbursementsCount : 0) }} {{ __('Pending') }}
                 </span>
             </div>
             <div class="mt-4 space-y-3">
@@ -67,14 +64,15 @@
                     </div>
                     <span class="font-semibold text-gray-900 dark:text-white">{{ $pendingLeavesCount }}</span>
                 </a>
-                <!-- Pending Reimbursements -->
-                <a href="{{ route('admin.reimbursements') }}" class="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2 text-sm transition-colors hover:bg-white dark:bg-gray-800/40 dark:hover:bg-gray-800">
-                    <div class="flex items-center gap-2">
-                        <div class="h-2 w-2 rounded-full {{ $pendingReimbursementsCount > 0 ? 'bg-amber-500 animate-pulse' : 'bg-gray-300' }}"></div>
-                        <span class="text-gray-700 dark:text-gray-200">{{ __('Reimbursements') }}</span>
-                    </div>
-                    <span class="font-semibold text-gray-900 dark:text-white">{{ $pendingReimbursementsCount }}</span>
-                </a>
+                @if($reimbursementEnabled)
+                    <a href="{{ route('admin.reimbursements') }}" class="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2 text-sm transition-colors hover:bg-white dark:bg-gray-800/40 dark:hover:bg-gray-800">
+                        <div class="flex items-center gap-2">
+                            <div class="h-2 w-2 rounded-full {{ $pendingReimbursementsCount > 0 ? 'bg-amber-500 animate-pulse' : 'bg-gray-300' }}"></div>
+                            <span class="text-gray-700 dark:text-gray-200">{{ __('Reimbursements') }}</span>
+                        </div>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ $pendingReimbursementsCount }}</span>
+                    </a>
+                @endif
             </div>
         </div>
 
@@ -121,7 +119,7 @@
         </div>
         
         {{-- Live Feed / Recent Activity (1 column) --}}
-        <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10" wire:poll.10s>
+        <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/10" wire:poll.30s>
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ __('Live Feed') }}</h3>
                 <a href="{{ route('admin.activity-logs') }}" 

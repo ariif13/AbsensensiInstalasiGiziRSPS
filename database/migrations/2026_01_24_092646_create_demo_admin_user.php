@@ -14,13 +14,16 @@ return new class extends Migration
         \App\Models\User::firstOrCreate([
             'email' => 'admin.demo@pandanteknik.com',
         ], [
+            'nip' => 'ADMDEMO001',
             'name' => 'Demo Admin',
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'group' => 'admin',
             'email_verified_at' => now(),
             'phone' => '081234567890',
+            'gender' => 'male',
             'address' => 'Demo Address, Jakarta',
             'city' => 'Jakarta',
+            'language' => 'id',
         ]);
     }
 

@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 
 Route::get('/', function () {
+    if (Auth::check()) {
+        return Auth::user()->isAdmin ? redirect('/admin') : redirect('/home');
+    }
+
     return redirect('/login');
 });
 
@@ -36,8 +40,6 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/', fn () => Auth::user()->isAdmin ? redirect('/admin') : redirect('/home'));
-
     // USER AREA
     Route::middleware('user')->group(function () {
         Route::get('/home', HomeController::class)->name('home');
@@ -62,11 +64,19 @@ Route::middleware([
         Route::get('/notifications', \App\Livewire\NotificationsPage::class)
             ->name('notifications');
 
-        Route::get('/reimbursement', \App\Livewire\ReimbursementPage::class)
-            ->name('reimbursement');
+        if (\App\Helpers\Editions::reimbursementEnabled()) {
+            Route::get('/reimbursement', \App\Livewire\ReimbursementPage::class)
+                ->name('reimbursement');
+        } else {
+            Route::get('/reimbursement', fn () => redirect()->route('home'))
+                ->name('reimbursement');
+        }
 
         Route::get('/my-schedule', \App\Livewire\ShiftSchedulePage::class)
             ->name('my-schedule');
+
+        Route::get('/shift-change', \App\Livewire\ShiftChangeRequestPage::class)
+            ->name('shift-change');
             
         Route::get('/approvals', \App\Livewire\TeamApprovals::class)
             ->name('approvals');
@@ -77,8 +87,13 @@ Route::middleware([
         Route::get('/overtime', \App\Livewire\OvertimeRequest::class)
             ->name('overtime');
 
-        Route::get('/payroll', \App\Livewire\MyPayslips::class)
-            ->name('my-payslips');
+        if (\App\Helpers\Editions::payrollEnabled()) {
+            Route::get('/payroll', \App\Livewire\MyPayslips::class)
+                ->name('my-payslips');
+        } else {
+            Route::get('/payroll', fn () => redirect()->route('home'))
+                ->name('my-payslips');
+        }
 
         Route::get('/face-enrollment', \App\Livewire\FaceEnrollment::class)
             ->name('face.enrollment');
@@ -139,6 +154,8 @@ Route::middleware([
             ->name('admin.import-export.users');
         Route::get('/import-export/attendances', [ImportExportController::class, 'attendances'])
             ->name('admin.import-export.attendances');
+        Route::get('/import-export/schedules', [ImportExportController::class, 'schedules'])
+            ->name('admin.import-export.schedules');
 
         Route::post('/users/import', [ImportExportController::class, 'importUsers'])
             ->name('admin.users.import');
@@ -166,6 +183,9 @@ Route::middleware([
 
         Route::get('/overtime', \App\Livewire\Admin\OvertimeManager::class)
             ->name('admin.overtime');
+
+        Route::get('/shift-change-requests', \App\Livewire\Admin\ShiftChangeManager::class)
+            ->name('admin.shift-change-requests');
         
         Route::get('/analytics', \App\Livewire\Admin\AnalyticsDashboard::class)
             ->name('admin.analytics');
@@ -180,16 +200,31 @@ Route::middleware([
             ->name('admin.announcements');
         
         // Reimbursements (v1.3.0)
-        Route::get('/reimbursements', \App\Livewire\Admin\ReimbursementManager::class)
-            ->name('admin.reimbursements');
+        if (\App\Helpers\Editions::reimbursementEnabled()) {
+            Route::get('/reimbursements', \App\Livewire\Admin\ReimbursementManager::class)
+                ->name('admin.reimbursements');
+        } else {
+            Route::get('/reimbursements', fn () => redirect()->route('admin.dashboard'))
+                ->name('admin.reimbursements');
+        }
             
         // Payroll Settings
-        Route::get('/payrolls/settings', \App\Livewire\Admin\PayrollSettings::class)
-            ->name('admin.payroll.settings');
+        if (\App\Helpers\Editions::payrollEnabled()) {
+            Route::get('/payrolls/settings', \App\Livewire\Admin\PayrollSettings::class)
+                ->name('admin.payroll.settings');
+        } else {
+            Route::get('/payrolls/settings', fn () => redirect()->route('admin.dashboard'))
+                ->name('admin.payroll.settings');
+        }
 
         // Payroll (v2.0)
-        Route::get('/payrolls', \App\Livewire\PayrollManager::class)
-            ->name('admin.payrolls');
+        if (\App\Helpers\Editions::payrollEnabled()) {
+            Route::get('/payrolls', \App\Livewire\PayrollManager::class)
+                ->name('admin.payrolls');
+        } else {
+            Route::get('/payrolls', fn () => redirect()->route('admin.dashboard'))
+                ->name('admin.payrolls');
+        }
     });
 });
 
@@ -213,4 +248,3 @@ Route::middleware([
 ])->group(function () {
     // Other auth routes...
 });
-

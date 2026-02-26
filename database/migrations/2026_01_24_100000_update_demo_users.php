@@ -20,13 +20,16 @@ return new class extends Migration
         User::firstOrCreate(
             ['email' => 'admin123@paspapan.com'],
             [
+                'nip' => 'ADM001',
                 'name' => 'Demo Admin',
                 'password' => Hash::make('12345678'),
                 'group' => 'admin',
                 'email_verified_at' => now(),
                 'phone' => '081234567801',
+                'gender' => 'male',
                 'address' => 'Demo Address Admin',
                 'city' => 'Jakarta',
+                'language' => 'id',
             ]
         );
 
@@ -34,13 +37,16 @@ return new class extends Migration
         User::firstOrCreate(
             ['email' => 'user123@paspapan.com'],
             [
+                'nip' => 'USR001',
                 'name' => 'Demo User',
                 'password' => Hash::make('12345678'),
                 'group' => 'user',
                 'email_verified_at' => now(),
                 'phone' => '081234567802',
+                'gender' => 'female',
                 'address' => 'Demo Address User',
                 'city' => 'Jakarta',
+                'language' => 'id',
             ]
         );
     }

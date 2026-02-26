@@ -5,7 +5,7 @@
             {{-- Header --}}
             <div class="px-5 py-4 lg:px-8 lg:py-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800 relative z-10">
                 <div class="flex items-center gap-3">
-                    <x-secondary-button href="{{ url()->previous() }}" class="!rounded-xl !px-3 !py-2 border-gray-200 dark:border-gray-600 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600">
+                    <x-secondary-button href="{{ route('home') }}" class="!rounded-xl !px-3 !py-2 border-gray-200 dark:border-gray-600 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600">
                         <x-heroicon-o-arrow-left class="h-4 w-4 text-gray-500 dark:text-gray-300" />
                     </x-secondary-button>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
@@ -15,6 +15,10 @@
                         {{ __('My Schedule') }}
                     </h3>
                 </div>
+                <a href="{{ route('shift-change') }}" class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-3 py-2 text-xs font-bold uppercase tracking-wider text-white hover:bg-primary-700 transition">
+                    <x-heroicon-o-arrows-right-left class="h-4 w-4" />
+                    {{ __('Shift Change') }}
+                </a>
             </div>
 
             <div class="p-0">
