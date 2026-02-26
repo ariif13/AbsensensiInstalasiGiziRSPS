@@ -24,7 +24,7 @@ class UsersTemplateExport implements FromCollection, WithHeadings, ShouldAutoSiz
                 'user',                 // Group (user, admin)
                 'password123',          // Password
                 '08123456789',          // Phone
-                'Male',                 // Gender
+                'male',                 // Gender (male/female)
                 '5000000',              // Basic Salary
                 '25000',                // Hourly Rate
                 'IT',                   // Division

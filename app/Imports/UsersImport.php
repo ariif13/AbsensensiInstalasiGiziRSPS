@@ -13,7 +13,6 @@ use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
-use Maatwebsite\Excel\Validators\Failure;
 
 class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure
 {
@@ -30,35 +29,74 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFai
      */
     public function model(array $row)
     {
-        // ... existing logic ...
-        $division_id = Division::where('name', $row['division'])->first()?->id
-            ?? Division::create(['name' => $row['division']])?->id;
-        $job_title_id = JobTitle::where('name', $row['job_title'])->first()?->id
-            ?? JobTitle::create(['name' => $row['job_title']])?->id;
-        $education_id = Education::where('name', $row['education'])->first()?->id
-            ?? Education::create(['name' => $row['education']])?->id;
-        $user = (new User)->forceFill([
-            'id' => isset($row['id']) ? $row['id'] : null,
-            'nip' => (string) $row['nip'],
-            'name' => $row['name'],
-            'email' => $row['email'],
+        $divisionName = trim((string) ($row['division'] ?? ''));
+        $jobTitleName = trim((string) ($row['job_title'] ?? ''));
+        $educationName = trim((string) ($row['education'] ?? ''));
+
+        $division_id = $divisionName !== ''
+            ? Division::firstOrCreate(['name' => $divisionName])->id
+            : null;
+
+        $job_title_id = $jobTitleName !== ''
+            ? JobTitle::firstOrCreate(['name' => $jobTitleName])->id
+            : null;
+
+        $education_id = $educationName !== ''
+            ? Education::firstOrCreate(['name' => $educationName])->id
+            : null;
+
+        $gender = $this->normalizeGender($row['gender'] ?? null);
+        if (!$gender) {
+            return null;
+        }
+
+        $email = mb_strtolower(trim((string) ($row['email'] ?? '')));
+        $nip = trim((string) ($row['nip'] ?? ''));
+
+        $attributes = [
+            'nip' => $nip,
+            'name' => trim((string) ($row['name'] ?? '')),
+            'email' => $email,
             'group' => $row['group'] ?? 'user',
-            'phone' => (string) $row['phone'],
-            'gender' => $row['gender'],
-            'basic_salary' => $row['basic_salary'] ?? 0,
-            'hourly_rate' => $row['hourly_rate'] ?? 0,
-            'birth_date' => $row['birth_date'],
-            'birth_place' => $row['birth_place'],
-            'address' => $row['address'],
-            'city' => $row['city'],
+            'phone' => trim((string) ($row['phone'] ?? '')),
+            'gender' => $gender,
+            'basic_salary' => (int) ($row['basic_salary'] ?? 0),
+            'hourly_rate' => (int) ($row['hourly_rate'] ?? 0),
+            'birth_date' => $row['birth_date'] ?? null,
+            'birth_place' => $row['birth_place'] ?? null,
+            'address' => $row['address'] ?? '',
+            'city' => $row['city'] ?? '',
             'education_id' => $education_id,
             'division_id' => $division_id,
             'job_title_id' => $job_title_id,
-            'password' => Hash::make($row['password']),
-            'created_at' => isset($row['created_at']) ? $row['created_at'] : \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
-        ]);
-        
+        ];
+
+        if (!empty($row['password'])) {
+            $attributes['password'] = Hash::make((string) $row['password']);
+        }
+
+        $existing = User::query()
+            ->where('email', $email)
+            ->orWhere('nip', $nip)
+            ->first();
+
+        if ($existing) {
+            if ($this->save) {
+                $existing->forceFill($attributes);
+                $existing->save();
+                \Illuminate\Support\Facades\Log::info('User updated successfully: '.$existing->email);
+            }
+
+            return $existing;
+        }
+
+        $user = (new User)->forceFill(array_merge($attributes, [
+            'id' => !empty($row['id']) ? (string) $row['id'] : null,
+            'password' => $attributes['password'] ?? Hash::make((string) ($row['password'] ?? '12345678')),
+            'created_at' => $row['created_at'] ?? \Carbon\Carbon::now(),
+        ]));
+
         if ($this->save) {
             $user->save();
             \Illuminate\Support\Facades\Log::info('User imported successfully: ' . $user->email);
@@ -69,12 +107,23 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFai
     public function rules(): array
     {
         return [
-            'nip' => ['required', Rule::unique('users', 'nip')],
+            'nip' => ['required'],
             'name' => ['required', 'string'],
-            'email' => ['required', 'string', Rule::unique('users', 'email')],
-            'phone' => ['nullable', Rule::unique('users', 'phone')],
-            'gender' => ['required', 'string'],
-            'password' => ['required', 'string'],
+            'email' => ['required', 'string'],
+            'phone' => ['nullable'],
+            'gender' => ['required', 'string', Rule::in(['male', 'female', 'Male', 'Female', 'MALE', 'FEMALE', 'L', 'P', 'l', 'p'])],
+            'password' => ['nullable', 'string'],
         ];
+    }
+
+    private function normalizeGender(mixed $value): ?string
+    {
+        $normalized = mb_strtolower(trim((string) $value));
+
+        return match ($normalized) {
+            'male', 'l' => 'male',
+            'female', 'p' => 'female',
+            default => null,
+        };
     }
 }

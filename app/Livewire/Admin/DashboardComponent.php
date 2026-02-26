@@ -6,6 +6,7 @@ use App\Livewire\Traits\AttendanceDetailTrait;
 use App\Models\Attendance;
 use App\Models\ActivityLog;
 use App\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
@@ -24,6 +25,12 @@ class DashboardComponent extends Component
     // Filter Properties
     public $search = '';
     public $chartFilter = 'week'; // 'week' | 'month'
+    public bool $readyToLoad = false;
+
+    public function loadDashboardData(): void
+    {
+        $this->readyToLoad = true;
+    }
 
     public function showStatDetail($type)
     {
@@ -113,6 +120,23 @@ class DashboardComponent extends Component
 
     public function render()
     {
+        if (!$this->readyToLoad) {
+            return view('livewire.admin.dashboard', [
+                'employees' => new LengthAwarePaginator(collect(), 0, 20, 1, ['path' => request()->url()]),
+                'employeesCount' => 0,
+                'presentCount' => 0,
+                'lateCount' => 0,
+                'earlyCheckoutCount' => 0,
+                'excusedCount' => 0,
+                'sickCount' => 0,
+                'absentCount' => 0,
+                'recentLogs' => collect(),
+                'chartData' => ['labels' => [], 'present' => [], 'late' => [], 'other' => []],
+                'overdueUsers' => collect(),
+                'calendarLeaves' => collect(),
+            ]);
+        }
+
         $reimbursementEnabled = \App\Helpers\Editions::reimbursementEnabled();
         $today = now()->format('Y-m-d');
 
@@ -194,7 +218,7 @@ class DashboardComponent extends Component
                       ->orWhere('nip', 'like', '%' . $this->search . '%');
                 });
             })
-            ->paginate(20)
+            ->paginate(10)
             ;
 
         $todayAttendances = Attendance::with('shift')

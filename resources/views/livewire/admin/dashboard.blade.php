@@ -2,7 +2,12 @@
     $date = Carbon\Carbon::now();
     $reimbursementEnabled = \App\Helpers\Editions::reimbursementEnabled();
 @endphp
-<div class="mx-auto max-w-7xl px-2 sm:px-2 lg:px-2 py-2">
+<div class="mx-auto max-w-7xl px-2 sm:px-2 lg:px-2 py-2" wire:init="loadDashboardData">
+    @if(!$readyToLoad)
+        <div class="mb-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700 dark:border-blue-900/40 dark:bg-blue-900/20 dark:text-blue-300">
+            {{ __('Loading dashboard data...') }}
+        </div>
+    @endif
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200">
