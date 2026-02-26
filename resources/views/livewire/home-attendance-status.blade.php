@@ -66,8 +66,7 @@
         <x-home-actions-card 
             :hasCheckedIn="$hasCheckedIn" 
             :hasCheckedOut="$hasCheckedOut" 
-            :attendance="$attendance" 
-            :overtime="$overtime"
+            :attendance="$attendance"
         />
     @endif
 </div>

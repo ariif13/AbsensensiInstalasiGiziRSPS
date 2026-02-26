@@ -36,9 +36,11 @@
                                 <x-dropdown-link href="{{ route('admin.leaves') }}" :active="request()->routeIs('admin.leaves')" wire:navigate>
                                     {{ __('Approvals') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link href="{{ route('admin.overtime') }}" :active="request()->routeIs('admin.overtime')" wire:navigate>
-                                    {{ __('Overtime') }}
-                                </x-dropdown-link>
+                                @if(\App\Helpers\Editions::overtimeEnabled())
+                                    <x-dropdown-link href="{{ route('admin.overtime') }}" :active="request()->routeIs('admin.overtime')" wire:navigate>
+                                        {{ __('Overtime') }}
+                                    </x-dropdown-link>
+                                @endif
                                 <x-dropdown-link href="{{ route('admin.schedules') }}" :active="request()->routeIs('admin.schedules')" wire:navigate>
                                     {{ __('Schedules (Roster)') }}
                                 </x-dropdown-link>

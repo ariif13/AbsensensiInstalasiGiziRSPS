@@ -21,11 +21,20 @@ class TeamApprovals extends Component
         if (!\App\Helpers\Editions::reimbursementEnabled() && $this->activeTab === 'reimbursements') {
             $this->activeTab = 'leaves';
         }
+
+        if (!\App\Helpers\Editions::overtimeEnabled() && $this->activeTab === 'overtimes') {
+            $this->activeTab = 'leaves';
+        }
     }
 
     public function switchTab($tab)
     {
         if ($tab === 'reimbursements' && !\App\Helpers\Editions::reimbursementEnabled()) {
+            $this->activeTab = 'leaves';
+            return;
+        }
+
+        if ($tab === 'overtimes' && !\App\Helpers\Editions::overtimeEnabled()) {
             $this->activeTab = 'leaves';
             return;
         }
@@ -38,7 +47,15 @@ class TeamApprovals extends Component
 
     public function approveOvertime($id)
     {
+        if (!\App\Helpers\Editions::overtimeEnabled()) {
+            return;
+        }
+
         $overtime = Overtime::find($id);
+
+        if (!$overtime) {
+            return;
+        }
 
         if (!$this->isSubordinate($overtime->user_id)) {
             return;
@@ -55,7 +72,15 @@ class TeamApprovals extends Component
 
     public function rejectOvertime($id)
     {
+        if (!\App\Helpers\Editions::overtimeEnabled()) {
+            return;
+        }
+
         $overtime = Overtime::find($id);
+
+        if (!$overtime) {
+            return;
+        }
 
         if (!$this->isSubordinate($overtime->user_id)) {
             return;
@@ -92,11 +117,11 @@ class TeamApprovals extends Component
                 ->where('status', 'pending')
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
-        } else {
-             $overtimes = Overtime::whereIn('user_id', $subordinateIds)
-                ->where('status', 'pending')
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
+        } elseif (\App\Helpers\Editions::overtimeEnabled()) {
+            $overtimes = Overtime::whereIn('user_id', $subordinateIds)
+               ->where('status', 'pending')
+               ->orderBy('created_at', 'desc')
+               ->paginate(10);
         }
 
         return view('livewire.team-approvals', [

@@ -23,6 +23,11 @@ class Editions
         return (bool) env('FEATURE_REIMBURSEMENT', false);
     }
 
+    public static function overtimeEnabled(): bool
+    {
+        return (bool) env('FEATURE_OVERTIME', false);
+    }
+
     /**
      * Check if a specific feature service is running in Community Mode (Locked).
      */

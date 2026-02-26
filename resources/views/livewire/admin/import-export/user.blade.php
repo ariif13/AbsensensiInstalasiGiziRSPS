@@ -169,11 +169,20 @@
                             {{ __('Import Data') }} {{ $lockedIcon }}
                          </x-danger-button>
                     @else
-                        <div x-show="file">
-                             <x-danger-button class="w-full justify-center py-3" wire:loading.attr="disabled" wire:target="import">
-                                {{ __('Start Import') }}
-                             </x-danger-button>
-                        </div>
+                        @if($file)
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <x-danger-button class="w-full justify-center py-3" wire:loading.attr="disabled" wire:target="import">
+                                    {{ __('Save Imported Data') }}
+                                </x-danger-button>
+
+                                <x-secondary-button type="button" class="w-full justify-center py-3" wire:click="cancelImportPreview" wire:loading.attr="disabled" wire:target="import">
+                                    {{ __('Cancel') }}
+                                </x-secondary-button>
+                            </div>
+                            <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
+                                {{ __('Preview sudah tampil. Klik Save Imported Data untuk menyimpan ke database.') }}
+                            </p>
+                        @endif
                     @endif
                 </form>
 

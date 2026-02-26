@@ -16,7 +16,7 @@
         <span class="text-[10px] font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Leave') }}</span>
     </a>
 
-    {{-- 3. Overtime / Team Approvals --}}
+    {{-- 3. Team Approvals / Notifications --}}
     @if(Auth::user()->subordinates->isNotEmpty())
         <a href="{{ route('approvals') }}" class="flex flex-col items-center gap-2 group">
             <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
@@ -25,11 +25,11 @@
             <span class="text-[10px] font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Approvals') }}</span>
         </a>
     @else
-        <a href="{{ route('overtime') }}" class="flex flex-col items-center gap-2 group">
+        <a href="{{ route('notifications') }}" class="flex flex-col items-center gap-2 group">
             <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
             </div>
-            <span class="text-[10px] font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Overtime') }}</span>
+            <span class="text-[10px] font-medium text-gray-600 dark:text-gray-300 text-center leading-tight">{{ __('Notifications') }}</span>
         </a>
     @endif
 

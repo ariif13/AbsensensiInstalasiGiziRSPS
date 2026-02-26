@@ -84,8 +84,13 @@ Route::middleware([
         Route::get('/approvals/history', \App\Livewire\TeamApprovalsHistory::class)
             ->name('approvals.history');
 
-        Route::get('/overtime', \App\Livewire\OvertimeRequest::class)
-            ->name('overtime');
+        if (\App\Helpers\Editions::overtimeEnabled()) {
+            Route::get('/overtime', \App\Livewire\OvertimeRequest::class)
+                ->name('overtime');
+        } else {
+            Route::get('/overtime', fn () => redirect()->route('home'))
+                ->name('overtime');
+        }
 
         if (\App\Helpers\Editions::payrollEnabled()) {
             Route::get('/payroll', \App\Livewire\MyPayslips::class)
@@ -181,8 +186,13 @@ Route::middleware([
         Route::get('/leaves', \App\Livewire\Admin\LeaveApproval::class)
             ->name('admin.leaves');
 
-        Route::get('/overtime', \App\Livewire\Admin\OvertimeManager::class)
-            ->name('admin.overtime');
+        if (\App\Helpers\Editions::overtimeEnabled()) {
+            Route::get('/overtime', \App\Livewire\Admin\OvertimeManager::class)
+                ->name('admin.overtime');
+        } else {
+            Route::get('/overtime', fn () => redirect()->route('admin.dashboard'))
+                ->name('admin.overtime');
+        }
 
         Route::get('/shift-change-requests', \App\Livewire\Admin\ShiftChangeManager::class)
             ->name('admin.shift-change-requests');

@@ -119,6 +119,11 @@ class User extends Component
         }
     }
 
+    public function cancelImportPreview()
+    {
+        $this->reset(['file', 'importErrors']);
+    }
+
     public function export()
     {
         if (Auth::user()->isNotAdmin) {
